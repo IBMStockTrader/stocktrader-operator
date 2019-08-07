@@ -1,0 +1,55 @@
+#       Copyright 2017-2019 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+type: Opaque
+data:
+  portfolio.url: {{ tpl .Values.portfolio.url . }}
+  stockQuote.url: {{ tpl .Values.stockQuote.url . }}
+  watson.url: {{ .Values.watson.url }}
+  tradeHistory.url: {{ tpl .Values.tradeHistory.url . }}
+  messaging.notification.url: {{ tpl .Values.messaging.notification.url . }}
+  looper.url: {{ tpl .Values.looper.url . }}
+  apic.url: {{ .Values.stockQuote.apiConnect }}
+  iex.url: {{ .Values.stockQuote.iexTrading }}
+  odm.url: {{ .Values.odm.url }}
+  openwhisk.url: {{ .Values.openwhisk.url }}
+  ingress.address: {{ .Values.ingress.address }}
+  kafka.address: {{ .Values.kafka.address }}
+  kafka.topic: {{ .Values.kafka.topic }}
+  db2.host: {{ .Values.db2.host }}
+  db2.port: "{{ .Values.db2.port }}"
+  db2.db: {{ .Values.db2.db }}
+  mq.host: {{ .Values.mq.host }}
+  mq.port: "{{ .Values.mq.port }}"
+  mq.queueManager: {{ .Values.mq.queueManager }}
+  mq.queue: {{ .Values.mq.queue }}
+  mq.channel: {{ .Values.mq.channel }}
+  oidc.name: {{ .Values.oidc.name }}
+  oidc.issuer: {{ .Values.oidc.issuer }}
+  oidc.token: {{ .Values.oidc.token }}
+  oidc.auth: {{ .Values.oidc.auth }}
+  oidc.key: {{ .Values.oidc.key }}
+  oidc.nodePort: {{ .Values.oidc.nodeport }}
+  jwt.issuer: {{ .Values.jwt.issuer }}
+  jwt.audience: {{ .Values.jwt.audience }}
+  redis.cacheInterval: "{{ .Values.redis.cacheInterval }}"
+  mongo.ip: {{ .Values.mongo.ip }}
+  mongo.port: "{{ .Values.mongo.ip }}"
+  mongo.database: {{ .Values.mongo.database }}
+  mongo.authDB: {{ .Values.mongo.authDB }}
+

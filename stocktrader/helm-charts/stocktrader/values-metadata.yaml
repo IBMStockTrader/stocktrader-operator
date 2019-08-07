@@ -1,0 +1,578 @@
+#       Copyright 2019 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Default values for stocktrader.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  __metadata:
+    label: "Global Settings"
+    description: "Settings that apply to all of the Stock Trader microservices"
+  replicas:
+    __metadata:
+      label: "Initial number of pods per microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for each microservice"
+      type: boolean
+  monitoring:
+    __metadata:
+      label: "Enable Prometheus monitoring"
+      description: "Register a Prometheus scraper for the metrics endpoint for each microservice"
+      type: boolean
+  ingress:
+    __metadata:
+      label: "Enable Ingress"
+      description: "Enable an Ingress for each front-end microservice"
+      type: boolean
+  healthCheck:
+    __metadata:
+      label: "Enable Readiness and Liveness probes"
+      description: "Configure Kubernetes to periodically probe each microservice to determine its health"
+      type: boolean
+  jsonLogging:
+    __metadata:
+      label: "Output pod logs in JSON format"
+      description: "Enable to send logs to ElasticSearch so they can be viewed in Kibana"
+      type: boolean
+db2:
+  __metadata:
+    label: "IBM DB2 Settings.  Mandatory - required by the portfolio microservice"
+    description: "Settings that apply to accessing the DB2 database (can be in-cluster, or external)"
+    required: true
+  host:
+    __metadata:
+      label: "Host name (or IP address)"
+      description: "Use the Kubernetes service DNS name if using an in-cluster DB2"
+      type: string
+  port:
+    __metadata:
+      label: "Port number"
+      description: "This usually defaults to 50000"
+      type: number
+  id:
+    __metadata:
+      label: "User ID"
+      description: "Login ID"
+      type: string
+  password:
+    __metadata:
+      label: "Password"
+      description: "Will be stored in a Kubernetes secret"
+      type: password
+  db:
+    __metadata:
+      label: "Database name"
+      description: "Name of the database"
+      type: string
+portfolio:
+  __metadata:
+    label: "Portfolio microservice"
+    description: "Settings that apply to the Portfolio microservice"
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the portfolio microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the portfolio microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the portfolio microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Portfolio URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
+stockQuote:
+  __metadata:
+    label: "Stock Quote microservice"
+    description: "Settings that apply to the Stock Quote microservice"
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the stock quote microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the stock quote microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the stock quote microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Stock Quote URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
+  apiConnect:
+    __metadata:
+      label: "API Connect URL"
+      description: "URL for contacting the stock quote service in API Connect"
+      type: string
+  iexTrading:
+    __metadata:
+      label: "IEX Trading URL"
+      description: "URL for contacting IEX directly (used as fallback if API Connect isn't working)"
+      type: string
+  iexApiKey:
+    __metadata:
+      label: "IEX API Key"
+      description: "Your API Key for the IEX Cloud.  Optional: Only used if API Connect isn't working"
+      type: password
+trader:
+  __metadata:
+    label: "Trader simple UI microservice"
+    description: "Settings that apply to the Java servlet-based Trader microservice"
+  enabled:
+    __metadata:
+      label: "Enable the basic UI microservice"
+      description: "This is a simple form-based browser client for IBM Stock Trader"
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the trader microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the trader microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the trader microservice"
+        type: string
+tradr:
+  __metadata:
+    label: "Tradr fancy UI microservice"
+    description: "Settings that apply to the Node.js/Vue.js-based Tradr microservice (the only non-Java one in IBM Stock Trader).  Requires OIDC"
+  enabled:
+    __metadata:
+      label: "Enable the fancy UI microservice"
+      description: "This is a sophisticated JavaScript-based browser client for IBM Stock Trader, which requires configuring OpenID Connect (OIDC) for authentication"
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the tradr microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the tradr microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the tradr microservice"
+        type: string
+messaging:
+  __metadata:
+    label: "Messaging microservice (optional - requires MQ)"
+    description: "Settings that apply to the Messaging microservice (enables notifications about changes in loyalty levels)"
+  enabled:
+    __metadata:
+      label: "Enable the messaging microservice"
+      description: "This optional service responds to JMS messages sent to MQ by Portfolio when your loyalty level changes, and invokes the Notification service"
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the messaging microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the messaging microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the messaging microservice"
+        type: string
+  notification:
+    __metadata:
+      label: "Notification service settings"
+      description: "How the messaging microservice calls the notification microservice"
+    url:
+      __metadata:
+        label: "URL for the Notification microservice"
+        description: "Use the Kubernetes service DNS name in the URL when both are deployed to the same cluster"
+notificationSlack:
+  __metadata:
+    label: "Slack-based Notification microservice (optional - requires Messaging microservice)"
+    description: "Settings that apply to the Slack-based notification microservice (posts to a Slack channel when your loyalty level changes)"
+  enabled:
+    __metadata:
+      label: "Enable the Slack-based notification microservice (choose this or the Twitter-based one, not both)"
+      description: "This optional service posts to a Slack channel when your loyalty level changes"
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the Slack-based notification microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the Slack-based notification microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the Slack-based notification microservice"
+        type: string
+notificationTwitter:
+  __metadata:
+    label: "Twitter-based Notification microservice (optional - requires Messaging microservice)"
+    description: "Settings that apply to the Twitter-based notification microservice (sends a tweet when your loyalty level changes)"
+  enabled:
+    __metadata:
+      label: "Enable the Twitter-based notification microservice (choose this or the Slack-based one, not both)"
+      description: "This optional service sends a tweet as @IBMStockTrader when your loyalty level changes"
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the Twitter-based notification microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the Twitter-based notification microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the Twitter-based notification microservice"
+        type: string
+tradeHistory:
+  __metadata:
+    label: "Trade History microservice"
+    description: "Settings that apply to the Trade History microservice"
+  enabled:
+    __metadata:
+      label: "Enable the Trade History microservice"
+      description: "This optional service maintains a history of all stock trades for your portfolio.  Requires a Mongo DB; this pod won't start if Mongo is unavailable"
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the trade history microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the trade history microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the trade history microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Trade History URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
+looper:
+  __metadata:
+    label: "Looper microservice"
+    description: "Settings that apply to the Looper microservice"
+  enabled:
+    __metadata:
+      label: "Enable the Looper microservice"
+      description: "This optional service drives performance and stress tests against the Portfolio microservice"
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the looper microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the looper microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the looper microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Looper URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
+jwt:
+  __metadata:
+    label: "JSON Web Token (JWT) settings"
+    description: "Settings that apply to the JWT used for Single Sign-On between microservices"
+  issuer:
+    __metadata:
+      label: "JWT Issuer URL"
+      description: "The default value is usually sufficient"
+      type: string
+  audience:
+      label: "JWT Audience"
+      description: "The default value is usually sufficient"
+      type: string
+oidc:
+  __metadata:
+    label: "OpenID Connect (OIDC) settings (optional)"
+    description: "Settings to authenticate against the OIDC provider, such as IBMid.  Only needed by the tradr client"
+  name:
+      label: "Name of the OIDC provider"
+      description: "Name by which you refer to the provider.  Not actually sent to the provider"
+      type: string
+  issuer:
+    __metadata:
+      label: "JWT Issuer URL"
+      description: "The URL of the JWT issuer for this OIDC provider"
+      type: string
+  token:
+    __metadata:
+      label: "OIDC Token URL"
+      description: "The URL of the token issuer for this OIDC provider"
+      type: string
+  auth:
+    __metadata:
+      label: "Auth URL"
+      description: "The URL of the authorization endpoint for this OIDC provider"
+      type: string
+  clientId:
+    __metadata:
+      label: "Client ID"
+      description: "The client ID issued to you by the OIDC provider"
+      type: password
+  clientSecret:
+    __metadata:
+      label: "Client Secret"
+      description: "The client secret issued to you by the OIDC provider"
+      type: password
+  key:
+    __metadata:
+      label: "Key name"
+      description: "Name of the public key for this OIDC provider, in the keystore for this microservice"
+      type: string
+  nodePort:
+    __metadata:
+      label: "Redirect URL"
+      description: "URL that the OIDC provider should call after authentication success"
+      type: string
+ingress:
+  __metadata:
+    label: "Ingress settings (optional)"
+    description: "Ingress configuration.  Only needed by the tradr client"
+  address:
+    __metadata:
+      label: "Ingress address"
+      description: "Specify in ip:port or hostname:port format"
+      type: string
+watson:
+  __metadata:
+    label: "Watson Tone Analyzer settings (optional)"
+    description: "Configuration for the 'submit feedback' operation to call the Watson Tone Analyzer"
+  id:
+    __metadata:
+      label: "ID"
+      description: "Login ID for the Watson Tone Analyzer.  Leave set to `apikey` if using an API key instead"
+      type: string
+  passwordOrApiKey:
+    __metadata:
+      label: "Password or API key"
+      description: "Login password for the Watson Tone Analyzer.  If you have an API key instead, specify that here"
+      type: password
+  url:
+    __metadata:
+      label: "URL"
+      description: "URL for the Watson Tone Analyzer.  Generally the default value will be sufficient"
+      type: string
+odm:
+  __metadata:
+    label: "ODM settings (optional)"
+    description: "Configuration for the determineLoyalty rule set in Operational Decision Management (ODM).  Needed only if you want a loyalty level calculated for your portfolio"
+  id:
+    __metadata:
+      label: "ID"
+      description: "Login ID for ODM"
+      type: string
+  passwordOrApiKey:
+    __metadata:
+      label: "Password"
+      description: "Login password for ODM"
+      type: password
+  url:
+    __metadata:
+      label: "URL"
+      description: "URL for ODM"
+      type: string
+mq:
+  __metadata:
+    label: "IBM MQ settings (optional)"
+    description: "Configuration for MQ.  Can be in-cluster, or external.  Needed only if you want to receive notifications about changes in loyalty level"
+  host:
+    __metadata:
+      label: "Host"
+      description: "Host name, or IP address, for MQ.  Use the Kube DNS service name if using an intra-cluster deployment of MQ"
+      type: string
+  port:
+    __metadata:
+      label: "Port"
+      description: "Port number for MQ.  Use the local port number (not the node port or Ingress port) if using an intra-cluster deployment of MQ"
+      type: number
+  id:
+    __metadata:
+      label: "ID"
+      description: "Login ID for MQ"
+      type: string
+  password:
+    __metadata:
+      label: "Password"
+      description: "Login password for MQ.  The default installation of MQ gives you an id of 'app', with no password"
+      type: password
+  queueManager:
+    __metadata:
+      label: "Queue Manager"
+      description: "Queue Manager to be used in MQ"
+      type: string
+  queue:
+    __metadata:
+      label: "Queue"
+      description: "Queue to be used in MQ"
+      type: string
+  channel:
+    __metadata:
+      label: "Channel"
+      description: "Channel to be used in MQ"
+      type: string
+redis:
+  __metadata:
+    label: "Redis settings (optional)"
+    description: "Caches stock quotes for performance.  Quotes less than a configured staleness are used from the cache, rather than hitting API Connect and IEX every time"
+  urlWithCredentials:
+    __metadata:
+      label: "URL"
+      description: "Use the Kube DNS service name and local port number for an intra-cluster deployment of Redis.  Encode any needed credentials into the URL"
+      type: string
+  cacheInterval:
+    __metadata:
+      label: "Cache Interval"
+      description: "Specify how stale a cached quote can be before requiring another trip outside the cluster to obtain a fresh one"
+      type: number
+openwhisk:
+  __metadata:
+    label: "OpenWhisk settings (optional)"
+    description: "Configuration for the PostLoyaltyLevelToSlack action sequence in OpenWhisk, called by the optional Slack-based Notification microservice (which requires the Messaging microservice and MQ).  Can be in-cluster, or the hosted IBM Cloud Functions"
+  id:
+    __metadata:
+      label: "ID"
+      description: "Login ID for OpenWhisk"
+      type: string
+  passwordOrApiKey:
+    __metadata:
+      label: "Password"
+      description: "Login password for OpenWhisk"
+      type: password
+  url:
+    __metadata:
+      label: "URL"
+      description: "URL for OpenWhisk.  Use the Kube DNS service name in the URL if using an intra-cluster deployment of OpenWhisk"
+      type: string
+twitter:
+  __metadata:
+    label: "Twitter settings (optional)"
+    description: "Configuration for the Twitter-based notification service to talk to Twitter (requires Messaging microservice and MQ)"
+  consumerKey:
+    __metadata:
+      label: "Consumer Key"
+      description: "Consumer key for Twitter"
+      type: password
+  consumerSecret:
+    __metadata:
+      label: "Consumer Secret"
+      description: "Consumer secret for Twitter"
+      type: password
+  accessToken:
+    __metadata:
+      label: "Access Token"
+      description: "Access token for Twitter"
+      type: password
+  accessTokenSecret:
+    __metadata:
+      label: "Access Token Secret"
+      description: "Access token secret for Twitter"
+      type: password
+kafka:
+  __metadata:
+    label: "Kafka settings (optional)"
+    description: "Configuration for Portfolio to asynchronously talk to Trade History (which requires Mongo).  Only tested with IBM Event Streams as the Kafka provider so far"
+  address:
+    __metadata:
+      label: "Address"
+      description: "Specify in ip:port or hostname:port format.  Use the Kube DNS service name and local port when using an intra-cluster deployment of IBM Event Streams"
+      type: string
+  topic:
+    __metadata:
+      label: "Topic"
+      description: "Kafka topic name"
+      type: string
+  user:
+    __metadata:
+      label: "User ID"
+      description: "Kafka user name.  Defaults to 'token' when using an API key"
+      type: string
+  apiKey:
+    __metadata:
+      label: "API Key"
+      description: "Kafka API key"
+      type: password
+mongo:
+  __metadata:
+    label: "Mongo settings (optional)"
+    description: "Trade History stores the history of stock purchases here (used in return-on-investment calculations).  Only needed if using the optional Trade History microservice"
+  ip:
+    __metadata:
+      label: "Host"
+      description: "Host name, or IP address, for Mongo.  Use the Kube DNS service name if using an intra-cluster deployment of Mongo"
+      type: string
+  port:
+    __metadata:
+      label: "Port"
+      description: "Port number for Mongo.  Use the local port number (not the node port or Ingress port) if using an intra-cluster deployment of Mongo"
+      type: number
+  user:
+    __metadata:
+      label: "User ID"
+      description: "Login ID for Mongo"
+      type: string
+  password:
+    __metadata:
+      label: "Password"
+      description: "Login password for Mongo"
+      type: password
+  database:
+    __metadata:
+      label: "Database"
+      description: "Database name for Mongo"
+      type: string
+  authDB:
+    __metadata:
+      label: "Auth database"
+      description: "Auth database name for Mongo"
+      type: string

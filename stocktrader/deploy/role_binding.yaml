@@ -1,0 +1,11 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: stocktrader
+subjects:
+- kind: ServiceAccount
+  name: stocktrader
+roleRef:
+  kind: Role
+  name: stocktrader
+  apiGroup: rbac.authorization.k8s.io
