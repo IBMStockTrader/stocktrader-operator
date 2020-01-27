@@ -1,4 +1,4 @@
-#       Copyright 2017-2019 IBM Corp All Rights Reserved
+#       Copyright 2017-2020 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ metadata:
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
-    prism.subkind: Liberty
+    prism.subkind: Node.js
 spec:
   replicas: {{ .Values.global.replicas }}
   template:
@@ -29,11 +29,6 @@ spec:
       labels:
         app: tradr
         solution: stock-trader
-{{- if .Values.global.monitoring }}
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: "9080"
-{{- end }}
     spec:
       containers:
       - name: tradr
@@ -96,23 +91,8 @@ spec:
             value: message,ffdc
 {{- end }}
         ports:
-          - containerPort: 9080
-          - containerPort: 9443
+          - containerPort: 3000
         imagePullPolicy: Always
-{{- if .Values.global.healthCheck }}
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 9080
-          initialDelaySeconds: 30
-          periodSeconds: 6
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 9080
-          initialDelaySeconds: 60
-          periodSeconds: 6
-{{- end }}
         resources:
           limits:
             cpu: 500m

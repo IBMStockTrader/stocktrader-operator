@@ -1,4 +1,4 @@
-#       Copyright 2017-2019 IBM Corp All Rights Reserved
+#       Copyright 2017-2020 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -54,6 +54,12 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: portfolio.url
                 optional: true
+          - name: LOOPER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: looper.url
+                optional: true
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
@@ -67,16 +73,16 @@ spec:
 {{- if .Values.global.healthCheck }}
         readinessProbe:
           httpGet:
-            path: /health
+            path: /health/ready
             port: 9080
           initialDelaySeconds: 30
-          periodSeconds: 6
+          periodSeconds: 15
         livenessProbe:
           httpGet:
-            path: /health
+            path: /health/live
             port: 9080
           initialDelaySeconds: 60
-          periodSeconds: 6
+          periodSeconds: 15
 {{- end }}
         resources:
           limits:
@@ -111,6 +117,11 @@ metadata:
   name: {{ .Release.Name }}-looper-service
   labels:
     app: looper
+{{- if .Values.global.monitoring }}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: "9080"
+{{- end }}
 spec:
   type: NodePort
   ports:
