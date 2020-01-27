@@ -10,18 +10,28 @@ The operator is built by going to the `stocktrader` subdirectory and running the
 ```
 operator-sdk build stocktrader-operator
 ```
-This produces a `stocktrader-operator:latest` Docker image, which I then pushed to DockerHub via the following usual commands:
+This produces a `stocktrader-operator:latest` Docker image, which I then pushed to DockerHub via the following usual commands (if building yourself, you'll need to push to somewhere that you have authority, and will need to update the operator.yaml to reference that location):
 ```
 docker tag stocktrader-operator:latest ibmstocktrader/stocktrader-operator:latest
 docker push ibmstocktrader/stocktrader-operator:latest
 ```
 The results of building this repo are in DockerHub at https://hub.docker.com/r/ibmstocktrader/stocktrader-operator
 
-First you deploy the CustomResourceDefinition (CRD) for the operator, via `oc create -f deploy/crds/ceh_stocktraders_crd.yaml`.
-The operator itself is deployed via `oc create -f deploy`, which runs each of the yaml files in that directory.
+Deploy the operator, and its CRD, via the following, in the specified order (of course, if you want it to go to a namespace other than the one configured by `oc login`/`oc project`, add it via a `-n` parameter to the commands below):
+```
+oc create -f deploy/crds/ceh_stocktraders_crd.yaml
+oc create -f deploy/service_account.yaml
+oc create -f deploy/role.yaml
+oc create -f deploy/role_binding.yaml
+oc create -f deploy/operator.yaml
+```
 You can do a standard `oc get deployment` to see that the operator is running, ready to respond to new CustomResources (CRs) being installed of kind `StockTrader`.
 
-An example CR yaml can be deployed via `oc create -f deploy/crds/ceh_v1_stocktrader)_cr.yaml`.  You can edit this file to add any of the fields specified in the values.yaml, such as the `db2.host`.
+An example CR yaml can be deployed via the following command:
+```
+oc create -f deploy/crds/ceh_v1_stocktrader_cr.yaml
+```
+You can first edit this file to add any of the fields specified in the values.yaml, such as the `db2.host`.
 Or, just run the default, then edit the values in the config map and/or the secret, which is where most of the settings from the values.yaml end up.
-For example, the `db2.host` and `db2.port` are placed in the config map (called `{name}-config`) that gets created for you, and the `db2.id` and `db2.password` are in the secret (called `{name}-credentials`).
+For example, the `db2.host` and `db2.port` are placed in the config map (called `{name}-config`) that gets generated for you, and the `db2.id` and `db2.password` are in the generated secret (called `{name}-credentials`).
 The various microservices in the IBM Stock Trader sample look in this config map and secret during pod startup for their configuration values.
