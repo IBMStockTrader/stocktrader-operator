@@ -1,9 +1,27 @@
 # IBM Stock Trader operator
 This repository contains the results of using the Operator SDK to turn the umbrella helm chart (in the sibling `stocktrader-helm` repo) into a Kubernetes Operator.
-The SDK was installed to my Mac via `brew install operator-sdk`.  I ran the following command to create the contents of this repo:
+The SDK was installed to my Mac via `brew install operator-sdk`, which gave me v0.15.0.  I ran the following command to create the contents of this repo:
 ```
-operator-sdk new stocktrader --type helm --helm-chart ../stocktrader-helm/stocktrader-0.1.6.tgz
+operator-sdk new stocktrader --api-version=ceh/v1 --kind StockTrader --type helm --helm-chart ../stocktrader-helm/stocktrader-0.1.6.tgz
 ```
 Mostly I followed the instructions here: https://docs.openshift.com/container-platform/4.3/operators/operator_sdk/osdk-helm.html
 
+The operator is built by going to the `stocktrader` subdirectory and running the following command:
+```
+operator-sdk build stocktrader-operator
+```
+This produces a `stocktrader-operator:latest` Docker image, which I then pushed to DockerHub via the following usual commands:
+```
+docker tag stocktrader-operator:latest ibmstocktrader/stocktrader-operator:latest
+docker push ibmstocktrader/stocktrader-operator:latest
+```
 The results of building this repo are in DockerHub at https://hub.docker.com/r/ibmstocktrader/stocktrader-operator
+
+First you deploy the CustomResourceDefinition (CRD) for the operator, via `oc create -f deploy/crds/ceh_stocktraders_crd.yaml`.
+The operator itself is deployed via `oc create -f deploy`, which runs each of the yaml files in that directory.
+You can do a standard `oc get deployment` to see that the operator is running, ready to respond to new CustomResources (CRs) being installed of kind `StockTrader`.
+
+An example CR yaml can be deployed via `oc create -f deploy/crds/ceh_v1_stocktrader)_cr.yaml`.  You can edit this file to add any of the fields specified in the values.yaml, such as the `db2.host`.
+Or, just run the default, then edit the values in the config map and/or the secret, which is where most of the settings from the values.yaml end up.
+For example, the `db2.host` and `db2.port` are placed in the config map (called `{name}-config`) that gets created for you, and the `db2.id` and `db2.password` are in the secret (called `{name}-credentials`).
+The various microservices in the IBM Stock Trader sample look in this config map and secret during pod startup for their configuration values.
