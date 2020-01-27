@@ -1,10 +1,10 @@
 apiVersion: v1
 description: Umbrella Helm chart for the IBM Stock Trader sample
-icon: https://raw.githubusercontent.com/IBMStockTrader/stocktrader/master/stock-trader-icon.png
+icon: https://raw.githubusercontent.com/IBMStockTrader/stocktrader-helm/master/stock-trader-icon.png
 maintainers:
 - name: John W. Alcorn
 - email: jalcorn@us.ibm.com
 name: stocktrader
 sources:
 - http://github.com/IBMStockTrader
-version: 0.1.4
+version: 0.1.6
