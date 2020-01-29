@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stocktrader
+  name: stocktrader-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: stocktrader
+      name: stocktrader-operator
   template:
     metadata:
       labels:
-        name: stocktrader
+        name: stocktrader-operator
     spec:
-      serviceAccountName: stocktrader
+      serviceAccountName: stocktrader-operator
       containers:
-        - name: stocktrader
+        - name: stocktrader-operator
           # Replace this with the built image name
           image: ibmstocktrader/stocktrader-operator:latest
           imagePullPolicy: Always
@@ -28,4 +28,4 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
-              value: "stocktrader"
+              value: "stocktrader-operator"
