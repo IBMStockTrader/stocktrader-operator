@@ -2,7 +2,7 @@
 This repository contains the results of using the Operator SDK to turn the umbrella helm chart (in the sibling `stocktrader-helm` repo) into a Kubernetes Operator.
 The SDK was installed to my Mac via `brew install operator-sdk`, which gave me v0.15.0.  I ran the following command to create the contents of this repo:
 ```
-operator-sdk new stocktrader --api-version=ceh/v1 --kind StockTrader --type helm --helm-chart ../stocktrader-helm/stocktrader-0.1.6.tgz
+operator-sdk new stocktrader --api-version=ibm.com/v1 --kind StockTrader --type helm --helm-chart ../stocktrader-helm/stocktrader-0.1.6.tgz
 ```
 Mostly I followed the instructions here: https://docs.openshift.com/container-platform/4.3/operators/operator_sdk/osdk-helm.html
 
@@ -19,7 +19,7 @@ The results of building this repo are in DockerHub at https://hub.docker.com/r/i
 
 Deploy the operator, and its CRD, via the following, in the specified order (of course, if you want it to go to a namespace other than the one configured by `oc login`/`oc project`, add it via a `-n` parameter to the commands below):
 ```
-oc create -f deploy/crds/ceh_stocktraders_crd.yaml
+oc create -f deploy/crds/ibm.com_stocktraders_crd.yaml
 oc create -f deploy/service_account.yaml
 oc create -f deploy/role.yaml
 oc create -f deploy/role_binding.yaml
@@ -29,7 +29,7 @@ You can do a standard `oc get deployment` to see that the operator is running, r
 
 An example CR yaml can be deployed via the following command:
 ```
-oc create -f deploy/crds/ceh_v1_stocktrader_cr.yaml
+oc create -f deploy/crds/ibm.com_v1_stocktrader_cr.yaml
 ```
 You can first edit this file to add any of the fields specified in the values.yaml, such as the `db2.host`.
 Or, just run the default, then edit the values in the config map and/or the secret, which is where most of the settings from the values.yaml end up.
