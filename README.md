@@ -1,16 +1,16 @@
 # IBM Stock Trader operator
-This repository contains the results of using the Operator SDK to turn the umbrella helm chart (in the sibling `stocktrader-helm` repo) into a Kubernetes Operator.
+This repository contains the results of using the Operator SDK to turn the umbrella helm chart (in the sibling `stocktrader-helm` repo - which must be built first, via `helm package stocktrader` in that repo) into a Kubernetes Operator.
 The SDK was installed to my Mac via `brew install operator-sdk`, which gave me v0.15.0.  I ran the following command to create the contents of this repo:
 ```
-operator-sdk new stocktrader --api-version=ibm.com/v1 --kind StockTrader --type helm --helm-chart ../stocktrader-helm/stocktrader-0.1.6.tgz
+operator-sdk new stocktrader-operator --api-version=ibm.com/v1 --kind StockTrader --type helm --helm-chart ../stocktrader-helm/stocktrader-0.1.6.tgz
 ```
 Mostly I followed the instructions here: https://docs.openshift.com/container-platform/4.3/operators/operator_sdk/osdk-helm.html
 
-The operator is built by going to the `stocktrader` subdirectory and running the following command:
+The operator is built by going to the `stocktrader-operator` subdirectory and running the following command:
 ```
 operator-sdk build stocktrader-operator
 ```
-This produces a `stocktrader-operator:latest` Docker image, which I then pushed to DockerHub via the following usual commands (if building yourself, you'll need to push to somewhere that you have authority, and will need to update the operator.yaml to reference that location):
+This produces a `stocktrader-operator:latest` Docker image, which I then pushed to DockerHub via the following usual commands (if building yourself, you'll need to push to somewhere that you have authority, and will need to update the `operator.yaml` to reference that location):
 ```
 docker tag stocktrader-operator:latest ibmstocktrader/stocktrader-operator:latest
 docker push ibmstocktrader/stocktrader-operator:latest
