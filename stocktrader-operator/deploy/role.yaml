@@ -98,7 +98,7 @@ rules:
   resources:
   - deployments
   verbs:
-  - get
+  - '*'
 - apiGroups:
   - ibm.com
   resources:
