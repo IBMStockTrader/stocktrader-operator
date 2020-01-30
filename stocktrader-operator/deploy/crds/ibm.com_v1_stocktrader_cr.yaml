@@ -52,7 +52,7 @@ spec:
     channel: DEV.APP.SVRCONN
     host: mqtrader1-mqtrader1
     id: app
-    password: ""
+    password: pwd
     port: 1414
     queue: NotificationQ
     queueManager: stocktrader
