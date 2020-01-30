@@ -44,7 +44,7 @@ data:
   oidc.token: {{ .Values.oidc.token }}
   oidc.auth: {{ .Values.oidc.auth }}
   oidc.key: {{ .Values.oidc.key }}
-  oidc.nodePort: {{ .Values.oidc.nodeport }}
+  oidc.nodePort: {{ .Values.oidc.nodePort }}
   jwt.issuer: {{ .Values.jwt.issuer }}
   jwt.audience: {{ .Values.jwt.audience }}
   redis.cacheInterval: "{{ .Values.redis.cacheInterval }}"
