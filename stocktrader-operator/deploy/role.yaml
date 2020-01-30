@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   creationTimestamp: null
-  name: stocktrader
+  name: stocktrader-operator
 rules:
 - apiGroups:
   - ""
@@ -67,7 +67,7 @@ rules:
 - apiGroups:
   - apps
   resourceNames:
-  - stocktrader
+  - stocktrader-operator
   resources:
   - deployments/finalizers
   verbs:
@@ -86,7 +86,7 @@ rules:
   verbs:
   - get
 - apiGroups:
-  - charts.helm.k8s.io
+  - ibm.com
   resources:
   - '*'
   verbs:
