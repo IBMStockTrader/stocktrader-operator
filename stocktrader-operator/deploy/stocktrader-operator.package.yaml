@@ -1,0 +1,5 @@
+channels:
+- currentCSV: stocktrader-operator.v0.1.0
+  name: alpha
+defaultChannel: alpha
+packageName: stocktrader-operator
