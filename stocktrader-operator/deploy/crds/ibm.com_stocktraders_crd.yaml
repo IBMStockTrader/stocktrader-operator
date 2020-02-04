@@ -3,6 +3,35 @@ kind: CustomResourceDefinition
 metadata:
   name: stocktraders.ibm.com
 spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.global.replicas
+    description: Initial number of pods per microservice
+    name: Replicas
+    type: integer
+  - JSONPath: .spec.global.autoscale
+    description: Enable a Horizontal Pod Autoscaler for each microservice
+    name: AutoScale
+    type: boolean
+  - JSONPath: .spec.global.monitoring
+    description: Register a Prometheus scraper for the metrics endpoint for each microservice
+    name: Monitoring
+    type: boolean
+  - JSONPath: .spec.global.ingress
+    description: Enable an Ingress for each front-end microservice
+    name: Ingress
+    type: boolean
+  - JSONPath: .spec.global.healthCheck
+    description: Configure Kubernetes to periodically probe each microservice to determine its health
+    name: HealthCheck
+    type: boolean
+  - JSONPath: .spec.global.jsonLogging
+    description: Enable to send logs to ElasticSearch so they can be viewed in Kibana
+    name: JSONLogging
+    type: boolean
+  - JSONPath: .metadata.creationTimestamp
+    description: Age of the resource
+    name: Age
+    type: date
   group: ibm.com
   names:
     kind: StockTrader
@@ -14,9 +43,94 @@ spec:
     status: {}
   validation:
     openAPIV3Schema:
-      type: object
       x-kubernetes-preserve-unknown-fields: true
+      description: Schema for the IBM Stock Trader cloud-native sample application
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: StockTraderSpec defines the desired state of StockTrader
+          properties:
+            global:
+              description: Global Settings
+              type: object
+              properties:
+                replicas:
+                  description: Initial number of pods per microservice
+                  format: int32
+                  minimum: 1
+                  type: integer
+                autoscale:
+                  description: Enable Auto-scaling
+                  type: boolean
+                monitoring:
+                  description: Enable Prometheus monitoring
+                  type: boolean
+                ingress:
+                  description: Enable Ingress
+                  type: boolean
+                healthCheck:
+                  description: Enable Readiness and Liveness probes
+                  type: boolean
+                jsonLogging:
+                  description: Output pod logs in JSON format (for ElasticSearch/Kibana)
+                  type: boolean
+            portfolio:
+              description: Portfolio microservice
+              type: object
+              properties:
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+                url:
+                  description: Portfolio URL
+                  type: string
+            stockQuote:
+              description: Stock Quote microservice
+              type: object
+              properties:
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+                url:
+                  description: Stock Quote URL
+                  type: string
+                apiConnect:
+                  description: API Connect URL
+                  type: string
+                iexTrading:
+                  description: IEX Trading URL
+                  type: string
+                iexApiKey:
+                  description: IEX API Key
+                  format: password
+                  type: string
+  version: v1beta1
   versions:
-  - name: v1
+  - name: v1beta1
     served: true
     storage: true
