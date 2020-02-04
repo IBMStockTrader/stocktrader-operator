@@ -199,7 +199,7 @@ spec:
     This operator will install each of the specified microservices, and configure them to
     receive fields of a config map and secret as environment variables.
     
-    ![Architecural Diagram](stock-trader.png)
+    ![Architecural Diagram](https://raw.githubusercontent.com/IBMStockTrader/stocktrader-helm/master/stock-trader.png)
     
     This operator will NOT install each of the prerequisites.  Note that DB2 is the only
     mandatory prereq; each of the others, like MQ or ODM, are optional, and will only be
