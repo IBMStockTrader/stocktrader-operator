@@ -1,7 +1,15 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
+  name: stocktrader-operator.v0.1.0
+  namespace: placeholder
   annotations:
+    description: Umbrella operator that installs and configures the IBM Stock Trader
+    capabilities: Basic Install
+    createdAt: 2020-01-31 16:00:00
+    support: IBM
+    containerImage: ibmstocktrader/stocktrader-operator:latest
+    repository: https://github.com/IBMStockTrader/stocktrader-operator
     alm-examples: |-
       [
         {
@@ -165,13 +173,37 @@ metadata:
           }
         }
       ]
-    capabilities: Basic Install
-  name: stocktrader-operator.v0.1.0
-  namespace: placeholder
 spec:
   apiservicedefinitions: {}
-  customresourcedefinitions: {}
-  description: Umbrella operator for installing and configuring the IBM Stock Trader sample
+  customresourcedefinitions:
+    owned:
+      - name: stocktraders.ibm.com
+        displayName: IBM Stock Trader application
+        kind: StockTrader
+        version: v1beta1
+        description: This operator deploys the IBM Stock Trader microservices and configures them
+        resources:
+          - name: ''
+            kind: Deployment
+          - name: ''
+            kind: Service
+          - name: ''
+            kind: Ingress
+          - name: ''
+            kind: HorizontalPodAutoscaler
+          - name: ''
+            kind: ConfigMap
+          - name: ''
+            kind: Secret
+  description: 'Umbrella operator for installing and configuring the IBM Stock Trader sample.
+    This operator will install each of the specified microservices, and configure them to
+    receive fields of a config map and secret as environment variables.
+    
+    ![Architecural Diagram](stock-trader.png)
+    
+    This operator will NOT install each of the prerequisites.  Note that DB2 is the only
+    mandatory prereq; each of the others, like MQ or ODM, are optional, and will only be
+    configured if so specified in the input passed to the operator.'
   displayName: IBM Stock Trader Operator
   install:
     spec:
