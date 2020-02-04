@@ -35,3 +35,9 @@ You can first edit this file to add any of the fields specified in the values.ya
 Or, just run the default, then edit the values in the config map and/or the secret, which is where most of the settings from the values.yaml end up.
 For example, the `db2.host` and `db2.port` are placed in the config map (called `{name}-config`) that gets generated for you, and the `db2.id` and `db2.password` are in the generated secret (called `{name}-credentials`).
 The various microservices in the IBM Stock Trader sample look in this config map and secret during pod startup for their configuration values.
+
+You can generate the ClusterServiceVersion (CSV), that registers the operator so it shows up in the Operators catalog page in the OpenShift console, via the following command:
+```
+operator-sdk generate csv --csv-version 0.1.0
+```
+This will produce an `olm-catalog` subdirectory of the above mentioned `deploy` directory, containing relevant yaml.
