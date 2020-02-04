@@ -60,6 +60,7 @@ spec:
           type: object
         spec:
           description: StockTraderSpec defines the desired state of StockTrader
+          type: object
           properties:
             global:
               description: Global Settings
