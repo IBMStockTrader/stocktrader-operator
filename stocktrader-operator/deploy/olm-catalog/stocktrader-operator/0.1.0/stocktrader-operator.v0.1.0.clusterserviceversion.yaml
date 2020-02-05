@@ -185,16 +185,22 @@ spec:
         resources:
           - name: ''
             kind: Deployment
+            version: v1beta1
           - name: ''
             kind: Service
+            version: v1
           - name: ''
             kind: Ingress
+            version: v1beta1
           - name: ''
             kind: HorizontalPodAutoscaler
+            version: v1
           - name: ''
             kind: ConfigMap
+            version: v1
           - name: ''
             kind: Secret
+            version: v1
         specDescriptors:
           - path: global.replicas
             description: Initial number of pods per microservice
