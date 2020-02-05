@@ -195,6 +195,37 @@ spec:
             kind: ConfigMap
           - name: ''
             kind: Secret
+        specDescriptors:
+          - path: global.replicas
+            description: Initial number of pods per microservice
+            displayName: Replicas
+            x-descriptors: 
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+          - path: global.autoscale
+            description: Enable a Horizontal Pod Autoscaler for each microservice
+            displayName: Enable Auto-scaling
+            x-descriptors: 
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+          - path: global.monitoring
+            description: Register a Prometheus scraper for the metrics endpoint for each microservice
+            displayName: Enable Prometheus monitoring
+            x-descriptors: 
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+          - path: global.ingress
+            description: Enable an Ingress for each front-end microservice
+            displayName: Enable Ingress
+            x-descriptors: 
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+          - path: global.healthCheck
+            description: Configure Kubernetes to periodically probe each microservice to determine its health
+            displayName: Enable Readiness and Liveness probes
+            x-descriptors: 
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+          - path: global.jsonLogging
+            description: Enable to send logs to ElasticSearch so they can be viewed in Kibana
+            displayName: Output pod logs in JSON format
+            x-descriptors: 
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
   description: 'Umbrella operator for installing and configuring the IBM Stock Trader sample.
     This operator will install each of the specified microservices, and configure them to
     receive fields of a config map and secret as environment variables.
