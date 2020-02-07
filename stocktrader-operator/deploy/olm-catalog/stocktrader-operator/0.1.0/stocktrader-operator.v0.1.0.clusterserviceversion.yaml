@@ -2,7 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   name: stocktrader-operator.v0.1.0
-  namespace: placeholder
+  namespace: john-test
   annotations:
     description: Umbrella operator that installs and configures the IBM Stock Trader
     capabilities: Basic Install
@@ -202,37 +202,135 @@ spec:
             kind: Secret
             version: v1
         specDescriptors:
+          # Section for global settings
           - path: global.replicas
             description: Initial number of pods per microservice
             displayName: Replicas
-            x-descriptors: 
+            x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.autoscale
             description: Enable a Horizontal Pod Autoscaler for each microservice
             displayName: Enable Auto-scaling
-            x-descriptors: 
+            x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.monitoring
             description: Register a Prometheus scraper for the metrics endpoint for each microservice
             displayName: Enable Prometheus monitoring
-            x-descriptors: 
+            x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.ingress
             description: Enable an Ingress for each front-end microservice
             displayName: Enable Ingress
-            x-descriptors: 
+            x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.healthCheck
             description: Configure Kubernetes to periodically probe each microservice to determine its health
             displayName: Enable Readiness and Liveness probes
-            x-descriptors: 
+            x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.jsonLogging
             description: Enable to send logs to ElasticSearch so they can be viewed in Kibana
             displayName: Output pod logs in JSON format
-            x-descriptors: 
+            x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-  description: 'Umbrella operator for installing and configuring the IBM Stock Trader sample.
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+
+          # Section for DB2 settings
+          - path: db2.host
+            description: Use the Kubernetes service DNS name if using an in-cluster DB2
+            displayName: DB2 Host name (or IP address)
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
+          - path: db2.port
+            description: This usually defaults to 50000
+            displayName: DB2 Port number
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
+          - path: db2.id
+            description: DB2 Login ID
+            displayName: DB2 User ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
+          - path: db2.password
+            description: Will be stored in a Kubernetes secret
+            displayName: DB2 Password
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
+          - path: db2.db
+            description: Name of the DB2 database
+            displayName: DB2 Database name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
+
+          # Section for Portfolio settings
+          - path: portfolio.image.repository
+            description: Path to locate the Docker image for the portfolio microservice
+            displayName: Portfolio Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.image.tag
+            description: Tag for the Docker image for the portfolio microservice
+            displayName: Portfolio Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Portfolio URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+
+          # Section for Stock Quote settings
+          - path: stockQuote.image.repository
+            description: Path to locate the Docker image for the stock quote microservice
+            displayName: Stock Quote Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.image.tag
+            description: Tag for the Docker image for the stock quote microservice
+            displayName: Stock Quote Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Stock Quote URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.apiConnect
+            description: URL for contacting the stock quote service in API Connect
+            displayName: API Connect URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.iexTrading
+            description: URL for contacting IEX directly (used as fallback if API Connect isn't working)
+            displayName: IEX Trading URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.iexApiKey
+            description: Your API Key for the IEX Cloud.  Optional - Only used if API Connect isn't working
+            displayName: IEX API Key
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+  description: |-
+    Umbrella operator for installing and configuring the IBM Stock Trader sample.
     This operator will install each of the specified microservices, and configure them to
     receive fields of a config map and secret as environment variables.
     
@@ -240,8 +338,8 @@ spec:
     
     This operator will NOT install each of the prerequisites.  Note that DB2 is the only
     mandatory prereq; each of the others, like MQ or ODM, are optional, and will only be
-    configured if so specified in the input passed to the operator.'
-  displayName: IBM Stock Trader Operator
+    configured if so requested in the input passed to the operator.
+  displayName: IBM Stock Trader sample Operator
   install:
     spec:
       deployments:
