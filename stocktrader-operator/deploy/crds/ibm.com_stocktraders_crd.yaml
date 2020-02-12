@@ -86,10 +86,17 @@ spec:
                 jsonLogging:
                   description: Output pod logs in JSON format (for ElasticSearch/Kibana)
                   type: boolean
-            db2:
-              description: IBM DB2 Settings.  Mandatory - required by the portfolio microservice
+            database:
+              description: Database Settings.  Mandatory - required by the portfolio microservice
               type: object
               properties:
+                kind:
+                  description: Kind of database
+                  enum:
+                  - db2
+                  - postgres
+                  - derby
+                  type: string
                 host:
                   description: Host name (or IP address)
                   type: string
