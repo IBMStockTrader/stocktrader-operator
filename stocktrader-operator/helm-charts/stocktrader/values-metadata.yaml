@@ -1,4 +1,4 @@
-#       Copyright 2019 IBM Corp All Rights Reserved
+#       Copyright 2019-2020 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -49,20 +49,25 @@ global:
       label: "Output pod logs in JSON format"
       description: "Enable to send logs to ElasticSearch so they can be viewed in Kibana"
       type: boolean
-db2:
+database:
   __metadata:
-    label: "IBM DB2 Settings.  Mandatory - required by the portfolio microservice"
-    description: "Settings that apply to accessing the DB2 database (can be in-cluster, or external)"
+    label: "Database Settings.  Mandatory - required by the portfolio microservice"
+    description: "Settings that apply to accessing the JDBC database (can be in-cluster, or external)"
     required: true
+  kind:
+    __metadata:
+      label: "Kind of database"
+      description: "Choose from DB2, PostgreSQL, or Derby"
+      type: string
   host:
     __metadata:
       label: "Host name (or IP address)"
-      description: "Use the Kubernetes service DNS name if using an in-cluster DB2"
+      description: "Use the Kubernetes service DNS name if using an in-cluster database"
       type: string
   port:
     __metadata:
       label: "Port number"
-      description: "This usually defaults to 50000"
+      description: "This usually defaults to 50000 for DB2"
       type: number
   id:
     __metadata:

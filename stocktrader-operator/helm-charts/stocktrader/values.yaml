@@ -1,103 +1,47 @@
-db2:
-  db: trader
+#       Copyright 2017-2020 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Default values for stocktrader.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicas: 1
+  autoscale: false
+  monitoring: true
+  ingress: true
+  healthCheck: true
+  jsonLogging: false
+database:
+  kind: db2
   host: db2trader1-ibm-db2oltp-dev
+  port: 50000
   id: db2inst1
   password: db2inst1
-  port: 50000
-global:
-  autoscale: false
-  healthCheck: true
-  ingress: true
-  jsonLogging: false
-  monitoring: true
-  replicas: 1
-ingress:
-  address: <your proxy node IP>:443
-jwt:
-  audience: stock-trader
-  issuer: http://stock-trader.ibm.com
-kafka:
-  address: <your Kafka proxy service>:30000
-  apiKey: <your API key>
-  topic: stocktrader
-  user: token
-looper:
-  enabled: false
-  image:
-    repository: ibmstocktrader/looper
-    tag: latest
-  url: http://{{ .Release.Name }}-looper-service:9080/looper
-messaging:
-  enabled: false
-  image:
-    repository: ibmstocktrader/messaging
-    tag: latest
-  notification:
-    url: http://{{ .Release.Name }}-notification-service:9080/notification
-mongo:
-  authDB: <your Mongo auth database>
-  database: <your Mongo database>
-  ip: <your Mongo IP>
-  password: <your Mongo password>
-  port: 27017
-  user: <your Mongo user>
-mq:
-  channel: DEV.APP.SVRCONN
-  host: mqtrader1-mqtrader1
-  id: app
-  password: pwd
-  port: 1414
-  queue: NotificationQ
-  queueManager: stocktrader
-notificationSlack:
-  enabled: false
-  image:
-    repository: ibmstocktrader/notification-slack
-    tag: latest
-notificationTwitter:
-  enabled: false
-  image:
-    repository: ibmstocktrader/notification-twitter
-    tag: latest
-odm:
-  id: odmAdmin
-  password: odmAdmin
-  url: http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty
-oidc:
-  auth: https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/authorize
-  clientId: <your client id>
-  clientSecret: <your client secret>
-  issuer: https://idaas.iam.ibm.com
-  key: blueidprod
-  name: IBMid
-  nodePort: <your ingress URL>
-  token: https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/token
-openwhisk:
-  id: <your id>
-  password: <your password>
-  url: https://openwhisk.ng.bluemix.net/api/v1/namespaces/jalcorn%40us.ibm.com_dev/actions/PostLoyaltyLevelToSlack
+  db: trader
 portfolio:
   image:
     repository: ibmstocktrader/portfolio
     tag: latest
   url: http://{{ .Release.Name }}-portfolio-service:9080/portfolio
-redis:
-  cacheInterval: 60
-  urlWithCredentials: redis://<your credentials>@redistrader1-ibm-redis-ha-dev-master-svc:6379
 stockQuote:
-  apiConnect: https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks
-  iexApiKey: <your IEX API key>
-  iexTrading: https://cloud.iexapis.com/stable/stock
   image:
     repository: ibmstocktrader/stock-quote
     tag: latest
   url: http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote
-tradeHistory:
-  enabled: false
-  image:
-    repository: ibmstocktrader/trade-history
-    tag: latest
-  url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
+  apiConnect: https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks
+  iexTrading: https://cloud.iexapis.com/stable/stock
+  iexApiKey: <your IEX API key>
 trader:
   enabled: true
   image:
@@ -108,12 +52,86 @@ tradr:
   image:
     repository: ibmstocktrader/tradr
     tag: latest
-twitter:
-  accessToken: <your access token>
-  accessTokenSecret: <your access token secret>
-  consumerKey: <your consumer key>
-  consumerSecret: <your consumer secret>
+messaging:
+  enabled: false
+  image:
+    repository: ibmstocktrader/messaging
+    tag: latest
+  notification:
+    url: http://{{ .Release.Name }}-notification-service:9080/notification
+notificationSlack:
+  enabled: false
+  image:
+    repository: ibmstocktrader/notification-slack
+    tag: latest
+notificationTwitter:
+  enabled: false
+  image:
+    repository: ibmstocktrader/notification-twitter
+    tag: latest
+tradeHistory:
+  enabled: false
+  image:
+    repository: ibmstocktrader/trade-history
+    tag: latest
+  url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
+looper:
+  enabled: false
+  image:
+    repository: ibmstocktrader/looper
+    tag: latest
+  url: http://{{ .Release.Name }}-looper-service:9080/looper
+jwt:
+  issuer: http://stock-trader.ibm.com
+  audience: stock-trader
+oidc:
+  name: IBMid
+  issuer: https://idaas.iam.ibm.com
+  token: https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/token
+  auth: https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/authorize
+  clientId: <your client id>
+  clientSecret: <your client secret>
+  key: blueidprod
+  nodePort: <your ingress URL>
+ingress:
+  address: <your proxy node IP>:443
 watson:
   id: apikey
   passwordOrApiKey: <your API key>
   url: https://gateway.watsonplatform.net/tone-analyzer/api/v3/tone?version=2017-09-21&sentences=false
+odm:
+  id: odmAdmin
+  password: odmAdmin
+  url: http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty
+mq:
+  host: mqtrader1-mqtrader1
+  port: 1414
+  id: app
+  password: ""
+  queueManager: stocktrader
+  queue: NotificationQ
+  channel: DEV.APP.SVRCONN
+redis:
+  urlWithCredentials: redis://<your credentials>@redistrader1-ibm-redis-ha-dev-master-svc:6379
+  cacheInterval: 60
+openwhisk:
+  id: <your id>
+  password: <your password>
+  url: https://openwhisk.ng.bluemix.net/api/v1/namespaces/jalcorn%40us.ibm.com_dev/actions/PostLoyaltyLevelToSlack
+twitter:
+  consumerKey: <your consumer key>
+  consumerSecret: <your consumer secret>
+  accessToken: <your access token>
+  accessTokenSecret: <your access token secret>
+kafka:
+  address: <your Kafka proxy service>:30000
+  topic: stocktrader
+  user: token
+  apiKey: <your API key>
+mongo:
+  ip: <your Mongo IP>
+  port: 27017
+  user: <your Mongo user>
+  password: <your Mongo password>
+  database: <your Mongo database>
+  authDB: <your Mongo auth database>
