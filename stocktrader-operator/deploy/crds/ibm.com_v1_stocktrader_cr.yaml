@@ -5,7 +5,8 @@ metadata:
 spec:
   # Default values copied from <project_dir>/helm-charts/stocktrader/values.yaml
   
-  db2:
+  database:
+    kind: db2
     db: trader
     host: db2trader1-ibm-db2oltp-dev
     id: db2inst1
