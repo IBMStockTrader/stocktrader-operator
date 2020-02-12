@@ -1,4 +1,4 @@
-#       Copyright 2017-2019 IBM Corp All Rights Reserved
+#       Copyright 2017-2020 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -30,9 +30,10 @@ data:
   ingress.address: {{ .Values.ingress.address }}
   kafka.address: {{ .Values.kafka.address }}
   kafka.topic: {{ .Values.kafka.topic }}
-  db2.host: {{ .Values.db2.host }}
-  db2.port: "{{ .Values.db2.port }}"
-  db2.db: {{ .Values.db2.db }}
+  database.kind: {{ .Values.database.kind }}
+  database.host: {{ .Values.database.host }}
+  database.port: "{{ .Values.database.port }}"
+  database.db: {{ .Values.database.db }}
   mq.host: {{ .Values.mq.host }}
   mq.port: "{{ .Values.mq.port }}"
   mq.queueManager: {{ .Values.mq.queueManager }}

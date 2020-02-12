@@ -37,31 +37,36 @@ spec:
       - name: portfolio
         image: "{{ .Values.portfolio.image.repository }}:{{ .Values.portfolio.image.tag }}"
         env:
+          - name: JDBC_KIND
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: database.kind
           - name: JDBC_HOST
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: db2.host
+                key: database.host
           - name: JDBC_PORT
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: db2.port
+                key: database.port
           - name: JDBC_DB
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: db2.db
+                key: database.db
           - name: JDBC_ID
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: db2.id
+                key: database.id
           - name: JDBC_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: db2.password
+                key: database.password
           - name: MQ_ID
             valueFrom:
               secretKeyRef:
