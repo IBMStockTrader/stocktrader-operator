@@ -19,7 +19,8 @@ metadata:
             "name": "example-stocktrader"
           },
           "spec": {
-            "db2": {
+            "database": {
+              "kind": "db2",
               "db": "trader",
               "host": "db2trader1-ibm-db2oltp-dev",
               "id": "db2inst1",
@@ -240,37 +241,45 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
 
-          # Section for DB2 settings
-          - path: db2.host
-            description: Use the Kubernetes service DNS name if using an in-cluster DB2
-            displayName: DB2 Host name (or IP address)
+          # Section for Database settings
+          - path: database.kind
+            description: JDBC Provider
+            displayName: Database kind
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:select:db2
+              - urn:alm:descriptor:com.tectonic.ui:select:derby
+              - urn:alm:descriptor:com.tectonic.ui:select:postgres
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
+          - path: database.host
+            description: Use the Kubernetes service DNS name if using an in-cluster database
+            displayName: Database Host name (or IP address)
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
-          - path: db2.port
-            description: This usually defaults to 50000
-            displayName: DB2 Port number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
+          - path: database.port
+            description: This usually defaults to 50000 on DB2
+            displayName: Database Port number
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
-          - path: db2.id
-            description: DB2 Login ID
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
+          - path: database.id
+            description: Database Login ID
             displayName: DB2 User ID
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
-          - path: db2.password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
+          - path: database.password
             description: Will be stored in a Kubernetes secret
-            displayName: DB2 Password
+            displayName: Database Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
-          - path: db2.db
-            description: Name of the DB2 database
-            displayName: DB2 Database name
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
+          - path: database.db
+            description: Name of the database containing the Portfolio and Stock tables
+            displayName: Database name
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:db2
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
 
           # Section for Portfolio settings
           - path: portfolio.image.repository
