@@ -95,6 +95,7 @@ spec:
                   enum:
                   - db2
                   - postgres
+                  - coackroach
                   - derby
                   type: string
                 host:
