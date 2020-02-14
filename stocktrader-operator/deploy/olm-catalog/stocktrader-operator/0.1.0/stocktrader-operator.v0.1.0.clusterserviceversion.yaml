@@ -339,6 +339,180 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+
+          # Section for Trader settings
+          - path: trader.enabled
+            description: This is a simple form-based browser client for IBM Stock Trader
+            displayName: Enable the basic UI microservice
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.image.repository
+            description: Path to locate the Docker image for the trader microservice
+            displayName: Trader Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.image.tag
+            description: Tag for the Docker image for the trader microservice
+            displayName: Trader Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+
+          # Section for Tradr settings
+          - path: tradr.enabled
+            description: Settings that apply to the Node.js/Vue.js-based Tradr microservice (the only non-Java one in IBM Stock Trader).  Requires OIDC
+            displayName: Enable the fancy UI microservice
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: trader.image.repository
+            description: Path to locate the Docker image for the tradr microservice
+            displayName: Tradr Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: trader.image.tag
+            description: Tag for the Docker image for the tradr microservice
+            displayName: Tradr Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+
+          # Section for Messaging settings
+          - path: messaging.enabled
+            description: This optional service responds to JMS messages sent to MQ by Portfolio when your loyalty level changes, and invokes the Notification service.  Requires MQ and ODM
+            displayName: Enable the messaging microservice
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: messaging.image.repository
+            description: Path to locate the Docker image for the messaging microservice
+            displayName: Messaging Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: messaging.image.tag
+            description: Tag for the Docker image for the messaging microservice
+            displayName: Messaging Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.notification.url
+            description: Use the Kubernetes service DNS name in the URL when both are deployed to the same cluster
+            displayName: URL for the Notification microservice
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Notification-Slack settings
+          - path: notificationSlack.enabled
+            description: This optional service posts to a Slack channel when your loyalty level changes.  Requires messaging microservice
+            displayName: Enable the Slack-based notification microservice (choose this or the Twitter-based one, not both)
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: notificationSlack.image.repository
+            description: Path to locate the Docker image for the notification-slack microservice
+            displayName: Notification-Slack Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: notificationSlack.image.tag
+            description: Tag for the Docker image for the notification-slack microservice
+            displayName: Notification-Slack Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Notification-Twitter settings
+          - path: notificationTwitter.enabled
+            description: This optional service tweets when your loyalty level changes.  Requires messaging microservice
+            displayName: Enable the Twitter-based notification microservice (choose this or the Slack-based one, not both)
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: notificationTwitter.image.repository
+            description: Path to locate the Docker image for the notification-twitter microservice
+            displayName: Notification-Twitter Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: notificationTwitter.image.tag
+            description: Tag for the Docker image for the notification-twitter microservice
+            displayName: Notification-Twitter Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Trade History settings
+          - path: tradeHistory.enabled
+            description: This optional service maintains a history of all stock trades for your portfolio.  Requires a Kafka and Mongo DB; this pod won't start if Mongo is unavailable
+            displayName: Enable the trade history microservice
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: tradeHistory.image.repository
+            description: Path to locate the Docker image for the trade history microservice
+            displayName: Trade History Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: tradeHistory.image.tag
+            description: Tag for the Docker image for the trade history microservice
+            displayName: Trade History Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Trade Histopry URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Looper settings
+          - path: looper.enabled
+            description: This optional service drives performance and stress tests against the Portfolio microservice
+            displayName: Enable the looper microservice
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: looper.image.repository
+            description: Path to locate the Docker image for the looper microservice
+            displayName: Looper Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: looper.image.tag
+            description: Tag for the Docker image for the looper microservice
+            displayName: Looper Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Looper URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
   description: |-
     Umbrella operator for installing and configuring the IBM Stock Trader sample.
     This operator will install each of the specified microservices, and configure them to
