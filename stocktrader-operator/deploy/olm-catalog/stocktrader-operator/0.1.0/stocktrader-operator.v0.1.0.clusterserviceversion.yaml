@@ -367,13 +367,13 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
-          - path: trader.image.repository
+          - path: tradr.image.repository
             description: Path to locate the Docker image for the tradr microservice
             displayName: Tradr Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
-          - path: trader.image.tag
+          - path: tradr.image.tag
             description: Tag for the Docker image for the tradr microservice
             displayName: Tradr Docker image tag
             x-descriptors:
@@ -401,6 +401,7 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: messaging.notification.url
             description: Use the Kubernetes service DNS name in the URL when both are deployed to the same cluster
             displayName: URL for the Notification microservice
@@ -445,7 +446,7 @@ spec:
             displayName: Notification-Twitter Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
               - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: notificationTwitter.image.tag
             description: Tag for the Docker image for the notification-twitter microservice
@@ -476,6 +477,7 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: tradeHistory.url
             description: URL at which this microservice can be accessed by other microservices
             displayName: Trade Histopry URL
@@ -505,6 +507,7 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: looper.url
             description: URL at which this microservice can be accessed by other microservices
             displayName: Looper URL
