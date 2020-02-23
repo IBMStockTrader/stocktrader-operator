@@ -100,7 +100,7 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - ibm.com
+  - operators.ibm.com
   resources:
   - '*'
   verbs:
