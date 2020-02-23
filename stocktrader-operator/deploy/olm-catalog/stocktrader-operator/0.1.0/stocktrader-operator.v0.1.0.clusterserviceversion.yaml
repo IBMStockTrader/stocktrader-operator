@@ -13,7 +13,7 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "ibm.com/v1",
+          "apiVersion": "operators.ibm.com/v1",
           "kind": "StockTrader",
           "metadata": {
             "name": "example-stocktrader"
@@ -178,7 +178,7 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-      - name: stocktraders.ibm.com
+      - name: stocktraders.operators.ibm.com
         displayName: IBM Stock Trader application
         kind: StockTrader
         version: v1beta1
@@ -657,7 +657,7 @@ spec:
           verbs:
           - get
         - apiGroups:
-          - ibm.com
+          - operators.ibm.com
           resources:
           - '*'
           verbs:
