@@ -181,7 +181,7 @@ spec:
       - name: stocktraders.operators.ibm.com
         displayName: IBM Stock Trader application
         kind: StockTrader
-        version: v1beta1
+        version: v1
         description: This operator deploys the IBM Stock Trader microservices and configures them
         resources:
           - name: ''
@@ -265,7 +265,7 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
           - path: database.id
             description: Database Login ID
-            displayName: DB2 User ID
+            displayName: Database User ID
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
