@@ -1,4 +1,4 @@
-apiVersion: ibm.com/v1
+apiVersion: operators.ibm.com/v1
 kind: StockTrader
 metadata:
   name: example-stocktrader
