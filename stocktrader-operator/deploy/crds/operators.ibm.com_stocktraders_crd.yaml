@@ -3,44 +3,22 @@ kind: CustomResourceDefinition
 metadata:
   name: stocktraders.operators.ibm.com
 spec:
-  additionalPrinterColumns:
-  - JSONPath: .spec.global.replicas
-    description: Initial number of pods per microservice
-    name: Replicas
-    type: integer
-  - JSONPath: .spec.global.autoscale
-    description: Enable a Horizontal Pod Autoscaler for each microservice
-    name: AutoScale
-    type: boolean
-  - JSONPath: .spec.global.monitoring
-    description: Register a Prometheus scraper for the metrics endpoint for each microservice
-    name: Monitoring
-    type: boolean
-  - JSONPath: .spec.global.ingress
-    description: Enable an Ingress for each front-end microservice
-    name: Ingress
-    type: boolean
-  - JSONPath: .spec.global.healthCheck
-    description: Configure Kubernetes to periodically probe each microservice to determine its health
-    name: HealthCheck
-    type: boolean
-  - JSONPath: .spec.global.jsonLogging
-    description: Enable to send logs to ElasticSearch so they can be viewed in Kibana
-    name: JSONLogging
-    type: boolean
-  - JSONPath: .metadata.creationTimestamp
-    description: Age of the resource
-    name: Age
-    type: date
   group: operators.ibm.com
   names:
     kind: StockTrader
     listKind: StockTraderList
     plural: stocktraders
     singular: stocktrader
+    shortNames:
+    - st
   scope: Namespaced
   subresources:
     status: {}
+  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
   validation:
     openAPIV3Schema:
       x-kubernetes-preserve-unknown-fields: true
@@ -291,8 +269,4 @@ spec:
                 url:
                   description: URL for the Looper microservice
                   type: string
-  version: v1beta1
-  versions:
-  - name: v1beta1
-    served: true
-    storage: true
+
