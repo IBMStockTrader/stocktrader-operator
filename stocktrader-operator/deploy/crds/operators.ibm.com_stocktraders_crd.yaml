@@ -32,7 +32,7 @@ spec:
     description: Age of the resource
     name: Age
     type: date
-  group: ibm.com
+  group: operators.ibm.com
   names:
     kind: StockTrader
     listKind: StockTraderList
