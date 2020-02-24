@@ -417,7 +417,7 @@ odm:
       label: "ID"
       description: "Login ID for ODM"
       type: string
-  passwordOrApiKey:
+  password:
     __metadata:
       label: "Password"
       description: "Login password for ODM"
