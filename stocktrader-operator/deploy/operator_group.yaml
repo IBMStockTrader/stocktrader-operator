@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1alpha2
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: StockTrader.v1.operators.ibm.com
+  name: stocktrader-operator-group
+spec:
+  targetNamespaces:
+  - john
+
