@@ -489,7 +489,7 @@ openwhisk:
       label: "ID"
       description: "Login ID for OpenWhisk"
       type: string
-  passwordOrApiKey:
+  password:
     __metadata:
       label: "Password"
       description: "Login password for OpenWhisk"
