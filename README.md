@@ -25,7 +25,7 @@ docker push ibmstocktrader/stocktrader-operator:latest
 ```
 The results of building this repo are in DockerHub at https://hub.docker.com/r/ibmstocktrader/stocktrader-operator
 
-Deploy the operator, and its CRD, via the following, in the specified order (of course, if you want it to go to a namespace other than the one configured by `oc login`/`oc project`, add it via a `-n` parameter to the commands below):
+Deploy the operator, and its CRD (which I hand-edited extensively, mostly in the `openAPIV3Schema` section), via the following, in the specified order (of course, if you want it to go to a namespace other than the one configured by `oc login`/`oc project`, add it via a `-n` parameter to the commands below):
 ```
 oc create -f deploy/crds/operators.ibm.com_stocktraders_crd.yaml
 oc create -f deploy/service_account.yaml
@@ -33,19 +33,19 @@ oc create -f deploy/role.yaml
 oc create -f deploy/role_binding.yaml
 oc create -f deploy/operator.yaml
 ```
-You can do a standard `oc get deployment` to see that the operator is running, ready to respond to new CustomResources (CRs) being installed of kind `StockTrader`.
+You can do a standard `oc get pods` to see that the operator is running, ready to respond to new CustomResources (CRs) being installed of kind `StockTrader`.
 
 An example CR yaml can be deployed via the following command:
 ```
 oc create -f deploy/crds/operators.ibm.com_v1_stocktrader_cr.yaml
 ```
-You can first edit this file to add any of the fields specified in the values.yaml, such as the `db2.host`.
+You can first edit this file to add any of the fields specified in the values.yaml, such as the `database.host`.
 Or, just run the default, then edit the values in the config map and/or the secret, which is where most of the settings from the values.yaml end up.
-For example, the `db2.host` and `db2.port` are placed in the config map (called `{name}-config`) that gets generated for you, and the `db2.id` and `db2.password` are in the generated secret (called `{name}-credentials`).
+For example, the `database.host` and `database.port` are placed in the config map (called `{name}-config`) that gets generated for you, and the `database.id` and `database.password` are in the generated secret (called `{name}-credentials`).
 The various microservices in the IBM Stock Trader sample look in this config map and secret during pod startup for their configuration values.
 
 You can generate the ClusterServiceVersion (CSV), that registers the operator so it shows up in the Operators catalog page in the OpenShift console, via the following command:
 ```
 operator-sdk generate csv --csv-version 0.1.0
 ```
-This will produce an `olm-catalog` subdirectory of the above mentioned `deploy` directory, containing relevant yaml.
+This will produce an `olm-catalog` subdirectory of the above mentioned `deploy` directory, containing relevant yaml.  The most important file is the `deploy/olm-catalog/stocktrader-operator/0.1.0/stocktrader-operator.v0.1.0.clusterserviceversion.yaml`, which is the actual CSV itself, containing the "hints" to the UI for how to display the form.
