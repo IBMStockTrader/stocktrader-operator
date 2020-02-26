@@ -153,4 +153,23 @@ spec:
           serviceName: {{ .Release.Name }}-looper-service
           servicePort: 9080
 {{- end }}
+---
+{{- if .Values.global.route }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: looper
+  name: {{ .Release.Name }}-looper
+spec:
+  port:
+    targetPort: https
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-looper-service
+    weight: 100
+  wildcardPolicy: None
+{{- end }}
 {{- end }}
