@@ -58,6 +58,9 @@ spec:
                 ingress:
                   description: Enable Ingress
                   type: boolean
+                route:
+                  description: Enable Route
+                  type: boolean
                 healthCheck:
                   description: Enable Readiness and Liveness probes
                   type: boolean
