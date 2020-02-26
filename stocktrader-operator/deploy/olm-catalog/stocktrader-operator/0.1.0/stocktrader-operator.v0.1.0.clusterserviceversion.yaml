@@ -31,6 +31,7 @@ metadata:
               "autoscale": false,
               "healthCheck": true,
               "ingress": false,
+              "route": true,
               "jsonLogging": false,
               "monitoring": true,
               "replicas": 1
@@ -225,6 +226,12 @@ spec:
           - path: global.ingress
             description: Enable an Ingress for each front-end microservice
             displayName: Enable Ingress
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.route
+            description: Enable a Route for each front-end microservice
+            displayName: Enable Route
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
