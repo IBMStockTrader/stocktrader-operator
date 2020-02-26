@@ -15,7 +15,8 @@ spec:
   global:
     autoscale: false
     healthCheck: true
-    ingress: true
+    ingress: false
+    route: true
     jsonLogging: false
     monitoring: true
     replicas: 1
