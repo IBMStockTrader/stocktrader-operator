@@ -39,6 +39,11 @@ global:
       label: "Enable Ingress"
       description: "Enable an Ingress for each front-end microservice"
       type: boolean
+  route:
+    __metadata:
+      label: "Enable Route"
+      description: "Enable an OpenShift Route for each front-end microservice"
+      type: boolean
   healthCheck:
     __metadata:
       label: "Enable Readiness and Liveness probes"

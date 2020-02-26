@@ -19,7 +19,8 @@ global:
   replicas: 1
   autoscale: false
   monitoring: true
-  ingress: true
+  ingress: false
+  route: true
   healthCheck: true
   jsonLogging: false
 database:
