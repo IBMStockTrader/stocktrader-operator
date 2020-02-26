@@ -195,6 +195,9 @@ spec:
             kind: Ingress
             version: v1beta1
           - name: ''
+            kind: Route
+            version: v1
+          - name: ''
             kind: HorizontalPodAutoscaler
             version: v1
           - name: ''
