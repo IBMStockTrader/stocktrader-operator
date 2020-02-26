@@ -272,4 +272,191 @@ spec:
                 url:
                   description: URL for the Looper microservice
                   type: string
-
+            jwt:
+              description: JSON Web Token (JWT) settings
+              type: object
+              properties:
+                issuer:
+                  description: JWT Issuer URL
+                  type: string
+                audience:
+                  description: JWT Audience
+                  type: string
+            oidc:
+              description: OpenID Connect (OIDC) settings (optional)
+              type: object
+              properties:
+                name:
+                  description: Name of the OIDC provider
+                  type: string
+                issuer:
+                  description: JWT Issuer URL
+                  type: string
+                token:
+                  description: OIDC Token URL
+                  type: string
+                auth:
+                  description: Auth URL
+                  type: string
+                cleintId:
+                  description: Client ID
+                  format: password
+                  type: string
+                clientSecret:
+                  description: Client Secret
+                  format: password
+                  type: string
+                key:
+                  description: Key Name
+                  type: string
+                nodePort:
+                  description: Redirect URL
+                  type: string
+            ingress:
+              description: Ingress settings (optional)
+              type: object
+              properties:
+                address:
+                  description: Ingress address
+                  type: string
+            watson:
+              description: Watson Tone Analyzer settings (optional)
+              type: object
+              properties:
+                id:
+                  description: ID
+                  type: string
+                passwordOrApiKey:
+                  description: Password or API Key
+                  format: password
+                  type: string
+                url:
+                  description: URL
+                  type: string
+            odm:
+              description: Operational Decision Manager (ODM) settings (optional)
+              type: object
+              properties:
+                id:
+                  description: ID
+                  type: string
+                password:
+                  description: Password
+                  format: password
+                  type: string
+                url:
+                  description: URL
+                  type: string
+            mq:
+              description: IBM MQ settings (optional)
+              type: object
+              properties:
+                host:
+                  description: Host name (or IP address)
+                  type: string
+                port:
+                  description: Port number
+                  format: int32
+                  type: integer
+                id:
+                  description: User ID
+                  type: string
+                password:
+                  description: Password
+                  format: password
+                  type: string
+                queueManager:
+                  description: Queue Manager
+                  type: string
+                queue:
+                  description: Queue
+                  type: string
+                channel:
+                  description: Channel
+                  type: string
+            redis:
+              description: Redis settings (optional)
+              type: object
+              properties:
+                urlWithCredentials:
+                  description: URL
+                  type: string
+                cacheInterval:
+                  description: Cache Interval
+                  format: int32
+                  type: number
+            openwhisk:
+              description: OpenWhisk settings (optional)
+              type: object
+              properties:
+                id:
+                  description: ID
+                  type: string
+                password:
+                  description: Password
+                  format: password
+                  type: string
+                url:
+                  description: URL
+                  type: string
+            twitter:
+              description: Twitter settings (optional)
+              type: object
+              properties:
+                consumerKey:
+                  description: Consumer Key
+                  format: password
+                  type: string
+                consumerSecret:
+                  description: Consumer Secret
+                  format: password
+                  type: string
+                accessToken:
+                  description: Access Token
+                  format: password
+                  type: string
+                accessTokenSecret:
+                  description: Access Token Secret
+                  format: password
+                  type: string
+            kafka:
+              description: Kafka settings (optional)
+              type: object
+              properties:
+                address:
+                  description: Address
+                  type: string
+                topic:
+                  description: Topic
+                  type: string
+                user:
+                  description: User ID
+                  type: string
+                apiKey:
+                  description: API Key
+                  format: password
+                  type: string
+            mongo:
+              description: Mongo settings (optional)
+              type: object
+              properties:
+                ip:
+                  description: Host name (or IP address)
+                  type: string
+                port:
+                  description: Port number
+                  format: int32
+                  type: integer
+                user:
+                  description: User ID
+                  type: string
+                password:
+                  description: Password
+                  format: password
+                  type: string
+                database:
+                  description: Database
+                  type: string
+                authDB:
+                  description: Auth database
+                  type: string
