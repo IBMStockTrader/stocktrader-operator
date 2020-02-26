@@ -154,4 +154,23 @@ spec:
           serviceName: {{ .Release.Name }}-trader-service
           servicePort: 9443
 {{- end }}
+---
+{{- if .Values.global.route }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: trader
+  name: {{ .Release.Name }}-trader
+spec:
+  port:
+    targetPort: https
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-trader-service
+    weight: 100
+  wildcardPolicy: None
+{{- end }}
 {{- end }}
