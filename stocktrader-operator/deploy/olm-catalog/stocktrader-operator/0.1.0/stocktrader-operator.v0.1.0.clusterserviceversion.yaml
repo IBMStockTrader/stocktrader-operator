@@ -526,6 +526,329 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
               - urn:alm:descriptor:com.tectonic.ui:advanced
 
+          # Section for JWT settings
+          - path: jwt.issuer
+            description: The default value is usually sufficient
+            displayName: JWT Issuer URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: jwt.audience
+            description: The default value is usually sufficient
+            displayName: JWT Audience
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for OIDC settings
+          - path: oidc.name
+            description: Name by which you refer to the provider.  Not actually sent to the provider
+            displayName: Name of the OIDC provider
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: oidc.issuer
+            description: The URL of the JWT issuer for this OIDC provider
+            displayName: JWT Issuer URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: oidc.token
+            description: The URL of the token issuer for this OIDC provider
+            displayName: OIDC Token URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: oidc.auth
+            description: The URL of the authorization endpoint for this OIDC provider
+            displayName: Auth URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: oidc.clientId
+            description: The client ID issued to you by the OIDC provider
+            displayName: Client ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: oidc.clientSecret
+            description: The client secret issued to you by the OIDC provider
+            displayName: Client Secret
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: oidc.key
+            description: Name of the public key for this OIDC provider, in the keystore for this microservice
+            displayName: Key name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: oidc.nodePort
+            description: URL that the OIDC provider should call after authentication success
+            displayName: Redirect URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Ingress settings
+          - path: ingress.address
+            description: Specify in ip:port or hostname:port format
+            displayName: Ingress address
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ingress
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Watson settings
+          - path: watson.id
+            description: Login ID for the Watson Tone Analyzer.  Leave set to `apikey` if using an API key instead
+            displayName: ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:watson
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: watson.passwordOrApiKey
+            description: Login password for the Watson Tone Analyzer.  If you have an API key instead, specify that here
+            displayName: Password or API Key
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:watson
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: watson.url
+            description: URL for the Watson Tone Analyzer.  Generally the default value will be sufficient
+            displayName: URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:watson
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for ODM settings
+          - path: odm.id
+            description: Login ID for Operation Decision Manager (ODM)
+            displayName: ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: odm.password
+            description: Password for Operation Decision Manager (ODM)
+            displayName: Password
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: odm.url
+            description: URL for Operation Decision Manager (ODM)
+            displayName: URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for MQ settings
+          - path: mq.host
+            description: Use the Kubernetes service DNS name if using an in-cluster MQ
+            displayName: Host name (or IP address) for MQ
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mq.port
+            description: Use the local port number (not the node port or Ingress port) if using an intra-cluster deployment of MQ
+            displayName: Port number for MQ
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mq.id
+            description: Login ID for MQ
+            displayName: ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mq.password
+            description: The default installation of MQ gives you an id of 'app', with no password
+            displayName: Password
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mq.queueManager
+            description: Queue Manager to be used in MQ
+            displayName: Queue Manager
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mq.queue
+            description: Queue to be used within the Queue Manager
+            displayName: Queue
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mq.channel
+            description: Channel to be used in MQ
+            displayName: Channel
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Redis settings
+          - path: redis.urlWithCredentials
+            description: Use the Kube DNS service name and local port number for an intra-cluster deployment of Redis.  Encode any needed credentials into the URL
+            displayName: URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:redis
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: redis.cacheInterval
+            description: Specify how stale a cached quote can be before requiring another trip outside the cluster to obtain a fresh one
+            displayName: Cache Interval
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:redis
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for OpenWhisk settings
+          - path: openwhisk.id
+            description: Login ID for OpenWhisk (aka IBM Cloud Functions)
+            displayName: ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: openwhisk.password
+            description: Password for OpenWhisk (aka IBM Cloud Functions)
+            displayName: Password
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: openwhisk.url
+            description: Use the Kube DNS service name in the URL if using an intra-cluster deployment of Apache OpenWhisk
+            displayName: URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Twitter settings
+          - path: twitter.consumerKey
+            description: Consumer Key for your Twitter ID
+            displayName: Consumer Key
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: twitter.consumerSecret
+            description: Consumer Secret for your Twitter ID
+            displayName: Consumer Secret
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: twitter.accessToken
+            description: Access Token for your Twitter ID
+            displayName: Access Token
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: twitter.accessTokenSecret
+            description: Access Token Secret for your Twitter ID
+            displayName: Access Token Secret
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Kafka settings
+          - path: kafka.address
+            description: Specify in ip:port or hostname:port format.  Use the Kube DNS service name and local port when using an intra-cluster deployment of IBM Event Streams
+            displayName: Address
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: kafka.topic
+            description: Kafka topic name
+            displayName: Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: kafka.user
+            description: Kafka user name.  Defaults to 'token' when using an API key
+            displayName: User ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: kafka.apiKey
+            description: Kafka API key
+            displayName: API Key
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Mongo settings
+          - path: mongo.ip
+            description: Use the Kubernetes service DNS name if using an in-cluster Mongo
+            displayName: Host name (or IP address) for Mongo
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mongo.port
+            description: Use the local port number (not the node port or Ingress port) if using an intra-cluster deployment of Mongo
+            displayName: Port number for Mongo
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mongo.user
+            description: Login ID for Mongo
+            displayName: User ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mongo.password
+            description: Login password for Mongo
+            displayName: Password
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mongo.database
+            description: Database name for Mongo
+            displayName: Database
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: mongo.authDB
+            description: Auth database name for Mongo
+            displayName: Auth database
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
   description: |-
     Umbrella operator for installing and configuring the IBM Stock Trader sample.
     This operator will install each of the specified microservices, and configure them to
