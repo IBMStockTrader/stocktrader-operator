@@ -38,16 +38,63 @@ spec:
       - name: trader
         image: "{{ .Values.trader.image.repository }}:{{ .Values.trader.image.tag }}"
         env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: trader.auth
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config 
+                name: {{ .Release.Name }}-config
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: jwt.issuer
+          - name: OIDC_CLIENTID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: oidc.clientId
+                optional: true
+          - name: OIDC_CLIENTSECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: oidc.clientSecret
+                optional: true
+          - name: OIDC_DISCOVERY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: oidc.discoveryUrl
+                optional: true
+          - name: LDAP_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config 
+                key: ldap.host
+                optional: true
+          - name: LDAP_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config 
+                key: ldap.port
+                optional: true
+          - name: LDAP_BASE_DN
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config 
+                key: ldap.baseDN
+                optional: true
+          - name: LDAP_REALM
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config 
+                key: ldap.realm
+                optional: true
           - name: PORTFOLIO_URL
             valueFrom:
               configMapKeyRef:
