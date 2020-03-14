@@ -45,9 +45,10 @@ stockQuote:
   iexApiKey: <your IEX API key>
 trader:
   enabled: true
+  auth: basic
   image:
     repository: ibmstocktrader/trader
-    tag: basicregistry
+    tag: latest
 tradr:
   enabled: false
   image:
@@ -86,16 +87,14 @@ jwt:
   issuer: http://stock-trader.ibm.com
   audience: stock-trader
 oidc:
-  name: IBMid
-  issuer: https://idaas.iam.ibm.com
-  token: https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/token
-  auth: https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/authorize
   clientId: <your client id>
   clientSecret: <your client secret>
-  key: blueidprod
-  nodePort: <your ingress URL>
-ingress:
-  address: <your proxy node IP>:443
+  discoveryUrl: <your discovery endpoint URL>
+ldap:
+  host: bluepages.ibm.com
+  port: 389
+  baseDN: o=ibm.com
+  realm: BluePages
 watson:
   id: apikey
   passwordOrApiKey: <your API key>

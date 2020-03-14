@@ -64,6 +64,13 @@ database:
       label: "Kind of database"
       description: "Choose from DB2, PostgreSQL, or Derby"
       type: string
+      options:
+      - label: "DB2"
+        value: "db2"
+      - label: "PostgreSQL"
+        value: "postgres"
+      - label: "Derby"
+        value: "derby"
   host:
     __metadata:
       label: "Host name (or IP address)"
@@ -159,6 +166,18 @@ trader:
       label: "Enable the basic UI microservice"
       description: "This is a simple form-based browser client for IBM Stock Trader"
       type: boolean
+  auth:
+    __metadata:
+      label: "Select the type of authentication"
+      description: "Choose from Basic, LDAP or OIDC"
+      type: string
+      options:
+      - label: "Basic"
+        value: "basic"
+      - label: "LDAP"
+        value: "ldap"
+      - label: "OIDC"
+        value: "oidc"
   image:
     __metadata:
       label: "Docker image settings"
@@ -345,26 +364,7 @@ jwt:
 oidc:
   __metadata:
     label: "OpenID Connect (OIDC) settings (optional)"
-    description: "Settings to authenticate against the OIDC provider, such as IBMid.  Only needed by the tradr client"
-  name:
-      label: "Name of the OIDC provider"
-      description: "Name by which you refer to the provider.  Not actually sent to the provider"
-      type: string
-  issuer:
-    __metadata:
-      label: "JWT Issuer URL"
-      description: "The URL of the JWT issuer for this OIDC provider"
-      type: string
-  token:
-    __metadata:
-      label: "OIDC Token URL"
-      description: "The URL of the token issuer for this OIDC provider"
-      type: string
-  auth:
-    __metadata:
-      label: "Auth URL"
-      description: "The URL of the authorization endpoint for this OIDC provider"
-      type: string
+    description: "Settings to authenticate against the OIDC provider, such as IBMid or KeyCloak"
   clientId:
     __metadata:
       label: "Client ID"
@@ -375,24 +375,34 @@ oidc:
       label: "Client Secret"
       description: "The client secret issued to you by the OIDC provider"
       type: password
-  key:
+  discoveryUrl:
     __metadata:
-      label: "Key name"
-      description: "Name of the public key for this OIDC provider, in the keystore for this microservice"
+      label: "Discovery URL"
+      description: "The URL of the discovery endpoint for this OIDC provider"
       type: string
-  nodePort:
-    __metadata:
-      label: "Redirect URL"
-      description: "URL that the OIDC provider should call after authentication success"
-      type: string
-ingress:
+ldap:
   __metadata:
-    label: "Ingress settings (optional)"
-    description: "Ingress configuration.  Only needed by the tradr client"
-  address:
+    label: "LDAP settings (optional)"
+    description: "Settings to authenticate against Lightweight Directory Access Protocol (LDAP)"
+  host:
     __metadata:
-      label: "Ingress address"
-      description: "Specify in ip:port or hostname:port format"
+      label: "Host name or IP address"
+      description: "Make sure your cloud has connectivity to this address, if using an on-premises LDAP"
+      type: string
+  port:
+    __metadata:
+      label: "Port number"
+      description: "This usually defaults to 389"
+      type: number
+  baseDN:
+    __metadata:
+      label: "Base DN"
+      description: "Comma-separated list of distinguished names"
+      type: string
+  realm:
+    __metadata:
+      label: "Realm name"
+      description: "User recognizable name for the LDAP environment"
       type: string
 watson:
   __metadata:
