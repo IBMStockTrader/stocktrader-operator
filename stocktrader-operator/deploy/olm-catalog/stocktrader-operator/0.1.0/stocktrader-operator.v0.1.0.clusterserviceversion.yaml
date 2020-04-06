@@ -2,7 +2,6 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   name: stocktrader-operator.v0.1.0
-  namespace: john-test
   annotations:
     description: Umbrella operator that installs and configures the IBM Stock Trader
     capabilities: Basic Install
