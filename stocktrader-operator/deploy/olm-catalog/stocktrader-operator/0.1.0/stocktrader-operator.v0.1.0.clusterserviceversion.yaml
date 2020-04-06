@@ -27,6 +27,7 @@ metadata:
               "port": 50000
             },
             "global": {
+              "auth": basic
               "autoscale": false,
               "healthCheck": true,
               "ingress": false,
@@ -34,9 +35,6 @@ metadata:
               "jsonLogging": false,
               "monitoring": true,
               "replicas": 1
-            },
-            "ingress": {
-              "address": "\u003cyour proxy node IP\u003e:443"
             },
             "jwt": {
               "audience": "stock-trader",
@@ -47,6 +45,12 @@ metadata:
               "apiKey": "\u003cyour API key\u003e",
               "topic": "stocktrader",
               "user": "token"
+            },
+            "ldap": {
+              "host": "bluepages.ibm.com",
+              "port": 389,
+              "baseDN": "o=ibm.com",
+              "realm": "BluePages"
             },
             "looper": {
               "enabled": false,
@@ -103,14 +107,9 @@ metadata:
               "url": "http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty"
             },
             "oidc": {
-              "auth": "https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/authorize",
               "clientId": "\u003cyour client id\u003e",
               "clientSecret": "\u003cyour client secret\u003e",
-              "issuer": "https://idaas.iam.ibm.com",
-              "key": "blueidprod",
-              "name": "IBMid",
-              "nodePort": "\u003cyour ingress URL\u003e",
-              "token": "https://idaas.iam.ibm.com/idaas/oidc/endpoint/default/token"
+              "discoveryUrl": "\u003cyour discovery url\u003e",
             },
             "openwhisk": {
               "id": "\u003cyour id\u003e",
@@ -150,7 +149,7 @@ metadata:
               "enabled": true,
               "image": {
                 "repository": "ibmstocktrader/trader",
-                "tag": "basicregistry"
+                "tag": "latest"
               }
             },
             "tradr": {
@@ -207,6 +206,14 @@ spec:
             version: v1
         specDescriptors:
           # Section for global settings
+          - path: global.auth
+            description: Choose from Basic, LDAP, or OIDC
+            displayName: Select the type of authentication
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:select:basic
+              - urn:alm:descriptor:com.tectonic.ui:select:ldap
+              - urn:alm:descriptor:com.tectonic.ui:select:oidc
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.replicas
             description: Initial number of pods per microservice
             displayName: Replicas
@@ -542,34 +549,6 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for OIDC settings
-          - path: oidc.name
-            description: Name by which you refer to the provider.  Not actually sent to the provider
-            displayName: Name of the OIDC provider
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
-          - path: oidc.issuer
-            description: The URL of the JWT issuer for this OIDC provider
-            displayName: JWT Issuer URL
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
-          - path: oidc.token
-            description: The URL of the token issuer for this OIDC provider
-            displayName: OIDC Token URL
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
-          - path: oidc.auth
-            description: The URL of the authorization endpoint for this OIDC provider
-            displayName: Auth URL
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: oidc.clientId
             description: The client ID issued to you by the OIDC provider
             displayName: Client ID
@@ -584,16 +563,9 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
               - urn:alm:descriptor:com.tectonic.ui:advanced
-          - path: oidc.key
-            description: Name of the public key for this OIDC provider, in the keystore for this microservice
-            displayName: Key name
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
-          - path: oidc.nodePort
-            description: URL that the OIDC provider should call after authentication success
-            displayName: Redirect URL
+          - path: oidc.discoveryUrl
+            description: The URL of the discovery endpoint for this OIDC provider
+            displayName: Discovery URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
@@ -633,21 +605,21 @@ spec:
 
           # Section for ODM settings
           - path: odm.id
-            description: Login ID for Operation Decision Manager (ODM)
+            description: Login ID for Operational Decision Manager (ODM)
             displayName: ID
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
               - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: odm.password
-            description: Password for Operation Decision Manager (ODM)
+            description: Password for Operational Decision Manager (ODM)
             displayName: Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
               - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: odm.url
-            description: URL for Operation Decision Manager (ODM)
+            description: URL for Operational Decision Manager (ODM)
             displayName: URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
