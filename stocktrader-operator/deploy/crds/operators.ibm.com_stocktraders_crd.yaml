@@ -44,6 +44,13 @@ spec:
               description: Global Settings
               type: object
               properties:
+                auth:
+                  description: Authentication type
+                  enum:
+                  - basic
+                  - ldap
+                  - oidc
+                  type: string
                 replicas:
                   description: Initial number of pods per microservice
                   format: int32
@@ -286,19 +293,7 @@ spec:
               description: OpenID Connect (OIDC) settings (optional)
               type: object
               properties:
-                name:
-                  description: Name of the OIDC provider
-                  type: string
-                issuer:
-                  description: JWT Issuer URL
-                  type: string
-                token:
-                  description: OIDC Token URL
-                  type: string
-                auth:
-                  description: Auth URL
-                  type: string
-                cleintId:
+                clientId:
                   description: Client ID
                   format: password
                   type: string
@@ -306,18 +301,25 @@ spec:
                   description: Client Secret
                   format: password
                   type: string
-                key:
-                  description: Key Name
+                discoveryUrl:
+                  description: Discovery URL
                   type: string
-                nodePort:
-                  description: Redirect URL
-                  type: string
-            ingress:
-              description: Ingress settings (optional)
+            ldap:
+              description: LDAP settings (optional)
               type: object
               properties:
-                address:
-                  description: Ingress address
+                host:
+                  description: LDAP host (or IP address)
+                  type: string
+                port:
+                  description: LDAP Port number
+                  format: int32
+                  type: integer
+                baseDN:
+                  description: Base Distinguished Name (DN)
+                  type: string
+                realm:
+                  description: LDAP realm
                   type: string
             watson:
               description: Watson Tone Analyzer settings (optional)
