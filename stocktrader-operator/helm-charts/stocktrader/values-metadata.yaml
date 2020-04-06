@@ -19,6 +19,18 @@ global:
   __metadata:
     label: "Global Settings"
     description: "Settings that apply to all of the Stock Trader microservices"
+  auth:
+    __metadata:
+      label: "Select the type of authentication"
+      description: "Choose from Basic, LDAP or OIDC"
+      type: string
+      options:
+      - label: "Basic"
+        value: "basic"
+      - label: "LDAP"
+        value: "ldap"
+      - label: "OIDC"
+        value: "oidc"
   replicas:
     __metadata:
       label: "Initial number of pods per microservice"
@@ -166,18 +178,6 @@ trader:
       label: "Enable the basic UI microservice"
       description: "This is a simple form-based browser client for IBM Stock Trader"
       type: boolean
-  auth:
-    __metadata:
-      label: "Select the type of authentication"
-      description: "Choose from Basic, LDAP or OIDC"
-      type: string
-      options:
-      - label: "Basic"
-        value: "basic"
-      - label: "LDAP"
-        value: "ldap"
-      - label: "OIDC"
-        value: "oidc"
   image:
     __metadata:
       label: "Docker image settings"
