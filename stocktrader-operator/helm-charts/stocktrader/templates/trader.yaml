@@ -42,7 +42,7 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: trader.auth
+                key: auth.type
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:

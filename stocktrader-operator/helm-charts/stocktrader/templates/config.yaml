@@ -17,6 +17,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
 data:
+  auth.type: {{ .Values.global.auth }}
   portfolio.url: {{ tpl .Values.portfolio.url . }}
   stockQuote.url: {{ tpl .Values.stockQuote.url . }}
   watson.url: {{ .Values.watson.url }}
