@@ -28,7 +28,6 @@ data:
   iex.url: {{ .Values.stockQuote.iexTrading }}
   odm.url: {{ .Values.odm.url }}
   openwhisk.url: {{ .Values.openwhisk.url }}
-  ingress.address: {{ .Values.ingress.address }}
   kafka.address: {{ .Values.kafka.address }}
   kafka.topic: {{ .Values.kafka.topic }}
   database.kind: {{ .Values.database.kind }}
