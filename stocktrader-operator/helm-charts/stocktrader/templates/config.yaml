@@ -41,7 +41,7 @@ data:
   mq.channel: {{ .Values.mq.channel }}
   oidc.discoveryUrl: {{ .Values.oidc.discoveryUrl }}
   ldap.host: {{ .Values.ldap.host }}
-  ldap.port: {{ .Values.ldap.port }}
+  ldap.port: "{{ .Values.ldap.port }}"
   ldap.baseDN: {{ .Values.ldap.baseDN }}
   ldap.realm: {{ .Values.ldap.realm }}
   jwt.issuer: {{ .Values.jwt.issuer }}
