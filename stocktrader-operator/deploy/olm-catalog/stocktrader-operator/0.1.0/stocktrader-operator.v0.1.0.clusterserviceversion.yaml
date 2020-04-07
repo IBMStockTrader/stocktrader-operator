@@ -109,7 +109,7 @@ metadata:
             "oidc": {
               "clientId": "\u003cyour client id\u003e",
               "clientSecret": "\u003cyour client secret\u003e",
-              "discoveryUrl": "\u003cyour discovery url\u003e",
+              "discoveryUrl": "\u003cyour discovery url\u003e"
             },
             "openwhisk": {
               "id": "\u003cyour id\u003e",
