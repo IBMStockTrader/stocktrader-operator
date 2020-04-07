@@ -27,7 +27,7 @@ metadata:
               "port": 50000
             },
             "global": {
-              "auth": "basic"
+              "auth": "basic",
               "autoscale": false,
               "healthCheck": true,
               "ingress": false,
