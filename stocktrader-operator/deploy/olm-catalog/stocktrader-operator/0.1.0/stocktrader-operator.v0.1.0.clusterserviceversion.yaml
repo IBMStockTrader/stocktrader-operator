@@ -548,6 +548,36 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
               - urn:alm:descriptor:com.tectonic.ui:advanced
 
+          # Section for LDAP settings
+          - path: ldap.host
+            description: Make sure your cloud has connectivity to this address, if using an on-premises LDAP
+            displayName: Host name or IP address
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: ldap.port
+            description: This usually defaults to 389
+            displayName: Port number
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: ldap.baseDN
+            description: Comma-separated list of distinguished names
+            displayName: Base DN
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+          - path: ldap.realm
+            description: User recognizable name for the LDAP environment
+            displayName: Realm name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+              - urn:alm:descriptor:com.tectonic.ui:advanced
+
           # Section for OIDC settings
           - path: oidc.clientId
             description: The client ID issued to you by the OIDC provider
@@ -569,15 +599,6 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
-
-          # Section for Ingress settings
-          - path: ingress.address
-            description: Specify in ip:port or hostname:port format
-            displayName: Ingress address
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ingress
               - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Watson settings
