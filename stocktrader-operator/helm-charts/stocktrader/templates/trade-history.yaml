@@ -38,6 +38,11 @@ spec:
       - name: trade-history
         image: "{{ .Values.tradeHistory.image.repository }}:{{ .Values.tradeHistory.image.tag }}"
         env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: auth.type
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:

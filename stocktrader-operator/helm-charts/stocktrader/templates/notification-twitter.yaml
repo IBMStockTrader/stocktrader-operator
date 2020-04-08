@@ -1,4 +1,4 @@
-#       Copyright 2017-2019 IBM Corp All Rights Reserved
+#       Copyright 2017-2020 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -38,6 +38,11 @@ spec:
       - name: notification-twitter
         image: "{{ .Values.notificationTwitter.image.repository }}:{{ .Values.notificationTwitter.image.tag }}"
         env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: auth.type
           - name: TWITTER_CONSUMER_KEY
             valueFrom:
               secretKeyRef:
@@ -81,24 +86,24 @@ spec:
 {{- if .Values.global.healthCheck }}
         readinessProbe:
           httpGet:
-            path: /health
+            path: /health/ready
             port: 9080
           initialDelaySeconds: 30
-          periodSeconds: 6
+          periodSeconds: 15
         livenessProbe:
           httpGet:
-            path: /health
+            path: /health/live
             port: 9080
           initialDelaySeconds: 60
-          periodSeconds: 6
+          periodSeconds: 15
 {{- end }}
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: 1000m
+            memory: 1000Mi
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 250m
+            memory: 256Mi
 ---
 {{- if .Values.global.autoscale }}
 #Deploy the autoscaler

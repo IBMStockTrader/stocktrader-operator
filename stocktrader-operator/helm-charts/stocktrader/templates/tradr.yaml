@@ -34,6 +34,11 @@ spec:
       - name: tradr
         image: "{{ .Values.tradr.image.repository }}:{{ .Values.tradr.image.tag }}"
         env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: auth.type
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:

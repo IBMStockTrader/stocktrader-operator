@@ -37,6 +37,11 @@ spec:
       - name: stock-quote
         image: "{{ .Values.stockQuote.image.repository }}:{{ .Values.stockQuote.image.tag }}"
         env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: auth.type
           - name: REDIS_URL
             valueFrom:
               secretKeyRef:
