@@ -13,7 +13,7 @@ spec:
     password: db2inst1
     port: 50000
   global:
-    auth: db2
+    auth: basic
     autoscale: false
     healthCheck: true
     ingress: false
@@ -110,7 +110,7 @@ spec:
     enabled: true
     image:
       repository: ibmstocktrader/trader
-      tag: basicregistry
+      tag: latest
   tradr:
     enabled: false
     image:
