@@ -15,7 +15,7 @@
 apiVersion: v1
 description: Umbrella Helm chart for the IBM Stock Trader sample
 name: stocktrader
-version: 0.1.9
+version: 0.2.0
 icon: https://raw.githubusercontent.com/IBMStockTrader/stocktrader-helm/master/stock-trader-icon.png
 sources:
   - http://github.com/IBMStockTrader
