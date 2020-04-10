@@ -188,9 +188,9 @@ spec:
                 key: tradeHistory.url
                 optional: true
           - name: TRADE_HISTORY_ENABLED
-            value: {{ .Values.tradeHistory.enabled }}
+            value: {{ quote .Values.tradeHistory.enabled }}
           - name: MESSAGING_ENABLED
-            value: {{ .Values.messaging.enabled }}
+            value: {{ quote .Values.messaging.enabled }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
