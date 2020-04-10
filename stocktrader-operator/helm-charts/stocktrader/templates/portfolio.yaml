@@ -187,6 +187,10 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: tradeHistory.url
                 optional: true
+          - name: TRADE_HISTORY_ENABLED
+            value: {{ .Values.tradeHistory.enabled }}
+          - name: MESSAGING_ENABLED
+            value: {{ .Values.messaging.enabled }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
