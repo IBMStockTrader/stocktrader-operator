@@ -5,7 +5,7 @@ Note it does NOT install such prereqs, like DB2 or MQ - it just asks you to tell
 
 It is a follow-on to the helm chart I created earlier, and described at https://medium.com/cloud-engagement-hub/using-an-umbrella-helm-chart-to-deploy-the-composite-ibm-stock-trader-sample-3b8b69af900d.
 
-![Architecural Diagram](stock-trader.png)
+![Architecural Diagram](images/stock-trader.png)
 
 This repository contains the results of using the Operator SDK to turn the umbrella helm chart (in the sibling `stocktrader-helm` repo - which must be built first, via `helm package stocktrader` in that repo) into a Kubernetes Operator.
 The SDK was installed to my Mac via `brew install operator-sdk`, which gave me v0.15.0.  I ran the following command to create the contents of this repo:
@@ -55,23 +55,23 @@ I don't think it makes sense for a sample like this to be in the main Red Hat Op
 
 Now let's take a look at what this gives us in the OpenShift console.  I'm using OCP 4.3 in IBM Cloud.  If I login to my cluster and click on Installed Operators:
 
-![Installed Operators](InstalledOperators.png)
+![Installed Operators](images/InstalledOperators.png)
 
 If I then click on "IBM Stock Trader application", I'll get the page showing all of my installed objects of type StockTrader.  Of course, there aren't any at first, so I want to click the blue button to create one.
 
-![Stock Traders](CreateStockTrader.png)
+![Stock Traders](images/CreateStockTrader.png)
 
 That will take me to a page where I can see yaml for all of the settings available for an object of type StockTrader.  You could edit this directly, if you prefer.  But I like to use the form UI instead.  Click on the Edit Form link in the top right.
 
-![Edit Form](EditForm.png)
+![Edit Form](images/EditForm.png)
 
 Now we can see that there are various expandable sections that one can fill in, depending on which features of Stock Trader you want to use.
 
-![Expandable Sections](AllSectionsCollapsed.png)
+![Expandable Sections](images/AllSectionsCollapsed.png)
 
 For the most part, you can accept the defaults and get basic functionality.  The one big exception to that rule is that you MUST supply the fields for the JDBC database, which is where the portfolios and their stocks are persisted.  Expand the Database twisty.  In my case, I'm using a DB2-as-a-Service hosted in the IBM Cloud (but I could have just as well installed my database locally into this cluster).
 
-![Database](DatabaseSectionExpanded.png)
+![Database](images/DatabaseSectionExpanded.png)
 
 The other sections are optional; for example, you'd only fill in the `MQ` and `Twitter` sections (and the `Messaging` and `Notification-Twitter` microservice sections) if you want a message to be tweeted each time your loyalty level changes.
 
@@ -79,26 +79,26 @@ Likewise with the `Kafka` and `Mongo` sections (and the `Trade-History` microser
 
 Once you've filled in your desired values and hit **Create**, you'll see a new entry on the page for installed Stock Traders.  Click on that to see its details.  In particular, I like its *Resources* tab, which shows all of the Kubernetes objects created across the various microservices that comprise the Stock Trader application.  These include *Deployments*, *Services*, *Ingresses*, *Routes*, *HorizontalPodAutoscalers*, *ConfigMaps*, and *Secrets*, depending on the options selected on the form.
 
-![Resources](ResourcesTab.png)
+![Resources](images/ResourcesTab.png)
 
 You can of course click on any of these particular resources to see their contents.  For example, many of the values entered on the form end up in the config map that gets generated, called {name}-config, such as *demo-config*.
 
-![Configuration](ConfigMap.png)
+![Configuration](images/ConfigMap.png)
 
 Sensitive fields, generally related to login credentials for the various services used by the application, are stored in the secret that gets generated, called {name}-credentials, such as *demo-credentials*.
 
-![Credentials](Secret.png)
+![Credentials](images/Secret.png)
 
 Each of the microservices have their own Deployment (and associated Pods), Service, Ingress, Route, an HPA generated.  You can also view these the old-fashioned way, such as by clicking on *Workloads->Deployments* in the left nav of the console.  The name for each will be prefixed with the name you gave for the overall Stock Trader instance (such as *demo* in this example).
 
-![Deployments](Deployments.png)
+![Deployments](images/Deployments.png)
 
 Let's launch the UI for our newly installed application.  From back on the Resources tab (or via *Networking->Routes* in the left nav), click on {name}-trader, such as *demo-trader*.  You'll see the URL for the generated route.
 
-![Route](Route.png)
+![Route](images/Route.png)
 
 When that launches, initially you'll see the "Welcome to Liberty" page; you'll need to click in the browser's address bar and add "trader" to the end of the URL and hit Enter to see the application.
 
-![Login](Login.png)
+![Login](images/Login.png)
 
 Congratulations, you have used the operator to install and configure and access the IBM Stock Trader application!
