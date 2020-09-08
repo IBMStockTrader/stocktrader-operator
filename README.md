@@ -35,7 +35,13 @@ oc create -f deploy/operator.yaml
 ```
 You can do a standard `oc get pods` to see that the operator is running, ready to respond to new CustomResources (CRs) being installed of kind `StockTrader`.
 
-An example CR yaml can be deployed via the following command:
+If you will want the operator to show up in the Operators catalog page, you must modify the file `deploy/operator_group.yaml` so that the namespace matches the one you wish to use and deploy it too.
+
+```
+oc create -f deploy/operator_group.yaml 
+```
+
+If you want to deploy via command line, an example CR yaml can be deployed with the following command:
 ```
 oc create -f deploy/crds/operators.ibm.com_v1_stocktrader_cr.yaml
 ```
