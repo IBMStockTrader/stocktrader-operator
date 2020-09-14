@@ -14,7 +14,7 @@
 
 {{- if .Values.tradr.enabled }}
 #Deploy the pod
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-tradr
@@ -24,6 +24,10 @@ metadata:
     prism.subkind: Node.js
 spec:
   replicas: {{ .Values.global.replicas }}
+  selector:
+    matchLabels:
+      app: tradr
+      solution: stock-trader
   template:
     metadata:
       labels:
@@ -105,8 +109,8 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
----
 {{- if .Values.global.autoscale }}
+---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -122,8 +126,8 @@ spec:
   maxReplicas: 10
   minReplicas: {{ .Values.global.replicas }}
   targetCPUUtilizationPercentage: 60
----
 {{- end }}
+---
 #Deploy the service
 apiVersion: v1
 kind: Service
@@ -137,10 +141,10 @@ spec:
     - port: 3000
   selector:
     app: tradr
----
 {{- if .Values.global.ingress }}
+---
 #Configure the ingress
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
 # annotations:
@@ -164,8 +168,8 @@ spec:
           serviceName: {{ .Release.Name }}-tradr-service
           servicePort: 3000
 {{- end }}
----
 {{- if .Values.global.route }}
+---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -182,5 +186,6 @@ spec:
     name: {{ .Release.Name }}-tradr-service
     weight: 100
   wildcardPolicy: None
+---
 {{- end }}
 {{- end }}

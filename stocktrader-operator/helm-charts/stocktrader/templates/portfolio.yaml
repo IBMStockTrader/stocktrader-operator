@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 #Deploy the pod
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-portfolio
@@ -23,6 +23,9 @@ metadata:
     prism.subkind: Liberty
 spec:
   replicas: {{ .Values.global.replicas }}
+  selector:
+    matchLabels:
+      app: portfolio
   template:
     metadata:
       labels:
@@ -222,8 +225,8 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
----
 {{- if .Values.global.autoscale }}
+---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -239,8 +242,8 @@ spec:
   maxReplicas: 10
   minReplicas: {{ .Values.global.replicas }}
   targetCPUUtilizationPercentage: 60
----
 {{- end }}
+---
 #Deploy the service
 apiVersion: v1
 kind: Service
@@ -266,8 +269,8 @@ spec:
       targetPort: 9443
   selector:
     app: portfolio
----   
 {{- if .Values.global.ingress }}
+---   
 #Configure the ingress 
 apiVersion: extensions/v1beta1
 kind: Ingress

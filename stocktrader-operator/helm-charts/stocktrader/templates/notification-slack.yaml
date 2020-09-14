@@ -14,7 +14,7 @@
 
 {{- if .Values.notificationSlack.enabled }}
 #Deploy the pod
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-notification-slack
@@ -24,6 +24,9 @@ metadata:
     prism.subkind: Liberty
 spec:
   replicas: {{ .Values.global.replicas }}
+  selector:
+    matchLabels:
+      app: notification-slack
   template:
     metadata:
       labels:
@@ -99,8 +102,8 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
----
 {{- if .Values.global.autoscale }}
+---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler

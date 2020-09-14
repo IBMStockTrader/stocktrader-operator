@@ -14,7 +14,7 @@
 
 {{- if .Values.trader.enabled }}
 #Deploy the pod
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-trader
@@ -24,6 +24,9 @@ metadata:
     prism.subkind: Liberty
 spec:
   replicas: {{ .Values.global.replicas }}
+  selector:
+    matchLabels:
+      app: trader
   template:
     metadata:
       labels:
@@ -132,8 +135,8 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
----
 {{- if .Values.global.autoscale }}
+---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -149,8 +152,8 @@ spec:
   maxReplicas: 10
   minReplicas: {{ .Values.global.replicas }}
   targetCPUUtilizationPercentage: 60
----
 {{- end }}
+---
 #Deploy the service
 apiVersion: v1
 kind: Service
@@ -176,10 +179,10 @@ spec:
       targetPort: 9443
   selector:
     app: trader
----
 {{- if .Values.global.ingress }}
+---
 #Configure the ingress
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-trader-ingress
@@ -201,8 +204,8 @@ spec:
           serviceName: {{ .Release.Name }}-trader-service
           servicePort: 9443
 {{- end }}
----
 {{- if .Values.global.route }}
+---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -219,5 +222,6 @@ spec:
     name: {{ .Release.Name }}-trader-service
     weight: 100
   wildcardPolicy: None
+---
 {{- end }}
 {{- end }}

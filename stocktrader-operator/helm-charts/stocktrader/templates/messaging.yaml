@@ -14,7 +14,7 @@
 
 {{- if .Values.messaging.enabled }}
 #Deploy the pod
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-messaging
@@ -24,6 +24,9 @@ metadata:
     prism.subkind: Liberty
 spec:
   replicas: {{ .Values.global.replicas }}
+  selector:
+    matchLabels:
+      app: messaging
   template:
     metadata:
       labels:

@@ -14,7 +14,7 @@
 
 {{- if .Values.notificationTwitter.enabled }}
 #Deploy the pod
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-notification-twitter
@@ -24,6 +24,9 @@ metadata:
     prism.subkind: Liberty
 spec:
   replicas: {{ .Values.global.replicas }}
+  selector:
+    matchLabels:
+      app: notification-twitter
   template:
     metadata:
       labels:
@@ -104,8 +107,8 @@ spec:
           requests:
             cpu: 250m
             memory: 256Mi
----
 {{- if .Values.global.autoscale }}
+---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
