@@ -1,7 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  creationTimestamp: null
   name: stocktrader-operator
 rules:
 - apiGroups:
@@ -87,16 +86,8 @@ rules:
   verbs:
   - get
 - apiGroups:
-  - apps
+  - networking.k8s.io
   resources:
-  - replicasets
-  - deployments
-  verbs:
-  - get
-- apiGroups:
-  - extensions
-  resources:
-  - deployments
   - ingresses
   verbs:
   - '*'
