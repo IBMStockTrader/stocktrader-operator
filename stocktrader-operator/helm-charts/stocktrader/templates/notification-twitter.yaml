@@ -91,14 +91,18 @@ spec:
           httpGet:
             path: /health/ready
             port: 9080
-          initialDelaySeconds: 30
-          periodSeconds: 15
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 5
         livenessProbe:
           httpGet:
             path: /health/live
             port: 9080
-          initialDelaySeconds: 60
-          periodSeconds: 15
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 5
 {{- end }}
         resources:
           limits:
@@ -106,7 +110,7 @@ spec:
             memory: 1000Mi
           requests:
             cpu: 250m
-            memory: 256Mi
+            memory: 250Mi
 {{- if .Values.global.autoscale }}
 ---
 #Deploy the autoscaler
