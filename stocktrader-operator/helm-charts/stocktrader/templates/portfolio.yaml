@@ -159,13 +159,13 @@ spec:
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-kafka
+                name: {{ .Release.Name }}-credentials
                 key: kafka.user
                 optional: true
           - name: KAFKA_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-kafka
+                name: {{ .Release.Name }}-credentials
                 key: kafka.apiKey
                 optional: true
           - name: JWT_AUDIENCE
