@@ -40,6 +40,26 @@ metadata:
               "audience": "stock-trader",
               "issuer": "http://stock-trader.ibm.com"
             },
+            "account": {
+              "enabled": false,
+              "image": {
+                "repository": "ibmstocktrader/account",
+                "tag": "latest"
+              },
+              "url": "http://{{ .Release.Name }}-account-service:9080/account"
+            },
+            "broker": {
+              "image": {
+                "repository": "ibmstocktrader/broker",
+                "tag": "latest"
+              },
+              "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
+            },
+            "cloudant": {
+              "url": "\u003cyour Cloudant URL\u003e",
+              "apiKey": "\u003cyour Cloudant API Key\u003e",
+              "database": "\u003cyour Cloudant database name\u003e"
+            },
             "kafka": {
               "address": "\u003cyour Kafka proxy service\u003e:30000",
               "apiKey": "\u003cyour API key\u003e",
@@ -185,25 +205,18 @@ spec:
         resources:
           - name: ''
             kind: Deployment
-            version: v1beta1
           - name: ''
             kind: Service
-            version: v1
           - name: ''
             kind: Ingress
-            version: v1beta1
           - name: ''
             kind: Route
-            version: v1
           - name: ''
             kind: HorizontalPodAutoscaler
-            version: v1
           - name: ''
             kind: ConfigMap
-            version: v1
           - name: ''
             kind: Secret
-            version: v1
         specDescriptors:
           # Section for global settings
           - path: global.auth
@@ -297,6 +310,26 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
+
+          # Section for Broker settings
+          - path: broker.image.repository
+            description: Path to locate the Docker image for the broker microservice
+            displayName: Broker Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.image.tag
+            description: Tag for the Docker image for the broker microservice
+            displayName: Broker Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Broker URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
 
           # Section for Portfolio settings
           - path: portfolio.image.repository
@@ -396,6 +429,26 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
 
+          # Section for Account settings
+          - path: account.enabled
+            description: Settings that apply to the Account microservice (which depends upon Cloudant)
+            displayName: Account microservice (optional - requires Cloudant)
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.image.repository
+            description: Path to locate the Docker image for the account microservice
+            displayName: Account Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.image.tag
+            description: Tag for the Docker image for the account microservice
+            displayName: Account Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+
           # Section for Messaging settings
           - path: messaging.enabled
             description: This optional service responds to JMS messages sent to MQ by Portfolio when your loyalty level changes, and invokes the Notification service.  Requires MQ and ODM
@@ -403,28 +456,24 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: messaging.image.repository
             description: Path to locate the Docker image for the messaging microservice
             displayName: Messaging Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: messaging.image.tag
             description: Tag for the Docker image for the messaging microservice
             displayName: Messaging Docker image tag
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: messaging.notification.url
             description: Use the Kubernetes service DNS name in the URL when both are deployed to the same cluster
             displayName: URL for the Notification microservice
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Notification-Slack settings
           - path: notificationSlack.enabled
@@ -433,21 +482,18 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: notificationSlack.image.repository
             description: Path to locate the Docker image for the notification-slack microservice
             displayName: Notification-Slack Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: notificationSlack.image.tag
             description: Tag for the Docker image for the notification-slack microservice
             displayName: Notification-Slack Docker image tag
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Notification-Twitter settings
           - path: notificationTwitter.enabled
@@ -456,21 +502,18 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: notificationTwitter.image.repository
             description: Path to locate the Docker image for the notification-twitter microservice
             displayName: Notification-Twitter Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: notificationTwitter.image.tag
             description: Tag for the Docker image for the notification-twitter microservice
             displayName: Notification-Twitter Docker image tag
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Trade History settings
           - path: tradeHistory.enabled
@@ -479,28 +522,24 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: tradeHistory.image.repository
             description: Path to locate the Docker image for the trade history microservice
             displayName: Trade History Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: tradeHistory.image.tag
             description: Tag for the Docker image for the trade history microservice
             displayName: Trade History Docker image tag
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: tradeHistory.url
             description: URL at which this microservice can be accessed by other microservices
             displayName: Trade Histopry URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Looper settings
           - path: looper.enabled
@@ -509,28 +548,24 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: looper.image.repository
             description: Path to locate the Docker image for the looper microservice
             displayName: Looper Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: looper.image.tag
             description: Tag for the Docker image for the looper microservice
             displayName: Looper Docker image tag
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: looper.url
             description: URL at which this microservice can be accessed by other microservices
             displayName: Looper URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for JWT settings
           - path: jwt.issuer
@@ -539,14 +574,32 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: jwt.audience
             description: The default value is usually sufficient
             displayName: JWT Audience
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
-              - urn:alm:descriptor:com.tectonic.ui:advanced
+
+          # Section for Cloudant settings
+          - path: cloudant.id
+            description: Login ID for IBM Cloudant
+            displayName: ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
+          - path: cloudant.password
+            description: Password for IBM Cloudant
+            displayName: Password
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
+          - path: cloudant.url
+            description: URL for IBM Cloudant
+            displayName: URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
 
           # Section for LDAP settings
           - path: ldap.host
@@ -555,28 +608,24 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: ldap.port
             description: This usually defaults to 389
             displayName: Port number
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: ldap.baseDN
             description: Comma-separated list of distinguished names
             displayName: Base DN
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: ldap.realm
             description: User recognizable name for the LDAP environment
             displayName: Realm name
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for OIDC settings
           - path: oidc.clientId
@@ -585,21 +634,18 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: oidc.clientSecret
             description: The client secret issued to you by the OIDC provider
             displayName: Client Secret
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: oidc.discoveryUrl
             description: The URL of the discovery endpoint for this OIDC provider
             displayName: Discovery URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Watson settings
           - path: watson.id
@@ -608,21 +654,18 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:watson
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: watson.passwordOrApiKey
             description: Login password for the Watson Tone Analyzer.  If you have an API key instead, specify that here
             displayName: Password or API Key
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:watson
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: watson.url
             description: URL for the Watson Tone Analyzer.  Generally the default value will be sufficient
             displayName: URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:watson
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for ODM settings
           - path: odm.id
@@ -631,21 +674,18 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: odm.password
             description: Password for Operational Decision Manager (ODM)
             displayName: Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: odm.url
             description: URL for Operational Decision Manager (ODM)
             displayName: URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for MQ settings
           - path: mq.host
@@ -654,49 +694,42 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mq.port
             description: Use the local port number (not the node port or Ingress port) if using an intra-cluster deployment of MQ
             displayName: Port number for MQ
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mq.id
             description: Login ID for MQ
             displayName: ID
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mq.password
             description: The default installation of MQ gives you an id of 'app', with no password
             displayName: Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mq.queueManager
             description: Queue Manager to be used in MQ
             displayName: Queue Manager
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mq.queue
             description: Queue to be used within the Queue Manager
             displayName: Queue
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mq.channel
             description: Channel to be used in MQ
             displayName: Channel
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Redis settings
           - path: redis.urlWithCredentials
@@ -705,14 +738,12 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:redis
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: redis.cacheInterval
             description: Specify how stale a cached quote can be before requiring another trip outside the cluster to obtain a fresh one
             displayName: Cache Interval
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:redis
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for OpenWhisk settings
           - path: openwhisk.id
@@ -721,21 +752,18 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: openwhisk.password
             description: Password for OpenWhisk (aka IBM Cloud Functions)
             displayName: Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: openwhisk.url
             description: Use the Kube DNS service name in the URL if using an intra-cluster deployment of Apache OpenWhisk
             displayName: URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Twitter settings
           - path: twitter.consumerKey
@@ -744,28 +772,24 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: twitter.consumerSecret
             description: Consumer Secret for your Twitter ID
             displayName: Consumer Secret
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: twitter.accessToken
             description: Access Token for your Twitter ID
             displayName: Access Token
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: twitter.accessTokenSecret
             description: Access Token Secret for your Twitter ID
             displayName: Access Token Secret
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Kafka settings
           - path: kafka.address
@@ -774,28 +798,24 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: kafka.topic
             description: Kafka topic name
             displayName: Topic
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: kafka.user
             description: Kafka user name.  Defaults to 'token' when using an API key
             displayName: User ID
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: kafka.apiKey
             description: Kafka API key
             displayName: API Key
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
           # Section for Mongo settings
           - path: mongo.ip
@@ -804,42 +824,36 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mongo.port
             description: Use the local port number (not the node port or Ingress port) if using an intra-cluster deployment of Mongo
             displayName: Port number for Mongo
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mongo.user
             description: Login ID for Mongo
             displayName: User ID
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mongo.password
             description: Login password for Mongo
             displayName: Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mongo.database
             description: Database name for Mongo
             displayName: Database
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
-              - urn:alm:descriptor:com.tectonic.ui:advanced
           - path: mongo.authDB
             description: Auth database name for Mongo
             displayName: Auth database
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
-              - urn:alm:descriptor:com.tectonic.ui:advanced
 
   description: |-
     Umbrella operator for installing and configuring the IBM Stock Trader sample.
