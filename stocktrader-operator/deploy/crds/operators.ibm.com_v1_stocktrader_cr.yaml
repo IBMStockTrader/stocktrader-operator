@@ -40,6 +40,17 @@ spec:
       repository: ibmstocktrader/looper
       tag: latest
     url: http://{{ .Release.Name }}-looper-service:9080/looper
+  broker:
+    image:
+      repository: ibmstocktrader/broker
+      tag: latest
+    url: http://{{ .Release.Name }}-broker-service:9080/broker
+  account:
+    enabled: false
+    image:
+      repository: ibmstocktrader/account
+      tag: latest
+    url: http://{{ .Release.Name }}-account-service:9080/account
   messaging:
     enabled: false
     image:
@@ -47,6 +58,10 @@ spec:
       tag: latest
     notification:
       url: http://{{ .Release.Name }}-notification-service:9080/notification
+  cloudant:
+    url: <your Cloudant URL>
+    apiKey: <your Cloudant API Key>
+    database: <your Cloudant database name>
   mongo:
     authDB: <your Mongo auth database>
     database: <your Mongo database>

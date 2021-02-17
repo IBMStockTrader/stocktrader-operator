@@ -103,6 +103,23 @@ spec:
                 db:
                   description: Database name
                   type: string
+            broker:
+              description: Broker microservice
+              type: object
+              properties:
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+                url:
+                  description: Broker URL
+                  type: string
             portfolio:
               description: Portfolio microservice
               type: object
@@ -170,6 +187,23 @@ spec:
               properties:
                 enabled:
                   description: Enable the fancy UI microservice
+                  type: boolean
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+            account:
+              description: Account microservice (requires Cloudant)
+              type: object
+              properties:
+                enabled:
+                  description: Enable the Account microservice
                   type: boolean
                 image:
                   description: Docker image settings
@@ -320,6 +354,20 @@ spec:
                   type: string
                 realm:
                   description: LDAP realm
+                  type: string
+            cloudant:
+              description: IBM Cloudant settings (optional)
+              type: object
+              properties:
+                url:
+                  description: URL
+                  type: string
+                apiKey:
+                  description: API Key
+                  format: password
+                  type: string
+                database:
+                  description: Database name
                   type: string
             watson:
               description: Watson Tone Analyzer settings (optional)
