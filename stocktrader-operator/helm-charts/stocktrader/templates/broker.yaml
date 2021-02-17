@@ -1,4 +1,4 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2020-2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-portfolio
+  name: {{ .Release.Name }}-broker
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
@@ -25,11 +25,11 @@ spec:
   replicas: {{ .Values.global.replicas }}
   selector:
     matchLabels:
-      app: portfolio
+      app: broker
   template:
     metadata:
       labels:
-        app: portfolio
+        app: broker
 {{- if .Values.global.monitoring }}
       annotations:
         prometheus.io/scrape: 'true'
@@ -37,68 +37,14 @@ spec:
 {{- end }}
     spec:
       containers:
-      - name: portfolio
-        image: "{{ .Values.portfolio.image.repository }}:{{ .Values.portfolio.image.tag }}"
+      - name: broker
+        image: "{{ .Values.broker.image.repository }}:{{ .Values.broker.image.tag }}"
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: auth.type
-          - name: JDBC_KIND
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.kind
-          - name: JDBC_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.host
-          - name: JDBC_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.port
-          - name: JDBC_DB
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.db
-          - name: JDBC_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: database.id
-          - name: JDBC_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: database.password
-          - name: KAFKA_TOPIC
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.topic
-                optional: true
-          - name: KAFKA_ADDRESS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.address
-                optional: true
-          - name: KAFKA_USER
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: kafka.user
-                optional: true
-          - name: KAFKA_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: kafka.apiKey
-                optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
@@ -109,12 +55,28 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: jwt.issuer
-          - name: STOCK_QUOTE_URL
+          - name: PORTFOLIO_URL
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: stockQuote.url
+                key: portfolio.url
                 optional: true
+          - name: ACCOUNT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: account.url
+                optional: true
+          - name: ACCOUNT_ENABLED
+            value: {{ quote .Values.account.enabled }}
+          - name: TRADE_HISTORY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: tradeHistory.url
+                optional: true
+          - name: TRADE_HISTORY_ENABLED
+            value: {{ quote .Values.tradeHistory.enabled }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
@@ -152,14 +114,14 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}-portfolio-hpa
+  name: {{ .Release.Name }}-broker-hpa
   labels:
     app: stock-trader
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Release.Name }}-portfolio
+    name: {{ .Release.Name }}-broker
   maxReplicas: 10
   minReplicas: {{ .Values.global.replicas }}
   targetCPUUtilizationPercentage: 60
@@ -169,9 +131,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-portfolio-service
+  name: {{ .Release.Name }}-broker-service
   labels:
-    app: portfolio
+    app: broker
 {{- if .Values.global.monitoring }}
   annotations:
     prometheus.io/scrape: 'true'
@@ -189,5 +151,49 @@ spec:
       port: 9443
       targetPort: 9443
   selector:
-    app: portfolio
-
+    app: broker
+{{- if .Values.global.ingress }}
+---
+#Configure the ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-broker-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/affinity: "cookie"
+    ingress.kubernetes.io/session-cookie-name: "route"
+    ingress.kubernetes.io/session-cookie-hash: "sha1"
+    #ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/secure-backends: "true"
+    #ingress.kubernetes.io/app-root: "/broker"
+spec:
+  rules:
+  - host:
+    http:
+      paths:
+      - path: /broker
+        backend:
+          serviceName: {{ .Release.Name }}-broker-service
+          servicePort: 9443
+{{- end }}
+{{- if .Values.global.route }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: broker
+  name: {{ .Release.Name }}-broker
+spec:
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-broker-service
+    weight: 100
+  wildcardPolicy: None
+---
+{{- end }}

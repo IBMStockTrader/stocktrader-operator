@@ -98,11 +98,11 @@ spec:
                 name: {{ .Release.Name }}-config 
                 key: ldap.realm
                 optional: true
-          - name: PORTFOLIO_URL
+          - name: BROKER_URL
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: portfolio.url
+                key: broker.url
                 optional: true
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
@@ -119,26 +119,22 @@ spec:
           httpGet:
             path: /health/ready
             port: 9080
-          initialDelaySeconds: 60
-          periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+          initialDelaySeconds: 30
+          periodSeconds: 15
         livenessProbe:
           httpGet:
             path: /health/live
             port: 9080
-          initialDelaySeconds: 90
-          periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+          initialDelaySeconds: 60
+          periodSeconds: 15
 {{- end }}
         resources:
           limits:
-            cpu: 1000m
-            memory: 1000Mi
+            cpu: 500m
+            memory: 500Mi
           requests:
-            cpu: 250m
-            memory: 250Mi
+            cpu: 100m
+            memory: 128Mi
 {{- if .Values.global.autoscale }}
 ---
 #Deploy the autoscaler
@@ -220,7 +216,7 @@ spec:
   port:
     targetPort: https
   tls:
-    termination: passthrough
+    termination: edge
   to:
     kind: Service
     name: {{ .Release.Name }}-trader-service

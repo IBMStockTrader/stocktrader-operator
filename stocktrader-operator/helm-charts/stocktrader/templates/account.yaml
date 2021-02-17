@@ -1,4 +1,4 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2020-2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-portfolio
+  name: {{ .Release.Name }}-account
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
@@ -25,11 +25,11 @@ spec:
   replicas: {{ .Values.global.replicas }}
   selector:
     matchLabels:
-      app: portfolio
+      app: account
   template:
     metadata:
       labels:
-        app: portfolio
+        app: account
 {{- if .Values.global.monitoring }}
       annotations:
         prometheus.io/scrape: 'true'
@@ -37,67 +37,82 @@ spec:
 {{- end }}
     spec:
       containers:
-      - name: portfolio
-        image: "{{ .Values.portfolio.image.repository }}:{{ .Values.portfolio.image.tag }}"
+      - name: account
+        image: "{{ .Values.account.image.repository }}:{{ .Values.account.image.tag }}"
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: auth.type
-          - name: JDBC_KIND
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.kind
-          - name: JDBC_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.host
-          - name: JDBC_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.port
-          - name: JDBC_DB
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: database.db
-          - name: JDBC_ID
+          - name: MQ_ID
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: database.id
-          - name: JDBC_PASSWORD
+                key: mq.id
+          - name: MQ_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: database.password
-          - name: KAFKA_TOPIC
+                key: mq.password
+          - name: MQ_HOST
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: kafka.topic
+                key: mq.host
+          - name: MQ_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: mq.port
+          - name: MQ_CHANNEL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: mq.channel
+          - name: MQ_QUEUE_MANAGER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: mq.queueManager
+          - name: MQ_QUEUE
+            valueFrom:
+               configMapKeyRef:
+                 name: {{ .Release.Name }}-config
+                 key: mq.queue
+          - name: WATSON_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: watson.url
+          - name: WATSON_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: watson.id
                 optional: true
-          - name: KAFKA_ADDRESS
+          - name: WATSON_PWD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: watson.password
+          - name: ODM_URL
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: kafka.address
+                key: odm.url
                 optional: true
-          - name: KAFKA_USER
+          - name: ODM_ID
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: kafka.user
+                key: odm.id
                 optional: true
-          - name: KAFKA_API_KEY
+          - name: ODM_PWD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: kafka.apiKey
+                key: odm.pwd
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
@@ -109,12 +124,8 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: jwt.issuer
-          - name: STOCK_QUOTE_URL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: stockQuote.url
-                optional: true
+          - name: MESSAGING_ENABLED
+            value: {{ quote .Values.messaging.enabled }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
@@ -130,13 +141,13 @@ spec:
           httpGet:
             path: /health/ready
             port: 9080
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60
           periodSeconds: 15
         livenessProbe:
           httpGet:
             path: /health/live
             port: 9080
-          initialDelaySeconds: 60
+          initialDelaySeconds: 90
           periodSeconds: 15
 {{- end }}
         resources:
@@ -144,22 +155,22 @@ spec:
             cpu: 500m
             memory: 500Mi
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 250m
+            memory: 256Mi
 {{- if .Values.global.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}-portfolio-hpa
+  name: {{ .Release.Name }}-account-hpa
   labels:
     app: stock-trader
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Release.Name }}-portfolio
+    name: {{ .Release.Name }}-account
   maxReplicas: 10
   minReplicas: {{ .Values.global.replicas }}
   targetCPUUtilizationPercentage: 60
@@ -169,9 +180,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-portfolio-service
+  name: {{ .Release.Name }}-account-service
   labels:
-    app: portfolio
+    app: account
 {{- if .Values.global.monitoring }}
   annotations:
     prometheus.io/scrape: 'true'
@@ -189,5 +200,4 @@ spec:
       port: 9443
       targetPort: 9443
   selector:
-    app: portfolio
-
+    app: account
