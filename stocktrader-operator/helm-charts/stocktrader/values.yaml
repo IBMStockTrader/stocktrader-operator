@@ -1,4 +1,4 @@
-#       Copyright 2017-2020 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -31,6 +31,11 @@ database:
   id: db2inst1
   password: db2inst1
   db: trader
+broker:
+  image:
+    repository: ibmstocktrader/broker
+    tag: latest
+  url: http://{{ .Release.Name }}-broker-service:9080/broker
 portfolio:
   image:
     repository: ibmstocktrader/portfolio
@@ -54,6 +59,12 @@ tradr:
   image:
     repository: ibmstocktrader/tradr
     tag: latest
+account:
+  enabled: false
+  image:
+    repository: ibmstocktrader/account
+    tag: latest
+  url: http://{{ .Release.Name }}-account-service:9080/account
 messaging:
   enabled: false
   image:
@@ -128,6 +139,10 @@ kafka:
   topic: stocktrader
   user: token
   apiKey: <your API key>
+cloudant:
+  url: <your Cloudant URL>
+  apiKey: <your Cloudant API Key>
+  database: <your Cloudant database name>
 mongo:
   ip: <your Mongo IP>
   port: 27017

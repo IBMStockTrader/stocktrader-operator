@@ -6,13 +6,15 @@ This chart installs the IBM Stock Trader microservices.
 
 ## Prerequisites
 
-The user must install and configure the following dependencies:
-* IBM DB2 Developer-C
+The user must install and configure (or point to existing installations of) the following dependencies:
+* IBM DB2
 
 The following dependencies are optional:
 * IBM MQ Advanced for Developers (enables notifications)
 * IBM Operational Decision Manager (enables loyalty level determination)
+* IBM Cloudant (enables account metadata)
 * IBM Event Streams (enables Trade History and its return-on-investment calculation)
+* Mongo DB (enables Trade History and its return-on-investment calculation)
 * Redis (enables stock quote caching)
 
 The user must create and configure the following services in the IBM Cloud:
@@ -20,7 +22,7 @@ The user must create and configure the following services in the IBM Cloud:
 * API Connect
 * Cloud Functions
 
-The [stocktrader project](../README.md) provides instructions for setting up these dependencies.
+The [stocktrader-helm project](../README.md) provides instructions for setting up these dependencies.
 
 ## Configuration
 
@@ -64,9 +66,9 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 
 ## Building and Deploying the Chart
 
-After cloing this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-0.1.2.tgz file.
+After cloning this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-1.0.0.tgz file.
 
-To load it into ICP, first do a `cloudctl login`, then a `cloudctl catalog load-chart --archive stocktrader-0.1.2.tgz --repo local-charts`.
+To load it into ICP, first do a `cloudctl login`, then a `cloudctl catalog load-chart --archive stocktrader-1.0.0.tgz --repo local-charts`.
 
 ## Installing the Chart
 

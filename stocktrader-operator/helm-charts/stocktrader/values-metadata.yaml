@@ -108,6 +108,29 @@ database:
       label: "Database name"
       description: "Name of the database"
       type: string
+broker:
+  __metadata:
+    label: "Broker microservice"
+    description: "Settings that apply to the Broker microservice"
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the broker microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the broker microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the broker microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Broker URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
 portfolio:
   __metadata:
     label: "Portfolio microservice"
@@ -214,6 +237,29 @@ tradr:
       __metadata:
         label: "Docker image tag"
         description: "Tag for the Docker image for the tradr microservice"
+        type: string
+account:
+  __metadata:
+    label: "Account microservice (optional - requires Cloudant"
+    description: "Settings that apply to the Account microservice (which depends upon Cloudant)
+  enabled:
+    __metadata:
+      label: "Enable the Account microservice"
+      description: "This microservice keeps track of account balance, commissions, sentiment, and free trades
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the account microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the account microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the account microservice"
         type: string
 messaging:
   __metadata:
@@ -562,6 +608,25 @@ kafka:
       label: "API Key"
       description: "Kafka API key"
       type: password
+cloudant:
+  __metadata:
+    label: "Cloudant settings (optional)"
+    description: "Account stores the balance, commissions, sentiment, and free trades for a portfolio to a Cloudant database.  Only needed if using the optional Account microservice"
+  url:
+    __metadata:
+      label: "URL"
+      description: "URL for Cloudant.  Use the Kube DNS service name and port in it if using an intra-cluster deployment of Cloudant"
+      type: string
+  apiKey:
+    __metadata:
+      label: "API Key"
+      description: "API Key for Cloudant"
+      type: password
+  database:
+    __metadata:
+      label: "Database"
+      description: "Database name for Cloudant"
+      type: string
 mongo:
   __metadata:
     label: "Mongo settings (optional)"
