@@ -1,4 +1,4 @@
-#       Copyright 2017-2020 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -104,6 +104,6 @@ spec:
             cpu: 1000m
             memory: 1000Mi
           requests:
-            cpu: 250m
-            memory: 250Mi
+            cpu: 5000m
+            memory: 512Mi
 {{- end }}

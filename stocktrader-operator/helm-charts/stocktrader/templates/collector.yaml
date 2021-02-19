@@ -1,4 +1,4 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -12,12 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-{{- if .Values.notificationTwitter.enabled }}
 #Deploy the pod
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-notification-twitter
+  name: {{ .Release.Name }}-collector
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
@@ -26,11 +25,11 @@ spec:
   replicas: {{ .Values.global.replicas }}
   selector:
     matchLabels:
-      app: notification-twitter
+      app: collector
   template:
     metadata:
       labels:
-        app: notification-twitter
+        app: collector
 {{- if .Values.global.monitoring }}
       annotations:
         prometheus.io/scrape: 'true'
@@ -38,34 +37,34 @@ spec:
 {{- end }}
     spec:
       containers:
-      - name: notification-twitter
-        image: "{{ .Values.notificationTwitter.image.repository }}:{{ .Values.notificationTwitter.image.tag }}"
+      - name: account
+        image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag }}"
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: auth.type
-          - name: TWITTER_CONSUMER_KEY
+          - name: CLOUDANT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: cloudant.url
+          - name: CLOUDANT_ID
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: twitter.consumerKey
-          - name: TWITTER_CONSUMER_SECRET
+                key: cloudant.id
+          - name: CLOUDANT_PWD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: twitter.consumerSecret
-          - name: TWITTER_ACCESS_TOKEN
+                key: cloudant.pwd
+          - name: CLOUDANT_DATABASE
             valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: twitter.accessToken
-          - name: TWITTER_ACCESS_TOKEN_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: twitter.accessTokenSecret
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: cloudant.collector
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
@@ -115,16 +114,41 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}-notification-twitter-hpa
+  name: {{ .Release.Name }}-collector-hpa
   labels:
     app: stock-trader
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Release.Name }}-notification-twitter
+    name: {{ .Release.Name }}-collector
   maxReplicas: 10
   minReplicas: {{ .Values.global.replicas }}
   targetCPUUtilizationPercentage: 60
 {{- end }}
+---
+#Deploy the service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-collector-service
+  labels:
+    app: account
+{{- if .Values.global.monitoring }}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: "9080"
 {{- end }}
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9080
+      targetPort: 9080
+    - name: https
+      protocol: TCP
+      port: 9443
+      targetPort: 9443
+  selector:
+    app: collector

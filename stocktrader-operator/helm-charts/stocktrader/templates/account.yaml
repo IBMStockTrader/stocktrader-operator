@@ -114,6 +114,26 @@ spec:
                 name: {{ .Release.Name }}-credentials
                 key: odm.pwd
                 optional: true
+          - name: CLOUDANT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: cloudant.url
+          - name: CLOUDANT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: cloudant.id
+          - name: CLOUDANT_PWD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: cloudant.pwd
+          - name: CLOUDANT_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: cloudant.database
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
@@ -141,22 +161,24 @@ spec:
           httpGet:
             path: /health/ready
             port: 9080
-          initialDelaySeconds: 60
+          initialDelaySeconds: 90
           periodSeconds: 15
+          failureThreshold: 2
         livenessProbe:
           httpGet:
             path: /health/live
             port: 9080
-          initialDelaySeconds: 90
+          initialDelaySeconds: 120
           periodSeconds: 15
+          failureThreshold: 3
 {{- end }}
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: 1000m
+            memory: 1000Mi
           requests:
-            cpu: 250m
-            memory: 256Mi
+            cpu: 500m
+            memory: 512Mi
 {{- if .Values.global.autoscale }}
 ---
 #Deploy the autoscaler

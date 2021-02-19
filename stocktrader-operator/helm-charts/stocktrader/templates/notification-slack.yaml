@@ -1,4 +1,4 @@
-#       Copyright 2017-2020 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -87,25 +87,23 @@ spec:
             path: /health/ready
             port: 9080
           initialDelaySeconds: 60
-          periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+          periodSeconds: 15
+          failureThreshold: 2
         livenessProbe:
           httpGet:
             path: /health/live
             port: 9080
           initialDelaySeconds: 90
-          periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+          periodSeconds: 15
+          failureThreshold: 3
 {{- end }}
         resources:
           limits:
-            cpu: 1000m
-            memory: 1000Mi
+            cpu: 500m
+            memory: 500Mi
           requests:
             cpu: 250m
-            memory: 250Mi
+            memory: 256Mi
 {{- if .Values.global.autoscale }}
 ---
 #Deploy the autoscaler

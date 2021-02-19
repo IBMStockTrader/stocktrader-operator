@@ -29,6 +29,10 @@ data:
   iex.url: {{ .Values.stockQuote.iexTrading }}
   odm.url: {{ .Values.odm.url }}
   openwhisk.url: {{ .Values.openwhisk.url }}
+  account.url: {{ tpl .Values.account.url . }}
+  cloudant.url: {{ .Values.cloudant.url }}
+  cloudant.database: {{ .Values.cloudant.database }}
+  cloudant.collector: {{ .Values.cloudant.collector }}
   kafka.address: {{ .Values.kafka.address }}
   kafka.topic: {{ .Values.kafka.topic }}
   database.kind: {{ .Values.database.kind }}
