@@ -88,6 +88,12 @@ tradeHistory:
     repository: ibmstocktrader/trade-history
     tag: latest
   url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
+collector:
+  enabled: false
+  image:
+    repository: ibmstocktrader/collector
+    tag: latest
+  url: http://{{ .Release.Name }}-collector-service:9080/collector
 looper:
   enabled: false
   image:
@@ -141,8 +147,10 @@ kafka:
   apiKey: <your API key>
 cloudant:
   url: <your Cloudant URL>
-  apiKey: <your Cloudant API Key>
-  database: <your Cloudant database name>
+  id: <your Cloudant ID>
+  password: <your Cloudant Password>
+  database: <your Cloudant Account database name>
+  collector: <your Cloudant Collector database name>
 mongo:
   ip: <your Mongo IP>
   port: 27017

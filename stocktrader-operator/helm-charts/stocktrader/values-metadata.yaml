@@ -366,6 +366,34 @@ tradeHistory:
       label: "Trade History URL"
       description: "URL at which this microservice can be accessed by other microservices"
       type: string
+collector:
+  __metadata:
+    label: "Collector microservice"
+    description: "Settings that apply to the SCC Collector microservice"
+  enabled:
+    __metadata:
+      label: "Enable the Collector microservice"
+      description: "This optional service maintains security and compliance evidence for the IBM Cloud Security and Compliance Center (SCC) to periodically scrape.  Depends on Cloudant as the evidence locker.
+      type: boolean
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the collector microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the collector microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the collector microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Collector URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
 looper:
   __metadata:
     label: "Looper microservice"
@@ -617,15 +645,25 @@ cloudant:
       label: "URL"
       description: "URL for Cloudant.  Use the Kube DNS service name and port in it if using an intra-cluster deployment of Cloudant"
       type: string
-  apiKey:
+  id:
     __metadata:
-      label: "API Key"
-      description: "API Key for Cloudant"
+      label: "ID"
+      description: "User ID for Cloudant"
+      type: string
+  password:
+    __metadata:
+      label: "Password"
+      description: "Password for Cloudant"
       type: password
   database:
     __metadata:
-      label: "Database"
-      description: "Database name for Cloudant"
+      label: "Account Database"
+      description: "Account database name for Cloudant"
+      type: string
+  collector:
+    __metadata:
+      label: "Collector Database"
+      description: "Collector database name for Cloudant"
       type: string
 mongo:
   __metadata:
