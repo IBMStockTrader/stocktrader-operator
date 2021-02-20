@@ -215,6 +215,9 @@ spec:
                     tag:
                       description: Docker image tag
                       type: string
+                url:
+                  description: Account URL
+                  type: string
             messaging:
               description: Messaging microservice (optional - requires MQ)
               type: object
@@ -362,12 +365,18 @@ spec:
                 url:
                   description: URL
                   type: string
-                apiKey:
-                  description: API Key
+                id:
+                  description: User ID
+                  type: string
+                password:
+                  description: Password
                   format: password
                   type: string
                 database:
-                  description: Database name
+                  description: Account database name
+                  type: string
+                collector:
+                  description: Collector database name
                   type: string
             watson:
               description: Watson Tone Analyzer settings (optional)
