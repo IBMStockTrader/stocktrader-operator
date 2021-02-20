@@ -48,6 +48,14 @@ metadata:
               },
               "url": "http://{{ .Release.Name }}-account-service:9080/account"
             },
+            "collector": {
+              "enabled": false,
+              "image": {
+                "repository": "ibmstocktrader/collector",
+                "tag": "latest"
+              },
+              "url": "http://{{ .Release.Name }}-collector-service:9080/collector"
+            },
             "broker": {
               "image": {
                 "repository": "ibmstocktrader/broker",
@@ -57,8 +65,10 @@ metadata:
             },
             "cloudant": {
               "url": "\u003cyour Cloudant URL\u003e",
-              "apiKey": "\u003cyour Cloudant API Key\u003e",
-              "database": "\u003cyour Cloudant database name\u003e"
+              "id": "\u003cyour Cloudant ID\u003e",
+              "password": "\u003cyour Cloudant password\u003e",
+              "database": "\u003cyour Cloudant account database name\u003e"
+              "collector": "\u003cyour Cloudant collector database name\u003e"
             },
             "kafka": {
               "address": "\u003cyour Kafka proxy service\u003e:30000",
@@ -456,6 +466,32 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
 
+          # Section for Collector settings
+          - path: collector.enabled
+            description: Settings that apply to the Collector microservice (which depends upon Cloudant)
+            displayName: Collector microservice (optional - requires Cloudant)
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.image.repository
+            description: Path to locate the Docker image for the collector microservice
+            displayName: Collector Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.image.tag
+            description: Tag for the Docker image for the collector microservice
+            displayName: Collector Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Collector URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+
           # Section for Messaging settings
           - path: messaging.enabled
             description: This optional service responds to JMS messages sent to MQ by Portfolio when your loyalty level changes, and invokes the Notification service.  Requires MQ and ODM
@@ -589,6 +625,12 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
 
           # Section for Cloudant settings
+          - path: cloudant.url
+            description: URL for IBM Cloudant
+            displayName: Cloudant URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
           - path: cloudant.id
             description: Login ID for IBM Cloudant
             displayName: Cloudant ID
@@ -601,9 +643,15 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
-          - path: cloudant.url
-            description: URL for IBM Cloudant
-            displayName: Cloudant URL
+          - path: cloudant.database
+            description: Account database for IBM Cloudant
+            displayName: Cloudant account database
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
+          - path: cloudant.collector
+            description: Collector database for IBM Cloudant
+            displayName: Cloudant collector database
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
