@@ -60,8 +60,10 @@ spec:
       url: http://{{ .Release.Name }}-notification-service:9080/notification
   cloudant:
     url: <your Cloudant URL>
-    apiKey: <your Cloudant API Key>
-    database: <your Cloudant database name>
+    id: <your Cloudant ID>
+    password: <your Cloudant Password>
+    database: <your Cloudant account database name>
+    collector: <your Cloudant collector database name>
   mongo:
     authDB: <your Mongo auth database>
     database: <your Mongo database>
