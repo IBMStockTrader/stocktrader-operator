@@ -218,6 +218,26 @@ spec:
                 url:
                   description: Account URL
                   type: string
+            collector:
+              description: Collector microservice (requires Cloudant)
+              type: object
+              properties:
+                enabled:
+                  description: Enable the Collector microservice
+                  type: boolean
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+                url:
+                  description: Collector URL
+                  type: string
             messaging:
               description: Messaging microservice (optional - requires MQ)
               type: object
@@ -242,7 +262,7 @@ spec:
                     url:
                       description: URL for the Notification microservice
                       type: string
-            notification-slack:
+            notificationSlack:
               description: Slack-based notification microservice (optional - requires messaging microservice)
               type: object
               properties:
@@ -259,7 +279,7 @@ spec:
                     tag:
                       description: Docker image tag
                       type: string
-            notification-twitter:
+            notificationTwitter:
               description: Twitter-based notification microservice (optional - requires messaging microservice)
               type: object
               properties:
@@ -276,7 +296,7 @@ spec:
                     tag:
                       description: Docker image tag
                       type: string
-            trade-history:
+            tradeHistory:
               description: Trade History microservice (optional - requires kafka and mongo)
               type: object
               properties:
