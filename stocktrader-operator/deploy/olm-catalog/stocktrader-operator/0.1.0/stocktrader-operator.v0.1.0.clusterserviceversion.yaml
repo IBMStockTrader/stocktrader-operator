@@ -18,27 +18,61 @@ metadata:
             "name": "example-stocktrader"
           },
           "spec": {
-            "database": {
-              "kind": "db2",
-              "db": "trader",
-              "host": "db2trader1-ibm-db2oltp-dev",
-              "id": "db2inst1",
-              "password": "db2inst1",
-              "port": 50000
-            },
             "global": {
               "auth": "basic",
+              "replicas": 1,
               "autoscale": false,
-              "healthCheck": true,
+              "monitoring": true,
               "ingress": false,
               "route": true,
-              "jsonLogging": false,
-              "monitoring": true,
-              "replicas": 1
+              "healthCheck": true,
+              "jsonLogging": false
             },
-            "jwt": {
-              "audience": "stock-trader",
-              "issuer": "http://stock-trader.ibm.com"
+            "database": {
+              "kind": "db2",
+              "host": "db2trader1-ibm-db2oltp-dev",
+              "port": 50000,
+              "id": "db2inst1",
+              "password": "db2inst1",
+              "db": "trader"
+            },
+            "broker": {
+              "image": {
+                "repository": "ibmstocktrader/broker",
+                "tag": "latest"
+              },
+              "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
+            },
+            "portfolio": {
+              "image": {
+                "repository": "ibmstocktrader/portfolio",
+                "tag": "latest"
+              },
+              "url": "http://{{ .Release.Name }}-portfolio-service:9080/portfolio"
+            },
+            "stockQuote": {
+              "image": {
+                "repository": "ibmstocktrader/stock-quote",
+                "tag": "latest"
+              },
+              "url": "http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote",
+              "apiConnect": "https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks",
+              "iexTrading": "https://cloud.iexapis.com/stable/stock",
+              "iexApiKey": "\u003cyour IEX API key\u003e"
+            },
+            "trader": {
+              "enabled": true,
+              "image": {
+                "repository": "ibmstocktrader/trader",
+                "tag": "latest"
+              }
+            },
+            "tradr": {
+              "enabled": false,
+              "image": {
+                "repository": "ibmstocktrader/tradr",
+                "tag": "latest"
+              }
             },
             "account": {
               "enabled": false,
@@ -56,40 +90,6 @@ metadata:
               },
               "url": "http://{{ .Release.Name }}-collector-service:9080/collector"
             },
-            "broker": {
-              "image": {
-                "repository": "ibmstocktrader/broker",
-                "tag": "latest"
-              },
-              "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
-            },
-            "cloudant": {
-              "url": "\u003cyour Cloudant URL\u003e",
-              "id": "\u003cyour Cloudant ID\u003e",
-              "password": "\u003cyour Cloudant password\u003e",
-              "database": "\u003cyour Cloudant account database name\u003e"
-              "collector": "\u003cyour Cloudant collector database name\u003e"
-            },
-            "kafka": {
-              "address": "\u003cyour Kafka proxy service\u003e:30000",
-              "apiKey": "\u003cyour API key\u003e",
-              "topic": "stocktrader",
-              "user": "token"
-            },
-            "ldap": {
-              "host": "bluepages.ibm.com",
-              "port": 389,
-              "baseDN": "o=ibm.com",
-              "realm": "BluePages"
-            },
-            "looper": {
-              "enabled": false,
-              "image": {
-                "repository": "ibmstocktrader/looper",
-                "tag": "latest"
-              },
-              "url": "http://{{ .Release.Name }}-looper-service:9080/looper"
-            },
             "messaging": {
               "enabled": false,
               "image": {
@@ -99,23 +99,6 @@ metadata:
               "notification": {
                 "url": "http://{{ .Release.Name }}-notification-service:9080/notification"
               }
-            },
-            "mongo": {
-              "authDB": "\u003cyour Mongo auth database\u003e",
-              "database": "\u003cyour Mongo database\u003e",
-              "ip": "\u003cyour Mongo IP\u003e",
-              "password": "\u003cyour Mongo password\u003e",
-              "port": 27017,
-              "user": "\u003cyour Mongo user\u003e"
-            },
-            "mq": {
-              "channel": "DEV.APP.SVRCONN",
-              "host": "mqtrader1-mqtrader1",
-              "id": "app",
-              "password": "pwd",
-              "port": 1414,
-              "queue": "NotificationQ",
-              "queueManager": "stocktrader"
             },
             "notificationSlack": {
               "enabled": false,
@@ -131,42 +114,6 @@ metadata:
                 "tag": "latest"
               }
             },
-            "odm": {
-              "id": "odmAdmin",
-              "password": "odmAdmin",
-              "url": "http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty"
-            },
-            "oidc": {
-              "clientId": "\u003cyour client id\u003e",
-              "clientSecret": "\u003cyour client secret\u003e",
-              "discoveryUrl": "\u003cyour discovery url\u003e"
-            },
-            "openwhisk": {
-              "id": "\u003cyour id\u003e",
-              "password": "\u003cyour password\u003e",
-              "url": "https://openwhisk.ng.bluemix.net/api/v1/namespaces/jalcorn%40us.ibm.com_dev/actions/PostLoyaltyLevelToSlack"
-            },
-            "portfolio": {
-              "image": {
-                "repository": "ibmstocktrader/portfolio",
-                "tag": "latest"
-              },
-              "url": "http://{{ .Release.Name }}-portfolio-service:9080/portfolio"
-            },
-            "redis": {
-              "cacheInterval": 60,
-              "urlWithCredentials": "redis://\u003cyour credentials\u003e@redistrader1-ibm-redis-ha-dev-master-svc:6379"
-            },
-            "stockQuote": {
-              "apiConnect": "https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks",
-              "iexApiKey": "\u003cyour IEX API key\u003e",
-              "iexTrading": "https://cloud.iexapis.com/stable/stock",
-              "image": {
-                "repository": "ibmstocktrader/stock-quote",
-                "tag": "latest"
-              },
-              "url": "http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote"
-            },
             "tradeHistory": {
               "enabled": false,
               "image": {
@@ -175,30 +122,83 @@ metadata:
               },
               "url": "http://{{ .Release.Name }}-trade-history-service:9080/trade-history"
             },
-            "trader": {
-              "enabled": true,
-              "image": {
-                "repository": "ibmstocktrader/trader",
-                "tag": "latest"
-              }
-            },
-            "tradr": {
+            "looper": {
               "enabled": false,
               "image": {
-                "repository": "ibmstocktrader/tradr",
+                "repository": "ibmstocktrader/looper",
                 "tag": "latest"
-              }
+              },
+              "url": "http://{{ .Release.Name }}-looper-service:9080/looper"
             },
-            "twitter": {
-              "accessToken": "\u003cyour access token\u003e",
-              "accessTokenSecret": "\u003cyour access token secret\u003e",
-              "consumerKey": "\u003cyour consumer key\u003e",
-              "consumerSecret": "\u003cyour consumer secret\u003e"
+            "jwt": {
+              "audience": "stock-trader",
+              "issuer": "http://stock-trader.ibm.com"
+            },
+            "oidc": {
+              "clientId": "\u003cyour client id\u003e",
+              "clientSecret": "\u003cyour client secret\u003e",
+              "discoveryUrl": "\u003cyour discovery url\u003e"
+            },
+            "ldap": {
+              "host": "bluepages.ibm.com",
+              "port": 389,
+              "baseDN": "o=ibm.com",
+              "realm": "BluePages"
+            },
+            "cloudant": {
+              "url": "\u003cyour Cloudant URL\u003e",
+              "id": "\u003cyour Cloudant ID\u003e",
+              "password": "\u003cyour Cloudant password\u003e",
+              "database": "\u003cyour Cloudant account database name\u003e",
+              "collector": "\u003cyour Cloudant collector database name\u003e"
             },
             "watson": {
               "id": "apikey",
               "passwordOrApiKey": "\u003cyour API key\u003e",
               "url": "https://gateway.watsonplatform.net/tone-analyzer/api/v3/tone?version=2017-09-21\u0026sentences=false"
+            },
+            "odm": {
+              "id": "odmAdmin",
+              "password": "odmAdmin",
+              "url": "http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty"
+            },
+            "mq": {
+              "host": "mqtrader1-mqtrader1",
+              "port": 1414,
+              "id": "app",
+              "password": "pwd",
+              "queueManager": "stocktrader",
+              "queue": "NotificationQ",
+              "channel": "DEV.APP.SVRCONN"
+            },
+            "redis": {
+              "urlWithCredentials": "redis://\u003cyour credentials\u003e@redistrader1-ibm-redis-ha-dev-master-svc:6379",
+              "cacheInterval": 60
+            },
+            "openwhisk": {
+              "id": "\u003cyour id\u003e",
+              "password": "\u003cyour password\u003e",
+              "url": "https://openwhisk.ng.bluemix.net/api/v1/namespaces/jalcorn%40us.ibm.com_dev/actions/PostLoyaltyLevelToSlack"
+            },
+            "twitter": {
+              "consumerKey": "\u003cyour consumer key\u003e",
+              "consumerSecret": "\u003cyour consumer secret\u003e",
+              "accessToken": "\u003cyour access token\u003e",
+              "accessTokenSecret": "\u003cyour access token secret\u003e"
+            },
+            "kafka": {
+              "address": "\u003cyour Kafka proxy service\u003e:30000",
+              "topic": "stocktrader",
+              "user": "token",
+              "apiKey": "\u003cyour API key\u003e"
+            },
+            "mongo": {
+              "ip": "\u003cyour Mongo IP\u003e",
+              "port": 27017,
+              "user": "\u003cyour Mongo user\u003e",
+              "password": "\u003cyour Mongo password\u003e",
+              "database": "\u003cyour Mongo database\u003e",
+              "authDB": "\u003cyour Mongo auth database\u003e"
             }
           }
         }
@@ -465,6 +465,12 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Account URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
 
           # Section for Collector settings
           - path: collector.enabled
@@ -579,7 +585,7 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
           - path: tradeHistory.url
             description: URL at which this microservice can be accessed by other microservices
-            displayName: Trade Histopry URL
+            displayName: Trade History URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
@@ -624,6 +630,52 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
 
+          # Section for OIDC settings
+          - path: oidc.clientId
+            description: The client ID issued to you by the OIDC provider
+            displayName: Client ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+          - path: oidc.clientSecret
+            description: The client secret issued to you by the OIDC provider
+            displayName: Client Secret
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+          - path: oidc.discoveryUrl
+            description: The URL of the discovery endpoint for this OIDC provider
+            displayName: Discovery URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+
+          # Section for LDAP settings
+          - path: ldap.host
+            description: Make sure your cloud has connectivity to this address, if using an on-premises LDAP
+            displayName: Host name or IP address
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+          - path: ldap.port
+            description: This usually defaults to 389
+            displayName: Port number
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+          - path: ldap.baseDN
+            description: Comma-separated list of distinguished names
+            displayName: Base DN
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+          - path: ldap.realm
+            description: User recognizable name for the LDAP environment
+            displayName: Realm name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+
           # Section for Cloudant settings
           - path: cloudant.url
             description: URL for IBM Cloudant
@@ -655,52 +707,6 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
-
-          # Section for LDAP settings
-          - path: ldap.host
-            description: Make sure your cloud has connectivity to this address, if using an on-premises LDAP
-            displayName: Host name or IP address
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-          - path: ldap.port
-            description: This usually defaults to 389
-            displayName: Port number
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:number
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-          - path: ldap.baseDN
-            description: Comma-separated list of distinguished names
-            displayName: Base DN
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-          - path: ldap.realm
-            description: User recognizable name for the LDAP environment
-            displayName: Realm name
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
-
-          # Section for OIDC settings
-          - path: oidc.clientId
-            description: The client ID issued to you by the OIDC provider
-            displayName: Client ID
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:password
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-          - path: oidc.clientSecret
-            description: The client secret issued to you by the OIDC provider
-            displayName: Client Secret
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:password
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
-          - path: oidc.discoveryUrl
-            description: The URL of the discovery endpoint for this OIDC provider
-            displayName: Discovery URL
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
 
           # Section for Watson settings
           - path: watson.id
