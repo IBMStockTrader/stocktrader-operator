@@ -37,7 +37,7 @@ spec:
 {{- end }}
     spec:
       containers:
-      - name: account
+      - name: collector
         image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag }}"
         env:
           - name: AUTH_TYPE
@@ -55,11 +55,11 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
                 key: cloudant.id
-          - name: CLOUDANT_PWD
+          - name: CLOUDANT_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: cloudant.pwd
+                key: cloudant.password
           - name: CLOUDANT_DATABASE
             valueFrom:
               configMapKeyRef:

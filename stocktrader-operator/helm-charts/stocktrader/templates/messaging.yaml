@@ -104,6 +104,6 @@ spec:
             cpu: 1000m
             memory: 1000Mi
           requests:
-            cpu: 5000m
+            cpu: 500m
             memory: 512Mi
 {{- end }}

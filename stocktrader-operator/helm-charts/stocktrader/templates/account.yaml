@@ -124,12 +124,12 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
                 key: cloudant.id
-          - name: CLOUDANT_PWD
+          - name: CLOUDANT_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: cloudant.pwd
-          - name: CLOUDANT_DATABASE
+                key: cloudant.password
+          - name: CLOUDANT_DB
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
