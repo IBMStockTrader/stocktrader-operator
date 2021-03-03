@@ -1099,8 +1099,7 @@ spec:
           - routes
           verbs:
           - '*'
-#       serviceAccountName: stocktrader-operator
-        serviceAccountName: default
+        serviceAccountName: stocktrader-operator
     strategy: deployment
   installModes:
   - supported: true
