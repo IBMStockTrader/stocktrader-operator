@@ -1,0 +1,45 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: stocktrader-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions: {}
+  description: This operator installs and configures the IBM Stock Trader sample cloud-native application
+  displayName: IBM Stock Trader operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - cloud-native
+  - sample
+  - IBM
+  - StockTrader
+  links:
+  - name: Stocktrader Operator
+    url: https://stocktrader-operator.domain
+  maintainers:
+  - email: jalcorn@us.ibm.com
+    name: John W. Alcorn
+  maturity: alpha
+  provider:
+    name: Cloud Engagement Hub
+    url: http://medium.com/cloud-engagement-hub
+  version: 0.0.0

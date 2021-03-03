@@ -1,0 +1,60 @@
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  auth.type: {{ .Values.global.auth }}
+  broker.url: {{ tpl .Values.broker.url . }}
+  portfolio.url: {{ tpl .Values.portfolio.url . }}
+  stockQuote.url: {{ tpl .Values.stockQuote.url . }}
+  watson.url: {{ .Values.watson.url }}
+  tradeHistory.url: {{ tpl .Values.tradeHistory.url . }}
+  messaging.notification.url: {{ tpl .Values.messaging.notification.url . }}
+  looper.url: {{ tpl .Values.looper.url . }}
+  apic.url: {{ .Values.stockQuote.apiConnect }}
+  iex.url: {{ .Values.stockQuote.iexTrading }}
+  odm.url: {{ .Values.odm.url }}
+  openwhisk.url: {{ .Values.openwhisk.url }}
+  account.url: {{ tpl .Values.account.url . }}
+  cloudant.url: {{ .Values.cloudant.url }}
+  cloudant.database: {{ .Values.cloudant.database }}
+  cloudant.collector: {{ .Values.cloudant.collector }}
+  collector.url: {{ tpl .Values.collector.url . }}
+  kafka.address: {{ .Values.kafka.address }}
+  kafka.topic: {{ .Values.kafka.topic }}
+  database.kind: {{ .Values.database.kind }}
+  database.host: {{ .Values.database.host }}
+  database.port: "{{ .Values.database.port }}"
+  database.db: {{ .Values.database.db }}
+  mq.host: {{ .Values.mq.host }}
+  mq.port: "{{ .Values.mq.port }}"
+  mq.queueManager: {{ .Values.mq.queueManager }}
+  mq.queue: {{ .Values.mq.queue }}
+  mq.channel: {{ .Values.mq.channel }}
+  oidc.discoveryUrl: {{ .Values.oidc.discoveryUrl }}
+  ldap.host: {{ .Values.ldap.host }}
+  ldap.port: "{{ .Values.ldap.port }}"
+  ldap.baseDN: {{ .Values.ldap.baseDN }}
+  ldap.realm: {{ .Values.ldap.realm }}
+  jwt.issuer: {{ .Values.jwt.issuer }}
+  jwt.audience: {{ .Values.jwt.audience }}
+  redis.cacheInterval: "{{ .Values.redis.cacheInterval }}"
+  mongo.ip: {{ .Values.mongo.ip }}
+  mongo.port: "{{ .Values.mongo.port }}"
+  mongo.database: {{ .Values.mongo.database }}
+  mongo.authDB: {{ .Values.mongo.authDB }}
+

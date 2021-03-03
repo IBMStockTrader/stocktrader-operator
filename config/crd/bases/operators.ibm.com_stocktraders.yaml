@@ -1,0 +1,540 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: stocktraders.operators.ibm.com
+spec:
+  group: operators.ibm.com
+  names:
+    kind: StockTrader
+    listKind: StockTraderList
+    plural: stocktraders
+    singular: stocktrader
+    shortNames:
+    - st
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    subresources:
+      status: {}
+    schema:
+      openAPIV3Schema:
+        x-kubernetes-preserve-unknown-fields: true
+        description: Schema for the IBM Stock Trader cloud-native sample application
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: StockTraderSpec defines the desired state of StockTrader
+            type: object
+            properties:
+              global:
+                description: Global Settings
+                type: object
+                properties:
+                  auth:
+                    description: Authentication type
+                    enum:
+                    - basic
+                    - ldap
+                    - oidc
+                    type: string
+                  replicas:
+                    description: Initial number of pods per microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  autoscale:
+                    description: Enable Auto-scaling
+                    type: boolean
+                  monitoring:
+                    description: Enable Prometheus monitoring
+                    type: boolean
+                  ingress:
+                    description: Enable Ingress
+                    type: boolean
+                  route:
+                    description: Enable Route
+                    type: boolean
+                  healthCheck:
+                    description: Enable Readiness and Liveness probes
+                    type: boolean
+                  jsonLogging:
+                    description: Output pod logs in JSON format (for ElasticSearch/Kibana)
+                    type: boolean
+              database:
+                description: Database Settings.  Mandatory - required by the portfolio microservice
+                type: object
+                properties:
+                  kind:
+                    description: Kind of database
+                    enum:
+                    - db2
+                    - postgres
+                    - cockroach
+                    - derby
+                    type: string
+                  host:
+                    description: Host name (or IP address)
+                    type: string
+                  port:
+                    description: Port number
+                    format: int32
+                    type: integer
+                  id:
+                    description: User ID
+                    type: string
+                  password:
+                    description: Password
+                    format: password
+                    type: string
+                  db:
+                    description: Database name
+                    type: string
+              broker:
+                description: Broker microservice
+                type: object
+                properties:
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  url:
+                    description: Broker URL
+                    type: string
+              portfolio:
+                description: Portfolio microservice
+                type: object
+                properties:
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  url:
+                    description: Portfolio URL
+                    type: string
+              stockQuote:
+                description: Stock Quote microservice
+                type: object
+                properties:
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  url:
+                    description: Stock Quote URL
+                    type: string
+                  apiConnect:
+                    description: API Connect URL
+                    type: string
+                  iexTrading:
+                    description: IEX Trading URL
+                    type: string
+                  iexApiKey:
+                    description: IEX API Key
+                    format: password
+                    type: string
+              trader:
+                description: Trader simple UI microservice
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the basic UI microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+              tradr:
+                description: Tradr fancy UI microservice (requires OIDC)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the fancy UI microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+              account:
+                description: Account microservice (requires Cloudant)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the Account microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  url:
+                    description: Account URL
+                    type: string
+              collector:
+                description: Collector microservice (requires Cloudant)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the Collector microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  url:
+                    description: Collector URL
+                    type: string
+              messaging:
+                description: Messaging microservice (optional - requires MQ)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the messaging microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  notification:
+                    description: Notification service settings
+                    type: object
+                    properties:
+                      url:
+                        description: URL for the Notification microservice
+                        type: string
+              notificationSlack:
+                description: Slack-based notification microservice (optional - requires messaging microservice)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the Slack-based notification microservice (choose this or the Twitter-based one, not both)
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+              notificationTwitter:
+                description: Twitter-based notification microservice (optional - requires messaging microservice)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the Twitter-based notification microservice (choose this or the Slack-based one, not both)
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+              tradeHistory:
+                description: Trade History microservice (optional - requires kafka and mongo)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the Trade History microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  url:
+                    description: URL for the Trade History microservice
+                    type: string
+              looper:
+                description: Looper microservice (optional - used for load/stress testing)
+                type: object
+                properties:
+                  enabled:
+                    description: Enable the Looper microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    type: object
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                  url:
+                    description: URL for the Looper microservice
+                    type: string
+              jwt:
+                description: JSON Web Token (JWT) settings
+                type: object
+                properties:
+                  issuer:
+                    description: JWT Issuer URL
+                    type: string
+                  audience:
+                    description: JWT Audience
+                    type: string
+              oidc:
+                description: OpenID Connect (OIDC) settings (optional)
+                type: object
+                properties:
+                  clientId:
+                    description: Client ID
+                    format: password
+                    type: string
+                  clientSecret:
+                    description: Client Secret
+                    format: password
+                    type: string
+                  discoveryUrl:
+                    description: Discovery URL
+                    type: string
+              ldap:
+                description: LDAP settings (optional)
+                type: object
+                properties:
+                  host:
+                    description: LDAP host (or IP address)
+                    type: string
+                  port:
+                    description: LDAP Port number
+                    format: int32
+                    type: integer
+                  baseDN:
+                    description: Base Distinguished Name (DN)
+                    type: string
+                  realm:
+                    description: LDAP realm
+                    type: string
+              cloudant:
+                description: IBM Cloudant settings (optional)
+                type: object
+                properties:
+                  url:
+                    description: URL
+                    type: string
+                  id:
+                    description: User ID
+                    type: string
+                  password:
+                    description: Password
+                    format: password
+                    type: string
+                  database:
+                    description: Account database name
+                    type: string
+                  collector:
+                    description: Collector database name
+                    type: string
+              watson:
+                description: Watson Tone Analyzer settings (optional)
+                type: object
+                properties:
+                  id:
+                    description: ID
+                    type: string
+                  passwordOrApiKey:
+                    description: Password or API Key
+                    format: password
+                    type: string
+                  url:
+                    description: URL
+                    type: string
+              odm:
+                description: Operational Decision Manager (ODM) settings (optional)
+                type: object
+                properties:
+                  id:
+                    description: ID
+                    type: string
+                  password:
+                    description: Password
+                    format: password
+                    type: string
+                  url:
+                    description: URL
+                    type: string
+              mq:
+                description: IBM MQ settings (optional)
+                type: object
+                properties:
+                  host:
+                    description: Host name (or IP address)
+                    type: string
+                  port:
+                    description: Port number
+                    format: int32
+                    type: integer
+                  id:
+                    description: User ID
+                    type: string
+                  password:
+                    description: Password
+                    format: password
+                    type: string
+                  queueManager:
+                    description: Queue Manager
+                    type: string
+                  queue:
+                    description: Queue
+                    type: string
+                  channel:
+                    description: Channel
+                    type: string
+              redis:
+                description: Redis settings (optional)
+                type: object
+                properties:
+                  urlWithCredentials:
+                    description: URL
+                    type: string
+                  cacheInterval:
+                    description: Cache Interval
+                    format: int32
+                    type: number
+              openwhisk:
+                description: OpenWhisk settings (optional)
+                type: object
+                properties:
+                  id:
+                    description: ID
+                    type: string
+                  password:
+                    description: Password
+                    format: password
+                    type: string
+                  url:
+                    description: URL
+                    type: string
+              twitter:
+                description: Twitter settings (optional)
+                type: object
+                properties:
+                  consumerKey:
+                    description: Consumer Key
+                    format: password
+                    type: string
+                  consumerSecret:
+                    description: Consumer Secret
+                    format: password
+                    type: string
+                  accessToken:
+                    description: Access Token
+                    format: password
+                    type: string
+                  accessTokenSecret:
+                    description: Access Token Secret
+                    format: password
+                    type: string
+              kafka:
+                description: Kafka settings (optional)
+                type: object
+                properties:
+                  address:
+                    description: Address
+                    type: string
+                  topic:
+                    description: Topic
+                    type: string
+                  user:
+                    description: User ID
+                    type: string
+                  apiKey:
+                    description: API Key
+                    format: password
+                    type: string
+              mongo:
+                description: Mongo settings (optional)
+                type: object
+                properties:
+                  ip:
+                    description: Host name (or IP address)
+                    type: string
+                  port:
+                    description: Port number
+                    format: int32
+                    type: integer
+                  user:
+                    description: User ID
+                    type: string
+                  password:
+                    description: Password
+                    format: password
+                    type: string
+                  database:
+                     description: Database
+                     type: string
+                  authDB:
+                    description: Auth database
+                    type: string

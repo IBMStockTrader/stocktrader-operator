@@ -1,0 +1,24 @@
+# permissions for end users to edit stocktraders.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: stocktrader-editor-role
+rules:
+- apiGroups:
+  - operators.ibm.com
+  resources:
+  - stocktraders
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - operators.ibm.com
+  resources:
+  - stocktraders/status
+  verbs:
+  - get

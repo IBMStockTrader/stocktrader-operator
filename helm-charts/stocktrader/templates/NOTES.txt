@@ -1,0 +1,11 @@
+The IBM Stock Trader application is deployed.
+
+{{- if .Values.trader.enabled }}
+The Java web application is available at
+  https://<route-url>>/trader
+{{- end }}
+
+{{- if .Values.tradr.enabled }}
+The Node.js web application is available at
+  https://<route-url>>/tradr
+{{- end }}

@@ -1,0 +1,6 @@
+# Use the 'create api' subcommand to add watches to this file.
+- group: operators.ibm.com
+  version: v1
+  kind: StockTrader
+  chart: helm-charts/stocktrader
+# +kubebuilder:scaffold:watch
