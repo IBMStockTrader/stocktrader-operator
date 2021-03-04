@@ -932,17 +932,17 @@ spec:
   install:
     spec:
       deployments:
-      - name: stocktrader-operator
+      - name: stocktrader-operator-controller-manager
         spec:
           replicas: 1
           selector:
             matchLabels:
-              name: stocktrader-operator
+              control-plane: controller-manager
           strategy: {}
           template:
             metadata:
               labels:
-                name: stocktrader-operator
+                control-plane: controller-manager
             spec:
               containers:
               - name: kube-rbac-proxy
@@ -957,21 +957,20 @@ spec:
                   name: https
                 resources: {}
               - name: manager
-                image: ibmstocktrader/stocktrader-operator:latest
-                imagePullPolicy: Always
+                image: controller:latest
                 args:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
                 - --leader-election-id=stocktrader-operator
                 livenessProbe:
                   httpGet:
-                    path: /readyz
+                    path: /healthz
                     port: 8081
                   initialDelaySeconds: 15
                   periodSeconds: 20
                 readinessProbe:
                   httpGet:
-                    path: /healthz
+                    path: /readyz
                     port: 8081
                   initialDelaySeconds: 5
                   periodSeconds: 10
