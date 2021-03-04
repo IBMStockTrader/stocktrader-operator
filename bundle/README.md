@@ -33,4 +33,4 @@ Once the catalog image is available in an image registry, you just add it to you
 9. Click on the tile for that operator, and click the **Install** button to install the *IBM Stock Trader* operator.  In the form that appears, you can leave the fields at their defaults and just click the **Install** button.
 10. It will now appear in the *Installed Operators* page. 
 
-See https://www.openshift.com/blog/openshift-4-3-managing-catalog-sources-in-the-openshift-web-console for further details and screenshots.
+See https://www.openshift.com/blog/openshift-4-3-managing-catalog-sources-in-the-openshift-web-console for further details and screenshots.  The base Helm-based operator tutorial is here: https://sdk.operatorframework.io/docs/building-operators/helm/tutorial/.  And there's a good helm-based operator sample for comparison to what's here, at https://github.com/operator-framework/operator-sdk/tree/master/testdata/helm/memcached-operator.
