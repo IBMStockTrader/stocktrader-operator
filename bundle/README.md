@@ -32,3 +32,5 @@ Once the catalog image is available in an image registry, you just add it to you
 8. Navigate to *Operators->OperatorHub* in the left nav, then scroll down to find **IBM Stock Trader sample Operator** (you can type something like "stock" in the filter field to make only this operator show up, rather than having scroll down past hundreds of them).
 9. Click on the tile for that operator, and click the **Install** button to install the *IBM Stock Trader* operator.  In the form that appears, you can leave the fields at their defaults and just click the **Install** button.
 10. It will now appear in the *Installed Operators* page. 
+
+See https://www.openshift.com/blog/openshift-4-3-managing-catalog-sources-in-the-openshift-web-console for further details and screenshots.
