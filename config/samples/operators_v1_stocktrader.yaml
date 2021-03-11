@@ -15,6 +15,7 @@ spec:
     healthCheck: true
     jsonLogging: false
     specifyCerts: false
+    certs: <your SSL certs>
   database:
     kind: db2
     host: db2trader1-ibm-db2oltp-dev
