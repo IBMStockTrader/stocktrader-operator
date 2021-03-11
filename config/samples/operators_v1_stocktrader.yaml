@@ -14,6 +14,7 @@ spec:
     route: true
     healthCheck: true
     jsonLogging: false
+    specifyCerts: false
   database:
     kind: db2
     host: db2trader1-ibm-db2oltp-dev
@@ -148,4 +149,11 @@ spec:
     password: <your Mongo password>
     database: <your Mongo database>
     authDB: <your Mongo auth database>
-  
+  s3:
+    enabled: false
+    bucket: stock-trader
+    location: <your S3 location>
+    endpointUrl: <your S3 endpoint URL>
+    resourceInstanceId: <your S3 CRN>
+    apiKey: <your S3 API Key>
+
