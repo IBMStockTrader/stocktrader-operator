@@ -288,6 +288,18 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.specifyCerts
+            description: Enable to provide SSL certificates that microservices should trust
+            displayName: Provide SSL certificates
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.certs
+            description: SSL certificates that microservices should trust
+            displayName: SSL certificates
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
 
           # Section for Database settings
           - path: database.kind
@@ -917,6 +929,44 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+
+          # Section for S3 settings
+          - path: s3.enabled
+            description: Log each portfolio to an S3 bucket in IBM Cloud Object Storage
+            displayName: Enable logging to an S3 bucket
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:s3
+          - path: s3.bucket
+            description: Name of the S3 bucket
+            displayName: Bucket name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:s3
+          - path: s3.location
+            description: Name of the location/region hosting the S3 bucket
+            displayName: Location name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:s3
+          - path: s3.endpointUrl
+            description: URL used to communicate with the S3 bucket
+            displayName: Endpoint URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:s3
+          - path: s3.resourceInstanceId
+            description: CRN for the S3 bucket instance
+            displayName: Resource Instance ID
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:s3
+          - path: s3.apiKey
+            description: Credentials for the S3 bucket
+            displayName: API Key
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:s3
 
   description: |-
     Umbrella operator for installing and configuring the IBM Stock Trader sample.
