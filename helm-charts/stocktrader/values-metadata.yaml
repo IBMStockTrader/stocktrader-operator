@@ -66,6 +66,16 @@ global:
       label: "Output pod logs in JSON format"
       description: "Enable to send logs to ElasticSearch so they can be viewed in Kibana"
       type: boolean
+  specifyCerts:
+    __metadata:
+      label: "Specify SSL Certificates"
+      description: "Enable to feed SSL certs to be trusted by the Liberty-based microservices"
+      type: boolean
+  certs:
+    __metadata:
+      label: "SSL Certificates"
+      description: "SSL certs to be trusted by the Liberty-based microservices"
+      type: string
 database:
   __metadata:
     label: "Database Settings.  Mandatory - required by the portfolio microservice"
@@ -698,4 +708,38 @@ mongo:
     __metadata:
       label: "Auth database"
       description: "Auth database name for Mongo"
+      type: string
+s3:
+  __metadata:
+    label: "S3 settings (optional)"
+    description: "Configuration settings for logging to an S3 bucket in IBM Cloud Object Storage"
+  enabled:
+    __metadata:
+      label: "Enabled"
+      description: "Enable logging of portfolios to an S3 bucket"
+      type: boolean
+  bucket:
+    __metadata:
+      label: "Bucket"
+      description: "S3 bucket name"
+      type: string
+  location:
+    __metadata:
+      label: "Location"
+      description: "S3 data center location"
+      type: string
+  endpointUrl:
+    __metadata:
+      label: "Endpoint URL"
+      description: "S3 endpoint URL"
+      type: string
+  resourceInstanceId:
+    __metadata:
+      label: "Resource Instance ID"
+      description: "S3 resource instance ID"
+      type: string
+  apiKey:
+    __metadata:
+      label: "API Key"
+      description: "S3 API Key"
       type: string
