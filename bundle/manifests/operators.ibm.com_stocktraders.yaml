@@ -149,6 +149,9 @@ spec:
                   autoscale:
                     description: Enable Auto-scaling
                     type: boolean
+                  certs:
+                    description: SSL certificates that should be trusted by microservices
+                    type: string
                   healthCheck:
                     description: Enable Readiness and Liveness probes
                     type: boolean
@@ -168,6 +171,9 @@ spec:
                     type: integer
                   route:
                     description: Enable Route
+                    type: boolean
+                  specifyCerts:
+                    description: Specify SSL certificates that should be trusted by microservices
                     type: boolean
                 type: object
               jwt:
@@ -414,6 +420,29 @@ spec:
                     description: URL
                     type: string
                 type: object
+              s3:
+                description: S3 buckets in IBM Cloud Object Storage
+                properties:
+                  enabled:
+                    description: Log portfolios to S3 buckets in IBM Cloud Object Storage
+                    type: boolean
+                  bucket:
+                    description: Name of the S3 bucket
+                    type: string
+                  location:
+                    description: Name of the location/region hosting the S3 bucket
+                    type: string
+                  endpointUrl:
+                    description: URL for interacting with the S3 bucket 
+                    type: string
+                  resourceInstanceId:
+                    description: CRN for the S3 bucket 
+                    type: string
+                  apiKey:
+                    description: Credentials for the S3 bucket
+                    format: password
+                    type: string
+                type: object
               stockQuote:
                 description: Stock Quote microservice
                 properties:
@@ -535,9 +564,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: null
-  storedVersions: null
