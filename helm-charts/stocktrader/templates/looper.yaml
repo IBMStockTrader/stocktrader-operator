@@ -21,6 +21,7 @@ metadata:
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-broker"}]'
     prism.subkind: Liberty
 spec:
   replicas: {{ .Values.global.replicas }}
@@ -56,11 +57,11 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: jwt.issuer
-          - name: PORTFOLIO_URL
+          - name: BROKER_URL
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: portfolio.url
+                key: broker.url
                 optional: true
           - name: LOOPER_URL
             valueFrom:
@@ -68,6 +69,14 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: looper.url
                 optional: true
+{{- if .Values.global.specifyCerts }}
+          - name: cert_defaultTrustStore
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: ssl.certs
+                optional: true
+{{- end }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
@@ -173,7 +182,7 @@ metadata:
   name: {{ .Release.Name }}-looper
 spec:
   port:
-    targetPort: https
+    targetPort: http
   tls:
     termination: passthrough
   to:

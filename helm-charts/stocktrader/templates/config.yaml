@@ -57,4 +57,8 @@ data:
   mongo.port: "{{ .Values.mongo.port }}"
   mongo.database: {{ .Values.mongo.database }}
   mongo.authDB: {{ .Values.mongo.authDB }}
-
+  s3.bucket: {{ .Values.s3.bucket }}
+  s3.location: {{ .Values.s3.location }}
+  s3.endpointUrl: {{ .Values.s3.endpointUrl }}
+  s3.resourceInstanceId: {{ .Values.s3.resourceInstanceId }}
+  ssl.certs: {{ .Values.global.certs }}

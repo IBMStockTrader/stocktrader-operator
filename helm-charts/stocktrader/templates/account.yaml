@@ -146,6 +146,14 @@ spec:
                 key: jwt.issuer
           - name: MESSAGING_ENABLED
             value: {{ quote .Values.messaging.enabled }}
+{{- if .Values.global.specifyCerts }}
+          - name: cert_defaultTrustStore
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: ssl.certs
+                optional: true
+{{- end }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json

@@ -1,4 +1,4 @@
-#       Copyright 2017-2020 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ metadata:
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-broker"}]'
     prism.subkind: Node.js
 spec:
   replicas: {{ .Values.global.replicas }}
@@ -178,9 +179,9 @@ metadata:
   name: {{ .Release.Name }}-tradr
 spec:
   port:
-    targetPort: https
+    targetPort: http
   tls:
-    termination: passthrough
+    termination: edge
   to:
     kind: Service
     name: {{ .Release.Name }}-tradr-service
