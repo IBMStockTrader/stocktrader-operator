@@ -1072,6 +1072,7 @@ spec:
                 resources: {}
               - name: manager
                 image: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
+                imagePullPolicy: Always
                 args:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
