@@ -28,7 +28,9 @@ metadata:
               "ingress": false,
               "route": true,
               "healthCheck": true,
-              "jsonLogging": false
+              "jsonLogging": false,
+              "specifyCerts": false,
+              "certs": "\u003cyour SSL certs\u003e"
             },
             "database": {
               "kind": "db2",
@@ -201,6 +203,14 @@ metadata:
               "password": "\u003cyour Mongo password\u003e",
               "database": "\u003cyour Mongo database\u003e",
               "authDB": "\u003cyour Mongo auth database\u003e"
+            },
+            "s3": {
+              "enabled": false,
+              "bucket": "stock-trader",
+              "location": "\u003cyour S3 location\u003e",
+              "endpointUrl": "\u003cyour S3 endpoint URL\u003e",
+              "resourceInstanceId": "\u003cyour S3 CRN\u003e",
+              "apiKey": "\u003cyour S3 API Key\u003e"
             }
           }
         }
@@ -238,6 +248,8 @@ spec:
             version: v1
         specDescriptors:
           # Section for global settings
+          - path: global
+            displayName: Global Settings
           - path: global.auth
             description: Choose from Basic, LDAP, or OIDC
             displayName: Select the type of authentication
@@ -302,6 +314,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
 
           # Section for Database settings
+          - path: database
+            displayName: Database
           - path: database.kind
             description: JDBC Provider
             displayName: Database kind
@@ -343,6 +357,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
 
           # Section for Broker settings
+          - path: broker
+            displayName: Broker microservice
           - path: broker.image.repository
             description: Path to locate the Docker image for the broker microservice
             displayName: Broker Docker image repository
@@ -363,6 +379,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
 
           # Section for Portfolio settings
+          - path: portfolio
+            displayName: Portfolio microservice
           - path: portfolio.image.repository
             description: Path to locate the Docker image for the portfolio microservice
             displayName: Portfolio Docker image repository
@@ -383,6 +401,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
 
           # Section for Stock Quote settings
+          - path: stockQuote
+            displayName: Stock Quote microservice
           - path: stockQuote.image.repository
             description: Path to locate the Docker image for the stock quote microservice
             displayName: Stock Quote Docker image repository
@@ -421,6 +441,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
 
           # Section for Trader settings
+          - path: trader
+            displayName: Trader simple UI microservice
           - path: trader.enabled
             description: This is a simple form-based browser client for IBM Stock Trader
             displayName: Enable the basic UI microservice
@@ -441,6 +463,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
 
           # Section for Tradr settings
+          - path: tradr
+            displayName: Tradr fancy UI microservice
           - path: tradr.enabled
             description: Settings that apply to the Node.js/Vue.js-based Tradr microservice (the only non-Java one in IBM Stock Trader).  Requires OIDC
             displayName: Enable the fancy UI microservice
@@ -461,6 +485,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
 
           # Section for Account settings
+          - path: account
+            displayName: Account microservice
           - path: account.enabled
             description: Settings that apply to the Account microservice (which depends upon Cloudant)
             displayName: Account microservice (optional - requires Cloudant)
@@ -487,6 +513,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
 
           # Section for Collector settings
+          - path: collector
+            displayName: Collector microservice
           - path: collector.enabled
             description: Settings that apply to the Collector microservice (which depends upon Cloudant)
             displayName: Collector microservice (optional - requires Cloudant)
@@ -513,6 +541,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
 
           # Section for Messaging settings
+          - path: messaging
+            displayName: Messaging microservice
           - path: messaging.enabled
             description: This optional service responds to JMS messages sent to MQ by Portfolio when your loyalty level changes, and invokes the Notification service.  Requires MQ and ODM
             displayName: Enable the messaging microservice
@@ -539,6 +569,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
 
           # Section for Notification-Slack settings
+          - path: notificationSlack
+            displayName: Notification-Slack microservice
           - path: notificationSlack.enabled
             description: This optional service posts to a Slack channel when your loyalty level changes.  Requires messaging microservice
             displayName: Enable the Slack-based notification microservice (choose this or the Twitter-based one, not both)
@@ -559,6 +591,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
 
           # Section for Notification-Twitter settings
+          - path: notificationTwitter
+            displayName: Notification-Twitter microservice
           - path: notificationTwitter.enabled
             description: This optional service tweets when your loyalty level changes.  Requires messaging microservice
             displayName: Enable the Twitter-based notification microservice (choose this or the Slack-based one, not both)
@@ -579,6 +613,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
 
           # Section for Trade History settings
+          - path: tradeHistory
+            displayName: Trade History microservice
           - path: tradeHistory.enabled
             description: This optional service maintains a history of all stock trades for your portfolio.  Requires a Kafka and Mongo DB; this pod won't start if Mongo is unavailable
             displayName: Enable the trade history microservice
@@ -605,6 +641,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
 
           # Section for Looper settings
+          - path: looper
+            displayName: Looper microservice
           - path: looper.enabled
             description: This optional service drives performance and stress tests against the Broker microservice
             displayName: Enable the looper microservice
@@ -631,6 +669,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
 
           # Section for JWT settings
+          - path: jwt
+            displayName: JWT settings
           - path: jwt.issuer
             description: The default value is usually sufficient
             displayName: JWT Issuer URL
@@ -645,6 +685,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:jwt
 
           # Section for OIDC settings
+          - path: oidc
+            displayName: OIDC settings
           - path: oidc.clientId
             description: The client ID issued to you by the OIDC provider
             displayName: Client ID
@@ -665,6 +707,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
 
           # Section for LDAP settings
+          - path: ldap
+            displayName: LDAP settings
           - path: ldap.host
             description: Make sure your cloud has connectivity to this address, if using an on-premises LDAP
             displayName: Host name or IP address
@@ -691,6 +735,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
 
           # Section for Cloudant settings
+          - path: cloudant
+            displayName: IBM Cloudant settings
           - path: cloudant.url
             description: URL for IBM Cloudant
             displayName: Cloudant URL
@@ -723,6 +769,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
 
           # Section for Watson settings
+          - path: watson
+            displayName: IBM Watson settings
           - path: watson.id
             description: Login ID for the Watson Tone Analyzer.  Leave set to `apikey` if using an API key instead
             displayName: ID
@@ -743,6 +791,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:watson
 
           # Section for ODM settings
+          - path: odm
+            displayName: IBM ODM settings
           - path: odm.id
             description: Login ID for Operational Decision Manager (ODM)
             displayName: ID
@@ -763,6 +813,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:odm
 
           # Section for MQ settings
+          - path: mq
+            displayName: IBM MQ settings
           - path: mq.host
             description: Use the Kubernetes service DNS name if using an in-cluster MQ
             displayName: Host name (or IP address) for MQ
@@ -807,6 +859,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
 
           # Section for Redis settings
+          - path: redis
+            displayName: Redis settings
           - path: redis.urlWithCredentials
             description: Use the Kube DNS service name and local port number for an intra-cluster deployment of Redis.  Encode any needed credentials into the URL
             displayName: URL
@@ -821,6 +875,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:redis
 
           # Section for OpenWhisk (IBM Cloud Functions) settings
+          - path: openwhisk
+            displayName: OpenWhisk settings
           - path: openwhisk.id
             description: Login ID for OpenWhisk (aka IBM Cloud Functions)
             displayName: ID
@@ -841,6 +897,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
 
           # Section for Twitter settings
+          - path: twitter
+            displayName: Twitter settings
           - path: twitter.consumerKey
             description: Consumer Key for your Twitter ID
             displayName: Consumer Key
@@ -867,6 +925,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:twitter
 
           # Section for Kafka settings
+          - path: kafka
+            displayName: Kafka settings
           - path: kafka.address
             description: Specify in ip:port or hostname:port format.  Use the Kube DNS service name and local port when using an intra-cluster deployment of IBM Event Streams
             displayName: Address
@@ -893,6 +953,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
 
           # Section for Mongo settings
+          - path: mongo
+            displayName: Mongo settings
           - path: mongo.ip
             description: Use the Kubernetes service DNS name if using an in-cluster Mongo
             displayName: Host name (or IP address) for Mongo
@@ -931,6 +993,8 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
 
           # Section for S3 settings
+          - path: s3
+            displayName: Cloud Object Storage (S3) settings
           - path: s3.enabled
             description: Log each portfolio to an S3 bucket in IBM Cloud Object Storage
             displayName: Enable logging to an S3 bucket
