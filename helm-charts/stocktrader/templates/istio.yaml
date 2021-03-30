@@ -48,6 +48,17 @@ spec:
         port:
           number: 9080
 ---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-trader
+spec:
+  host: {{ .Release.Name }}-trader
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
 {{- end }}
 {{- if .Values.tradr.enabled }}
 apiVersion: networking.istio.io/v1beta1
@@ -68,6 +79,17 @@ spec:
         host: {{ .Release.Name }}-tradr
         port:
           number: 9080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-tradr
+spec:
+  host: {{ .Release.Name }}-tradr
+  subsets:
+  - name: v1
+    labels:
+      version: v1
 ---
 {{- end }}
 {{- if .Values.broker.enabled }}
@@ -90,6 +112,17 @@ spec:
         port:
           number: 9080
 ---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-broker
+spec:
+  host: {{ .Release.Name }}-broker
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
 {{- end }}
 {{- if .Values.collector.enabled }}
 apiVersion: networking.istio.io/v1beta1
@@ -111,6 +144,17 @@ spec:
         port:
           number: 9080
 ---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-collector
+spec:
+  host: {{ .Release.Name }}-collector
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
 {{- end }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
@@ -127,6 +171,7 @@ metadata:
     maistra.io/owner: {{ .Values.global.istioNamespace }}
     app.kubernetes.io/name: {{ .Values.global.istioNamespace }}-config
 spec:
+  podSelector: {}
   ingress:
     - from:
         - namespaceSelector:
