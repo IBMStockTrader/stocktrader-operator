@@ -1,11 +1,15 @@
 domain: ibm.com
 layout: helm.sdk.operatorframework.io/v1
-projectName: stocktrader-operator
-resources:
-- group: operators
-  kind: StockTrader
-  version: v1
-version: 3-alpha
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
+projectName: stocktrader-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: ibm.com
+  group: operators
+  kind: StockTrader
+  version: v1
+version: "3"
