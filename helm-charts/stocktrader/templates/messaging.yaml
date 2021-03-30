@@ -37,6 +37,11 @@ spec:
     metadata:
       labels:
         app: messaging
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/messaging"
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
+{{- end }}
     spec:
       containers:
       - name: messaging

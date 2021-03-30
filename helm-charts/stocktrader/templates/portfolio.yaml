@@ -31,10 +31,14 @@ spec:
     metadata:
       labels:
         app: portfolio
-{{- if .Values.global.monitoring }}
       annotations:
+        git-repo: "https://github.com/IBMStockTrader/portfolio"
+{{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
+{{- end }}
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
       containers:

@@ -31,10 +31,14 @@ spec:
     metadata:
       labels:
         app: trade-history
-{{- if .Values.global.monitoring }}
       annotations:
+        git-repo: "https://github.com/IBMStockTrader/stock-quote"
+{{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
+{{- end }}
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
       containers:
@@ -92,19 +96,27 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: mongo.port
                 optional: false
-          - name: BOOTSTRAP_SERVER
+          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_BOOTSTRAP_SERVERS
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: kafka.address
                 optional: false
+          - name: KAFKA_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: kafka.user
+                optional: true
           - name: CONSUMER_API_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
                 key: kafka.apiKey
                 optional: false
-          - name: TOPIC
+          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_JAAS_CONFIG
+            value: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$(KAFKA_USER)\" password=\"$(CONSUMER_API_KEY)\";"
+          - name: MP_MESSAGING_INCOMING_STOCKTRADER_TOPIC
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config

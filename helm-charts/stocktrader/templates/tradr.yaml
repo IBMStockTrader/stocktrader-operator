@@ -34,6 +34,12 @@ spec:
       labels:
         app: tradr
         solution: stock-trader
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/tradr"
+{{- if .Values.global.istio }}
+        maistra.io/expose-route: 'true'
+        sidecar.istio.io/inject: 'true'
+{{- end }}
     spec:
       containers:
       - name: tradr

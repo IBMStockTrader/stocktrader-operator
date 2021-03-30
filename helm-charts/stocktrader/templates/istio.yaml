@@ -1,0 +1,163 @@
+#       Copyright 2021 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+{{- if .Values.global.istio }}
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ .Release.Name }}-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+{{- if .Values.trader.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-trader
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ .Release.Name }}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /trader
+    route:
+    - destination:
+        host: {{ .Release.Name }}-trader
+        port:
+          number: 9080
+---
+{{- end }}
+{{- if .Values.tradr.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-tradr
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ .Release.Name }}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /tradr
+    route:
+    - destination:
+        host: {{ .Release.Name }}-tradr
+        port:
+          number: 9080
+---
+{{- end }}
+{{- if .Values.broker.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-broker
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ .Release.Name }}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /broker
+    route:
+    - destination:
+        host: {{ .Release.Name }}-broker
+        port:
+          number: 9080
+---
+{{- end }}
+{{- if .Values.collector.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-collector
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ .Release.Name }}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /collector
+    route:
+    - destination:
+        host: {{ .Release.Name }}-collector
+        port:
+          number: 9080
+---
+{{- end }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ .Release.Name }}-istio
+  labels:
+    app: istio
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/instance: {{ .Values.global.istioNamespace }}
+    release: istio
+    maistra.io/member-of: {{ .Values.global.istioNamespace }}
+    app.kubernetes.io/component: {{ .Values.global.istioNamespace }}-config
+    app.kubernetes.io/managed-by: maistra-istio-operator
+    maistra.io/owner: {{ .Values.global.istioNamespace }}
+    app.kubernetes.io/name: {{ .Values.global.istioNamespace }}-config
+spec:
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              maistra.io/member-of: {{ .Values.global.istioNamespace }}
+  policyTypes:
+    - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: istio-expose-route-{{ .Release.Name }}
+  labels:
+    app: istio
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    release: istio
+    maistra.io/member-of: {{ .Release.Name }}
+    app.kubernetes.io/component: {{ .Release.Name }}-config
+    app.kubernetes.io/managed-by: maistra-istio-operator
+    maistra.io/owner: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}-config
+spec:
+  podSelector:
+    matchLabels:
+      maistra.io/expose-route: 'true'
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              network.openshift.io/policy-group: ingress
+  policyTypes:
+    - Ingress
+{{- end }}
