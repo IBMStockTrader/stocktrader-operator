@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: ibmstocktrader/stocktrader-operator:latest
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.4.0
+    operators.operatorframework.io/builder: operator-sdk-v1.5.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -26,6 +26,8 @@ metadata:
               "autoscale": false,
               "monitoring": true,
               "ingress": false,
+              "istio": false,
+              "istioNamespace": "istio-system",
               "route": true,
               "healthCheck": true,
               "jsonLogging": false,
@@ -281,6 +283,18 @@ spec:
             displayName: Enable Ingress
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.istio
+            description: Enable for the OpenShift Service Mesh (Istio)
+            displayName: Enable Istio
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.istioNamespace
+            description: Namespace for the OpenShift Service Mesh (Istio)
+            displayName: Istio Namespace
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.route
             description: Enable a Route for each front-end microservice
@@ -1216,9 +1230,9 @@ spec:
         serviceAccountName: stocktrader-operator
     strategy: deployment
   installModes:
-  - supported: true
+  - supported: false
     type: OwnNamespace
-  - supported: true
+  - supported: false
     type: SingleNamespace
   - supported: false
     type: MultiNamespace
