@@ -158,6 +158,12 @@ spec:
                   ingress:
                     description: Enable Ingress
                     type: boolean
+                  istio:
+                    description: Enable the OpenShift Service Mesh (Istio)
+                    type: boolean
+                  istioNamespace:
+                    description: Namespace for the OpenShift Service Mesh (Istio)
+                    type: string
                   jsonLogging:
                     description: Output pod logs in JSON format (for ElasticSearch/Kibana)
                     type: boolean
