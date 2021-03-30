@@ -2,7 +2,9 @@
 
 ## Introduction
 
-This chart installs the IBM Stock Trader microservices.
+This helm chart installs and configures the IBM Stock Trader microservices.
+Nowadays, generally the operator in the sibling `stocktrader-operator` repo
+is used instead; that operator wraps this helm chart.
 
 ## Prerequisites
 
@@ -29,7 +31,7 @@ The [stocktrader-helm project](../README.md) provides instructions for setting u
 The following table lists the configurable parameters of this chart and their default values.
 The parameters allow you to:
 * change the image of any microservice from the one provided by IBM to one that you build (e.g. if you want to try to modify a service)
-* enable the deployment of optional microservices (tradr, notification-slack, notification-twitter)
+* enable the deployment of optional microservices (tradr, account, messaging, notification-slack, notification-twitter, trade-history, collector)
 
 | Parameter                           | Description                                         | Default                                                                         |
 | ----------------------------------- | ----------------------------------------------------| --------------------------------------------------------------------------------|
@@ -66,9 +68,11 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 
 ## Building and Deploying the Chart
 
-After cloning this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-1.0.0.tgz file.
+After cloning this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-1.4.0.tgz file.
 
-To load it into ICP, first do a `cloudctl login`, then a `cloudctl catalog load-chart --archive stocktrader-1.0.0.tgz --repo local-charts`.
+It is also handy to change directory into the `stocktrader` directory (where the Chart.yaml is) and run `helm lint` to validate the helm chart.
+
+To load it into ICP, first do a `cloudctl login`, then a `cloudctl catalog load-chart --archive stocktrader-1.4.0.tgz --repo local-charts`.
 
 ## Installing the Chart
 
