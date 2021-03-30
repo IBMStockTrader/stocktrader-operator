@@ -14,8 +14,13 @@ spec:
     route: true
     healthCheck: true
     jsonLogging: false
+    istio: false
+    istioNamespace: istio-system
     specifyCerts: false
-    certs: <your SSL certs>
+    certs: |
+      -----BEGIN CERTIFICATE-----
+      Put your certificate(s) here
+      -----END CERTIFICATE-----
   database:
     kind: db2
     host: db2trader1-ibm-db2oltp-dev
