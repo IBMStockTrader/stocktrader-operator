@@ -12,9 +12,9 @@ Unfortunately, the `opm` tool only works on Linux, and I develop on a Mac.  So I
 ```
 docker build -t opm -f opm.Dockerfile .
 ```
-Then just run the following command.  The first one puts you in a shell where you can run the rest:
+Then just run the following commands.  The first one puts you in a shell where you can run the rest:
 ```
-docker run -it opm
+docker run -it opm bash
 /operator-registry/bin/opm index add --bundles docker.io/ibmstocktrader/stocktrader-operator-bundle:v0.2.0 --tag docker.io/ibmstocktrader/stocktrader-operator-catalog:v0.2.0
 podman login docker.io
 podman push docker.io/ibmstocktrader/stocktrader-operator-catalog:v0.2.0
