@@ -44,7 +44,7 @@ spec:
         prefix: /trader
     route:
     - destination:
-        host: {{ .Release.Name }}-trader
+        host: {{ .Release.Name }}-trader-service
         port:
           number: 9080
 ---
@@ -53,7 +53,7 @@ kind: DestinationRule
 metadata:
   name: {{ .Release.Name }}-trader
 spec:
-  host: {{ .Release.Name }}-trader
+  host: {{ .Release.Name }}-trader-service
   subsets:
   - name: v1
     labels:
@@ -76,7 +76,7 @@ spec:
         prefix: /tradr
     route:
     - destination:
-        host: {{ .Release.Name }}-tradr
+        host: {{ .Release.Name }}-tradr-service
         port:
           number: 3000
 ---
@@ -85,7 +85,7 @@ kind: DestinationRule
 metadata:
   name: {{ .Release.Name }}-tradr
 spec:
-  host: {{ .Release.Name }}-tradr
+  host: {{ .Release.Name }}-tradr-service
   subsets:
   - name: v1
     labels:
@@ -108,7 +108,7 @@ spec:
         prefix: /broker
     route:
     - destination:
-        host: {{ .Release.Name }}-broker
+        host: {{ .Release.Name }}-broker-service
         port:
           number: 9080
 ---
@@ -117,7 +117,7 @@ kind: DestinationRule
 metadata:
   name: {{ .Release.Name }}-broker
 spec:
-  host: {{ .Release.Name }}-broker
+  host: {{ .Release.Name }}-broker-service
   subsets:
   - name: v1
     labels:
@@ -140,7 +140,7 @@ spec:
         prefix: /collector
     route:
     - destination:
-        host: {{ .Release.Name }}-collector
+        host: {{ .Release.Name }}-collector-service
         port:
           number: 9080
 ---
@@ -149,7 +149,7 @@ kind: DestinationRule
 metadata:
   name: {{ .Release.Name }}-collector
 spec:
-  host: {{ .Release.Name }}-collector
+  host: {{ .Release.Name }}-collector-service
   subsets:
   - name: v1
     labels:
