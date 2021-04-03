@@ -78,7 +78,7 @@ spec:
     - destination:
         host: {{ .Release.Name }}-tradr
         port:
-          number: 9080
+          number: 3000
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
@@ -171,7 +171,7 @@ metadata:
     maistra.io/owner: {{ .Values.global.istioNamespace }}
     app.kubernetes.io/name: {{ .Values.global.istioNamespace }}-config
 spec:
-  podSelector: {}
+  podSelector: {{ print "{}" }}
   ingress:
     - from:
         - namespaceSelector:
@@ -187,13 +187,13 @@ metadata:
   labels:
     app: istio
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Values.global.istioNamespace }}
     release: istio
-    maistra.io/member-of: {{ .Release.Name }}
-    app.kubernetes.io/component: {{ .Release.Name }}-config
+    maistra.io/member-of: {{ .Values.global.istioNamespace }}
+    app.kubernetes.io/component: {{ .Values.global.istioNamespace }}-config
     app.kubernetes.io/managed-by: maistra-istio-operator
-    maistra.io/owner: {{ .Release.Name }}
-    app.kubernetes.io/name: {{ .Release.Name }}-config
+    maistra.io/owner: {{ .Values.global.istioNamespace }}
+    app.kubernetes.io/name: {{ .Values.global.istioNamespace }}-config
 spec:
   podSelector:
     matchLabels:
