@@ -31,16 +31,6 @@ global:
         value: "ldap"
       - label: "OIDC"
         value: "oidc"
-  replicas:
-    __metadata:
-      label: "Initial number of pods per microservice"
-      description: "If auto-scaling is enabled, more may get created if needed"
-      type: number
-  autoscale:
-    __metadata:
-      label: "Enable Auto-scaling"
-      description: "Enable a Horizontal Pod Autoscaler for each microservice"
-      type: boolean
   monitoring:
     __metadata:
       label: "Enable Prometheus monitoring"
@@ -132,6 +122,26 @@ broker:
   __metadata:
     label: "Broker microservice"
     description: "Settings that apply to the Broker microservice"
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -155,6 +165,26 @@ portfolio:
   __metadata:
     label: "Portfolio microservice"
     description: "Settings that apply to the Portfolio microservice"
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -178,6 +208,26 @@ stockQuote:
   __metadata:
     label: "Stock Quote microservice"
     description: "Settings that apply to the Stock Quote microservice"
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -221,6 +271,26 @@ trader:
       label: "Enable the basic UI microservice"
       description: "This is a simple form-based browser client for IBM Stock Trader"
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -244,6 +314,26 @@ tradr:
       label: "Enable the fancy UI microservice"
       description: "This is a sophisticated JavaScript-based browser client for IBM Stock Trader, which requires configuring OpenID Connect (OIDC) for authentication"
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -267,6 +357,26 @@ account:
       label: "Enable the Account microservice"
       description: "This microservice keeps track of account balance, commissions, sentiment, and free trades
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -290,6 +400,26 @@ messaging:
       label: "Enable the messaging microservice"
       description: "This optional service responds to JMS messages sent to MQ by Portfolio when your loyalty level changes, and invokes the Notification service"
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -321,6 +451,26 @@ notificationSlack:
       label: "Enable the Slack-based notification microservice (choose this or the Twitter-based one, not both)"
       description: "This optional service posts to a Slack channel when your loyalty level changes"
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -344,6 +494,26 @@ notificationTwitter:
       label: "Enable the Twitter-based notification microservice (choose this or the Slack-based one, not both)"
       description: "This optional service sends a tweet as @IBMStockTrader when your loyalty level changes"
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -367,6 +537,26 @@ tradeHistory:
       label: "Enable the Trade History microservice"
       description: "This optional service maintains a history of all stock trades for your portfolio.  Requires a Mongo DB; this pod won't start if Mongo is unavailable"
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -395,6 +585,26 @@ collector:
       label: "Enable the Collector microservice"
       description: "This optional service maintains security and compliance evidence for the IBM Cloud Security and Compliance Center (SCC) to periodically scrape.  Depends on Cloudant as the evidence locker.
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -423,6 +633,26 @@ looper:
       label: "Enable the Looper microservice"
       description: "This optional service drives performance and stress tests against the Portfolio microservice"
       type: boolean
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
