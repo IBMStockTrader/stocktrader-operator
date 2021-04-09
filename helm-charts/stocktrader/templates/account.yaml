@@ -22,7 +22,7 @@ metadata:
   annotations:
     prism.subkind: Liberty
 spec:
-  replicas: {{ .Values.global.replicas }}
+  replicas: {{ .Values.account.replicas }}
   selector:
     matchLabels:
       app: account
@@ -191,7 +191,7 @@ spec:
           requests:
             cpu: 500m
             memory: 512Mi
-{{- if .Values.global.autoscale }}
+{{- if .Values.account.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
@@ -205,9 +205,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-account
-  maxReplicas: 10
-  minReplicas: {{ .Values.global.replicas }}
-  targetCPUUtilizationPercentage: 60
+  minReplicas: {{ .Values.account.replicas }}
+  maxReplicas: {{ .Values.account.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.account.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service

@@ -24,7 +24,7 @@ metadata:
     app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-broker"}{{- if .Values.collector.enabled }}, {"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-collector"}{{- end }}]'
     prism.subkind: Liberty
 spec:
-  replicas: {{ .Values.global.replicas }}
+  replicas: {{ .Values.trader.replicas }}
   selector:
     matchLabels:
       app: trader
@@ -191,7 +191,7 @@ spec:
           requests:
             cpu: 250m
             memory: 256Mi
-{{- if .Values.global.autoscale }}
+{{- if .Values.trader.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
@@ -205,9 +205,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-trader
-  maxReplicas: 10
-  minReplicas: {{ .Values.global.replicas }}
-  targetCPUUtilizationPercentage: 60
+  minReplicas: {{ .Values.trader.replicas }}
+  maxReplicas: {{ .Values.trader.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.trader.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service

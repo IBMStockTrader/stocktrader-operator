@@ -23,7 +23,7 @@ metadata:
   annotations:
     prism.subkind: Liberty
 spec:
-  replicas: {{ .Values.global.replicas }}
+  replicas: {{ .Values.notificationSlack.replicas }}
   selector:
     matchLabels:
       app: notification-slack
@@ -116,7 +116,7 @@ spec:
           requests:
             cpu: 250m
             memory: 256Mi
-{{- if .Values.global.autoscale }}
+{{- if .Values.notificationSlack.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
@@ -130,8 +130,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-notification-slack
-  maxReplicas: 10
-  minReplicas: {{ .Values.global.replicas }}
-  targetCPUUtilizationPercentage: 60
+  minReplicas: {{ .Values.notificationSlack.replicas }}
+  maxReplicas: {{ .Values.notificationSlack.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.notificationSlack.cpuThreshold }}
 {{- end }}
 {{- end }}

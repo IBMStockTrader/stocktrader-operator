@@ -156,6 +156,38 @@ spec:
       version: v1
 ---
 {{- end }}
+{{- if .Values.looper.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-looper
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ .Release.Name }}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /looper
+    route:
+    - destination:
+        host: {{ .Release.Name }}-looper-service
+        port:
+          number: 9080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-looper
+spec:
+  host: {{ .Release.Name }}-looper-service
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
+{{- end }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -183,7 +215,7 @@ spec:
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: istio-expose-route-{{ .Release.Name }}
+  name: {{ .Release.Name }}-istio-expose-route
   labels:
     app: istio
     app.kubernetes.io/part-of: istio

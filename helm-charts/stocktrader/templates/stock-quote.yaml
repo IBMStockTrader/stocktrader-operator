@@ -25,7 +25,7 @@ metadata:
 {{- end }}
     prism.subkind: Liberty
 spec:
-  replicas: {{ .Values.global.replicas }}
+  replicas: {{ .Values.stockQuote.replicas }}
   selector:
     matchLabels:
         app: stock-quote
@@ -134,7 +134,7 @@ spec:
           requests:
             cpu: 250m
             memory: 256Mi
-{{- if .Values.global.autoscale }}
+{{- if .Values.stockQuote.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
@@ -148,9 +148,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-stock-quote
-  maxReplicas: 10
-  minReplicas: {{ .Values.global.replicas }}
-  targetCPUUtilizationPercentage: 60
+  minReplicas: {{ .Values.stockQuote.replicas }}
+  maxReplicas: {{ .Values.stockQuote.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.stockQuote.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service

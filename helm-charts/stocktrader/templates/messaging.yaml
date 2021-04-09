@@ -29,7 +29,7 @@ metadata:
 {{- end }}
     prism.subkind: Liberty
 spec:
-  replicas: {{ .Values.global.replicas }}
+  replicas: {{ .Values.messaging.replicas }}
   selector:
     matchLabels:
       app: messaging
@@ -125,4 +125,22 @@ spec:
           requests:
             cpu: 500m
             memory: 512Mi
+{{- if .Values.messaging.autoscale }}
+---
+#Deploy the autoscaler
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-broker-hpa
+  labels:
+    app: stock-trader
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-broker
+  minReplicas: {{ .Values.messaging.replicas }}
+  maxReplicas: {{ .Values.messagign.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.messaging.cpuThreshold }}
+{{- end }}
 {{- end }}

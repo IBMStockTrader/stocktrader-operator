@@ -23,7 +23,7 @@ metadata:
   annotations:
     prism.subkind: Liberty
 spec:
-  replicas: {{ .Values.global.replicas }}
+  replicas: {{ .Values.tradeHistory.replicas }}
   selector:
     matchLabels:
       app: trade-history
@@ -165,7 +165,7 @@ spec:
           requests:
             cpu: 250m
             memory: 250Mi
-{{- if .Values.global.autoscale }}
+{{- if .Values.tradeHistory.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
@@ -179,9 +179,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-trade-history
-  maxReplicas: 10
-  minReplicas: {{ .Values.global.replicas }}
-  targetCPUUtilizationPercentage: 60
+  minReplicas: {{ .Values.tradeHistory.replicas }}
+  maxReplicas: {{ .Values.tradeHistory.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.tradeHistory.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
