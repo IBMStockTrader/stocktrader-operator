@@ -22,8 +22,6 @@ metadata:
           "spec": {
             "global": {
               "auth": "basic",
-              "replicas": 1,
-              "autoscale": false,
               "monitoring": true,
               "ingress": false,
               "istio": false,
@@ -43,6 +41,10 @@ metadata:
               "db": "trader"
             },
             "broker": {
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/broker",
                 "tag": "latest"
@@ -50,6 +52,10 @@ metadata:
               "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
             },
             "portfolio": {
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/portfolio",
                 "tag": "latest"
@@ -57,6 +63,10 @@ metadata:
               "url": "http://{{ .Release.Name }}-portfolio-service:9080/portfolio"
             },
             "stockQuote": {
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/stock-quote",
                 "tag": "latest"
@@ -68,6 +78,10 @@ metadata:
             },
             "trader": {
               "enabled": true,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/trader",
                 "tag": "latest"
@@ -75,6 +89,10 @@ metadata:
             },
             "tradr": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/tradr",
                 "tag": "latest"
@@ -82,6 +100,10 @@ metadata:
             },
             "account": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/account",
                 "tag": "latest"
@@ -90,6 +112,10 @@ metadata:
             },
             "collector": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/collector",
                 "tag": "latest"
@@ -98,6 +124,10 @@ metadata:
             },
             "messaging": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/messaging",
                 "tag": "latest"
@@ -108,6 +138,10 @@ metadata:
             },
             "notificationSlack": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/notification-slack",
                 "tag": "latest"
@@ -115,6 +149,10 @@ metadata:
             },
             "notificationTwitter": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/notification-twitter",
                 "tag": "latest"
@@ -122,6 +160,10 @@ metadata:
             },
             "tradeHistory": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/trade-history",
                 "tag": "latest"
@@ -130,6 +172,10 @@ metadata:
             },
             "looper": {
               "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/looper",
                 "tag": "latest"
@@ -234,6 +280,15 @@ spec:
             kind: Service
             version: v1
           - name: ''
+            kind: ConfigMap
+            version: v1
+          - name: ''
+            kind: Secret
+            version: v1
+          - name: ''
+            kind: NetworkPolicy
+            version: networking.k8s.io/v1
+          - name: ''
             kind: Ingress
             version: networking.k8s.io/v1
           - name: ''
@@ -243,11 +298,14 @@ spec:
             kind: HorizontalPodAutoscaler
             version: autoscaling/v1
           - name: ''
-            kind: ConfigMap
-            version: v1
+            kind: Gateway
+            version: networking.istio.io/v1beta1
           - name: ''
-            kind: Secret
-            version: v1
+            kind: VirtualService
+            version: networking.istio.io/v1beta1
+          - name: ''
+            kind: DestinationRule
+            version: networking.istio.io/v1beta1
         specDescriptors:
           # Section for global settings
           - path: global
@@ -259,18 +317,6 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:select:basic
               - urn:alm:descriptor:com.tectonic.ui:select:ldap
               - urn:alm:descriptor:com.tectonic.ui:select:oidc
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
-          - path: global.replicas
-            description: Initial number of pods per microservice
-            displayName: Replicas
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:podCount
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
-          - path: global.autoscale
-            description: Enable a Horizontal Pod Autoscaler for each microservice
-            displayName: Enable Auto-scaling
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.monitoring
             description: Register a Prometheus scraper for the metrics endpoint for each microservice
@@ -373,6 +419,30 @@ spec:
           # Section for Broker settings
           - path: broker
             displayName: Broker microservice
+          - path: broker.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
           - path: broker.image.repository
             description: Path to locate the Docker image for the broker microservice
             displayName: Broker Docker image repository
@@ -395,6 +465,30 @@ spec:
           # Section for Portfolio settings
           - path: portfolio
             displayName: Portfolio microservice
+          - path: portfolio.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
           - path: portfolio.image.repository
             description: Path to locate the Docker image for the portfolio microservice
             displayName: Portfolio Docker image repository
@@ -417,6 +511,30 @@ spec:
           # Section for Stock Quote settings
           - path: stockQuote
             displayName: Stock Quote microservice
+          - path: stockQuote.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
           - path: stockQuote.image.repository
             description: Path to locate the Docker image for the stock quote microservice
             displayName: Stock Quote Docker image repository
@@ -463,6 +581,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
           - path: trader.image.repository
             description: Path to locate the Docker image for the trader microservice
             displayName: Trader Docker image repository
@@ -485,6 +627,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
           - path: tradr.image.repository
             description: Path to locate the Docker image for the tradr microservice
             displayName: Tradr Docker image repository
@@ -506,6 +672,30 @@ spec:
             displayName: Account microservice (optional - requires Cloudant)
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
           - path: account.image.repository
             description: Path to locate the Docker image for the account microservice
@@ -535,6 +725,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
           - path: collector.image.repository
             description: Path to locate the Docker image for the collector microservice
             displayName: Collector Docker image repository
@@ -562,6 +776,30 @@ spec:
             displayName: Enable the messaging microservice
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
           - path: messaging.image.repository
             description: Path to locate the Docker image for the messaging microservice
@@ -591,6 +829,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
           - path: notificationSlack.image.repository
             description: Path to locate the Docker image for the notification-slack microservice
             displayName: Notification-Slack Docker image repository
@@ -613,6 +875,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+          - path: notificationTwitter.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+          - path: notificationTwitter.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+          - path: notificationTwitter.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+          - path: notificationTwitter.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
           - path: notificationTwitter.image.repository
             description: Path to locate the Docker image for the notification-twitter microservice
             displayName: Notification-Twitter Docker image repository
@@ -634,6 +920,30 @@ spec:
             displayName: Enable the trade history microservice
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
           - path: tradeHistory.image.repository
             description: Path to locate the Docker image for the trade history microservice
@@ -662,6 +972,30 @@ spec:
             displayName: Enable the looper microservice
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
           - path: looper.image.repository
             description: Path to locate the Docker image for the looper microservice
@@ -1060,7 +1394,7 @@ spec:
   install:
     spec:
       deployments:
-      - name: stocktrader-operator-controller-manager
+      - name: stocktrader-operator
         spec:
           replicas: 1
           selector:
@@ -1086,6 +1420,7 @@ spec:
                 resources: {}
               - name: manager
                 image: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
+                imagePullPolicy: Always
                 args:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
@@ -1220,6 +1555,21 @@ spec:
           - patch
           - update
           - watch
+        - apiGroups:
+          - networking.k8s.io
+          resources:
+          - ingresses
+          - networkpolicies
+          verbs:
+          - '*'
+        - apiGroups:
+          - networking.istio.io
+          resources:
+          - gateways
+          - virtualservices
+          - destinationrules
+          verbs:
+          - '*'
         - apiGroups:
           - route.openshift.io
           resources:

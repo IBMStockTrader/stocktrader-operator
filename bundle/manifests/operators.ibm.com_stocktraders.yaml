@@ -33,6 +33,14 @@ spec:
               account:
                 description: Account microservice (requires Cloudant)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
                     description: Enable the Account microservice
                     type: boolean
@@ -46,6 +54,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   url:
                     description: Account URL
                     type: string
@@ -53,6 +71,14 @@ spec:
               broker:
                 description: Broker microservice
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   image:
                     description: Docker image settings
                     properties:
@@ -63,6 +89,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   url:
                     description: Broker URL
                     type: string
@@ -90,6 +126,14 @@ spec:
               collector:
                 description: Collector microservice (requires Cloudant)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
                     description: Enable the Collector microservice
                     type: boolean
@@ -103,6 +147,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   url:
                     description: Collector URL
                     type: string
@@ -146,9 +200,6 @@ spec:
                     - ldap
                     - oidc
                     type: string
-                  autoscale:
-                    description: Enable Auto-scaling
-                    type: boolean
                   certs:
                     description: SSL certificates that should be trusted by microservices
                     type: string
@@ -170,11 +221,6 @@ spec:
                   monitoring:
                     description: Enable Prometheus monitoring
                     type: boolean
-                  replicas:
-                    description: Initial number of pods per microservice
-                    format: int32
-                    minimum: 1
-                    type: integer
                   route:
                     description: Enable Route
                     type: boolean
@@ -229,6 +275,14 @@ spec:
               looper:
                 description: Looper microservice (optional - used for load/stress testing)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
                     description: Enable the Looper microservice
                     type: boolean
@@ -242,6 +296,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   url:
                     description: URL for the Looper microservice
                     type: string
@@ -249,8 +313,16 @@ spec:
               messaging:
                 description: Messaging microservice (optional - requires MQ)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
-                    description: Enable the messaging microservice
+                    description: Enable the Messaging microservice
                     type: boolean
                   image:
                     description: Docker image settings
@@ -262,6 +334,11 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   notification:
                     description: Notification service settings
                     properties:
@@ -269,6 +346,11 @@ spec:
                         description: URL for the Notification microservice
                         type: string
                     type: object
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                 type: object
               mongo:
                 description: Mongo settings (optional)
@@ -324,8 +406,16 @@ spec:
               notificationSlack:
                 description: Slack-based notification microservice (optional - requires messaging microservice)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
-                    description: Enable the Slack-based notification microservice (choose this or the Twitter-based one, not both)
+                    description: Enable the Notification-Slack microservice
                     type: boolean
                   image:
                     description: Docker image settings
@@ -337,12 +427,30 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                 type: object
               notificationTwitter:
                 description: Twitter-based notification microservice (optional - requires messaging microservice)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
-                    description: Enable the Twitter-based notification microservice (choose this or the Slack-based one, not both)
+                    description: Enable the Notification-Twitter microservice
                     type: boolean
                   image:
                     description: Docker image settings
@@ -354,6 +462,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                 type: object
               odm:
                 description: Operational Decision Manager (ODM) settings (optional)
@@ -401,6 +519,14 @@ spec:
               portfolio:
                 description: Portfolio microservice
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   image:
                     description: Docker image settings
                     properties:
@@ -411,6 +537,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   url:
                     description: Portfolio URL
                     type: string
@@ -429,24 +565,24 @@ spec:
               s3:
                 description: S3 buckets in IBM Cloud Object Storage
                 properties:
+                  apiKey:
+                    description: Credentials for the S3 bucket
+                    format: password
+                    type: string
+                  bucket:
+                    description: Name of the S3 bucket
+                    type: string
                   enabled:
                     description: Log portfolios to S3 buckets in IBM Cloud Object Storage
                     type: boolean
-                  bucket:
-                    description: Name of the S3 bucket
+                  endpointUrl:
+                    description: URL for interacting with the S3 bucket 
                     type: string
                   location:
                     description: Name of the location/region hosting the S3 bucket
                     type: string
-                  endpointUrl:
-                    description: URL for interacting with the S3 bucket 
-                    type: string
                   resourceInstanceId:
                     description: CRN for the S3 bucket 
-                    type: string
-                  apiKey:
-                    description: Credentials for the S3 bucket
-                    format: password
                     type: string
                 type: object
               stockQuote:
@@ -455,6 +591,14 @@ spec:
                   apiConnect:
                     description: API Connect URL
                     type: string
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   iexApiKey:
                     description: IEX API Key
                     format: password
@@ -472,6 +616,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   url:
                     description: Stock Quote URL
                     type: string
@@ -479,6 +633,14 @@ spec:
               tradeHistory:
                 description: Trade History microservice (optional - requires kafka and mongo)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
                     description: Enable the Trade History microservice
                     type: boolean
@@ -492,6 +654,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                   url:
                     description: URL for the Trade History microservice
                     type: string
@@ -499,6 +671,14 @@ spec:
               trader:
                 description: Trader simple UI microservice
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
                     description: Enable the basic UI microservice
                     type: boolean
@@ -512,10 +692,28 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                 type: object
               tradr:
                 description: Tradr fancy UI microservice (requires OIDC)
                 properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
                   enabled:
                     description: Enable the fancy UI microservice
                     type: boolean
@@ -529,6 +727,16 @@ spec:
                         description: Docker image tag
                         type: string
                     type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
                 type: object
               twitter:
                 description: Twitter settings (optional)
