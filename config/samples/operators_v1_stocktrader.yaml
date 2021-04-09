@@ -7,8 +7,6 @@ spec:
   
   global:
     auth: basic
-    replicas: 1
-    autoscale: false
     monitoring: true
     ingress: false
     route: true
@@ -29,16 +27,28 @@ spec:
     password: db2inst1
     db: trader
   broker:
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/broker
       tag: latest
     url: http://{{ .Release.Name }}-broker-service:9080/broker
   portfolio:
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/portfolio
       tag: latest
     url: http://{{ .Release.Name }}-portfolio-service:9080/portfolio
   stockQuote:
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/stock-quote
       tag: latest
@@ -48,28 +58,48 @@ spec:
     iexApiKey: <your IEX API key>
   trader:
     enabled: true
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/trader
       tag: latest
   tradr:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/tradr
       tag: latest
   account:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/account
       tag: latest
     url: http://{{ .Release.Name }}-account-service:9080/account
   collector:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/collector
       tag: latest
     url: http://{{ .Release.Name }}-collector-service:9080/collector
   messaging:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/messaging
       tag: latest
@@ -77,22 +107,38 @@ spec:
       url: http://{{ .Release.Name }}-notification-service:9080/notification
   notificationSlack:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/notification-slack
       tag: latest
   notificationTwitter:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/notification-twitter
       tag: latest
   tradeHistory:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/trade-history
       tag: latest
     url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
   looper:
     enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
     image:
       repository: ibmstocktrader/looper
       tag: latest
