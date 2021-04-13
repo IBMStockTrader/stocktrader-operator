@@ -116,7 +116,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
-                key: odm.pwd
+                key: odm.password
                 optional: true
           - name: CLOUDANT_URL
             valueFrom:
