@@ -12,6 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+{{- if .Values.account.enabled }}
 #Deploy the pod
 apiVersion: apps/v1
 kind: Deployment
@@ -235,3 +236,4 @@ spec:
       targetPort: 9443
   selector:
     app: account
+{{- end }}

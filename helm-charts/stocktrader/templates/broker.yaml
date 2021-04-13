@@ -12,6 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+{{- if .Values.collector.enabled }}
 #Deploy the pod
 apiVersion: apps/v1
 kind: Deployment
@@ -212,4 +213,5 @@ spec:
     weight: 100
   wildcardPolicy: None
 ---
+{{- end }}
 {{- end }}
