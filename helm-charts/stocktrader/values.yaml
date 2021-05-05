@@ -40,7 +40,7 @@ broker:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/broker
-    tag: latest
+    tag: 1.0.0
   url: http://{{ .Release.Name }}-broker-service:9080/broker
 portfolio:
   replicas: 1
@@ -49,7 +49,7 @@ portfolio:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/portfolio
-    tag: latest
+    tag: 1.0.0
   url: http://{{ .Release.Name }}-portfolio-service:9080/portfolio
 stockQuote:
   replicas: 1
@@ -58,7 +58,7 @@ stockQuote:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/stock-quote
-    tag: latest
+    tag: 1.0.0
   url: http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote
   apiConnect: https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks
   iexTrading: https://cloud.iexapis.com/stable/stock
@@ -71,7 +71,7 @@ trader:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/trader
-    tag: latest
+    tag: 1.0.0
 tradr:
   enabled: false
   replicas: 1
@@ -80,7 +80,7 @@ tradr:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/tradr
-    tag: latest
+    tag: 1.0.0
 account:
   enabled: false
   replicas: 1
@@ -89,7 +89,7 @@ account:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/account
-    tag: latest
+    tag: 1.0.0
   url: http://{{ .Release.Name }}-account-service:9080/account
 messaging:
   enabled: false
@@ -99,7 +99,7 @@ messaging:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/messaging
-    tag: latest
+    tag: 1.0.0
   notification:
     url: http://{{ .Release.Name }}-notification-service:9080/notification
 notificationSlack:
@@ -110,7 +110,7 @@ notificationSlack:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/notification-slack
-    tag: latest
+    tag: 1.0.0
 notificationTwitter:
   enabled: false
   replicas: 1
@@ -119,7 +119,7 @@ notificationTwitter:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/notification-twitter
-    tag: latest
+    tag: 1.0.0
 tradeHistory:
   enabled: false
   replicas: 1
@@ -128,7 +128,7 @@ tradeHistory:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/trade-history
-    tag: latest
+    tag: 1.0.0
   url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
 collector:
   enabled: false
@@ -138,7 +138,7 @@ collector:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/collector
-    tag: latest
+    tag: 1.0.0
   url: http://{{ .Release.Name }}-collector-service:9080/collector
 looper:
   enabled: false
@@ -148,7 +148,7 @@ looper:
   cpuThreshold: 75
   image:
     repository: ibmstocktrader/looper
-    tag: latest
+    tag: 1.0.0
   url: http://{{ .Release.Name }}-looper-service:9080/looper
 jwt:
   issuer: http://stock-trader.ibm.com
