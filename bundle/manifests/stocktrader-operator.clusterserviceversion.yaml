@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: ibmstocktrader/stocktrader-operator:latest
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.5.0
+    operators.operatorframework.io/builder: operator-sdk-v1.6.2
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -17,7 +17,7 @@ metadata:
           "apiVersion": "operators.ibm.com/v1",
           "kind": "StockTrader",
           "metadata": {
-            "name": "example-stocktrader"
+            "name": "sample"
           },
           "spec": {
             "global": {
@@ -47,7 +47,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/broker",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
             },
@@ -58,7 +58,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/portfolio",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-portfolio-service:9080/portfolio"
             },
@@ -69,7 +69,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/stock-quote",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote",
               "apiConnect": "https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks",
@@ -84,7 +84,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/trader",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "tradr": {
@@ -95,7 +95,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/tradr",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "account": {
@@ -106,7 +106,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/account",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-account-service:9080/account"
             },
@@ -118,7 +118,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/collector",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-collector-service:9080/collector"
             },
@@ -130,7 +130,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/messaging",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "notification": {
                 "url": "http://{{ .Release.Name }}-notification-service:9080/notification"
@@ -144,7 +144,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/notification-slack",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "notificationTwitter": {
@@ -155,7 +155,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/notification-twitter",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "tradeHistory": {
@@ -166,7 +166,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/trade-history",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-trade-history-service:9080/trade-history"
             },
@@ -178,7 +178,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/looper",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-looper-service:9080/looper"
             },
