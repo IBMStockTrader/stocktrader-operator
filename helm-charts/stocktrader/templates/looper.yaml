@@ -189,7 +189,7 @@ spec:
   port:
     targetPort: http
   tls:
-    termination: passthrough
+    termination: edge
   to:
     kind: Service
     name: {{ .Release.Name }}-looper-service
