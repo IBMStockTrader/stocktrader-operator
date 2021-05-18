@@ -47,9 +47,20 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/broker",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
+            },
+            "brokerCQRS": {
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
+              "image": {
+                "repository": "ibmstocktrader/broker-cqrs",
+                "tag": "1.0.0"
+              },
+              "url": "http://{{ .Release.Name }}-broker-cqrs-service:9080/broker"
             },
             "portfolio": {
               "replicas": 1,
@@ -58,7 +69,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/portfolio",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-portfolio-service:9080/portfolio"
             },
@@ -69,7 +80,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/stock-quote",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote",
               "apiConnect": "https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks",
@@ -84,7 +95,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/trader",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "tradr": {
@@ -95,7 +106,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/tradr",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "account": {
@@ -106,7 +117,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/account",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-account-service:9080/account"
             },
@@ -118,7 +129,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/collector",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-collector-service:9080/collector"
             },
@@ -130,7 +141,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/messaging",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "notification": {
                 "url": "http://{{ .Release.Name }}-notification-service:9080/notification"
@@ -144,7 +155,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/notification-slack",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "notificationTwitter": {
@@ -155,7 +166,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/notification-twitter",
-                "tag": "latest"
+                "tag": "1.0.0"
               }
             },
             "tradeHistory": {
@@ -166,7 +177,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/trade-history",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-trade-history-service:9080/trade-history"
             },
@@ -178,7 +189,7 @@ metadata:
               "cpuThreshold": 75,
               "image": {
                 "repository": "ibmstocktrader/looper",
-                "tag": "latest"
+                "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-looper-service:9080/looper"
             },
@@ -240,7 +251,9 @@ metadata:
             },
             "kafka": {
               "address": "\u003cyour Kafka proxy service\u003e:30000",
-              "topic": "stocktrader",
+              "accountTopic": "account",
+              "historyTopic": "history",
+              "portfolioTopic": "portfolio",
               "user": "token",
               "apiKey": "\u003cyour API key\u003e"
             },
@@ -461,6 +474,52 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+
+          # Section for Broker CQRS settings
+          - path: brokerCQRS
+            displayName: Broker CQRS microservice
+          - path: brokerCQRS.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.image.repository
+            description: Path to locate the Docker image for the broker CQRS microservice
+            displayName: Broker CQRS Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.image.tag
+            description: Tag for the Docker image for the broker CQRS microservice
+            displayName: Broker CQRS Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Broker CQRS URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
 
           # Section for Portfolio settings
           - path: portfolio
@@ -1281,9 +1340,21 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.accountTopic
+            description: Kafka account topic name
+            displayName: Account Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.historyTopic
+            description: Kafka history topic name
+            displayName: History Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
           - path: kafka.topic
-            description: Kafka topic name
-            displayName: Topic
+            description: Kafka portfolio topic name
+            displayName: Portfolio Topic
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
