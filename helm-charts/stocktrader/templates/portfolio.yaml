@@ -50,6 +50,12 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: trace.spec
+                optional: true
           - name: JDBC_KIND
             valueFrom:
               configMapKeyRef:
@@ -80,11 +86,17 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
                 key: database.password
-          - name: KAFKA_TOPIC
+          - name: KAFKA_PORTFOLIO_TOPIC
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: kafka.topic
+                key: kafka.portfolioTopic
+                optional: true
+          - name: KAFKA_HISTORY_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: kafka.historyTopic
                 optional: true
           - name: KAFKA_ADDRESS
             valueFrom:
@@ -133,6 +145,12 @@ spec:
             value: json
           - name: WLP_LOGGING_CONSOLE_SOURCE
             value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
 {{- end }}
         ports:
           - containerPort: 9080

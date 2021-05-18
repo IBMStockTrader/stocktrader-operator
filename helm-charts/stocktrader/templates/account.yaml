@@ -50,6 +50,12 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: trace.spec
+                optional: true
           - name: MQ_ID
             valueFrom:
               secretKeyRef:
@@ -139,6 +145,36 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: cloudant.database
+          - name: KAFKA_ACCOUNT_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: kafka.accountTopic
+                optional: true
+          - name: KAFKA_HISTORY_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: kafka.historyTopic
+                optional: true
+          - name: KAFKA_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: kafka.address
+                optional: true
+          - name: KAFKA_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: kafka.user
+                optional: true
+          - name: KAFKA_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: kafka.apiKey
+                optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
@@ -151,6 +187,8 @@ spec:
                 key: jwt.issuer
           - name: MESSAGING_ENABLED
             value: {{ quote .Values.messaging.enabled }}
+          - name: CQRS_ENABLED
+            value: {{ quote .Values.brokerCQRS.enabled }}
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
@@ -164,6 +202,12 @@ spec:
             value: json
           - name: WLP_LOGGING_CONSOLE_SOURCE
             value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
 {{- end }}
         ports:
           - containerPort: 9080

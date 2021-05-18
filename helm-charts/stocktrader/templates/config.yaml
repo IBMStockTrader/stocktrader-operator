@@ -18,6 +18,7 @@ metadata:
   name: {{ .Release.Name }}-config
 data:
   auth.type: {{ .Values.global.auth }}
+  trace.spec: "{{ .Values.global.traceSpec }}"
   broker.url: {{ tpl .Values.broker.url . }}
   portfolio.url: {{ tpl .Values.portfolio.url . }}
   stockQuote.url: {{ tpl .Values.stockQuote.url . }}
@@ -35,7 +36,9 @@ data:
   cloudant.collector: {{ .Values.cloudant.collector }}
   collector.url: {{ tpl .Values.collector.url . }}
   kafka.address: {{ .Values.kafka.address }}
-  kafka.topic: {{ .Values.kafka.topic }}
+  kafka.portfolioTopic: {{ .Values.kafka.portfolioTopic }}
+  kafka.accountTopic: {{ .Values.kafka.accountTopic }}
+  kafka.historyTopic: {{ .Values.kafka.historyTopic }}
   database.kind: {{ .Values.database.kind }}
   database.host: {{ .Values.database.host }}
   database.port: "{{ .Values.database.port }}"

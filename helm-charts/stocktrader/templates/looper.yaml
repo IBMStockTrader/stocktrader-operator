@@ -52,6 +52,12 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: trace.spec
+                optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
@@ -87,6 +93,12 @@ spec:
             value: json
           - name: WLP_LOGGING_CONSOLE_SOURCE
             value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
 {{- end }}
         ports:
           - containerPort: 9080

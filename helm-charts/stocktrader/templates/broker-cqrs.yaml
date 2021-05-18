@@ -1,4 +1,4 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2021 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -12,38 +12,38 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-{{- if .Values.tradeHistory.enabled }}
 #Deploy the pod
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-trade-history
+  name: {{ .Release.Name }}-broker-cqrs
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
     prism.subkind: Liberty
 spec:
-  replicas: {{ .Values.tradeHistory.replicas }}
+  replicas: {{ .Values.brokerCQRS.replicas }}
   selector:
     matchLabels:
-      app: trade-history
+      app: broker-cqrs
   template:
     metadata:
       labels:
-        app: trade-history
+        app: broker-cqrs
       annotations:
-        git-repo: "https://github.com/IBMStockTrader/stock-quote"
+        git-repo: "https://github.com/IBMStockTrader/broker-cqrs"
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
 {{- end }}
 {{- if .Values.global.istio }}
+        maistra.io/expose-route: 'true'
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
       containers:
-      - name: trade-history
-        image: "{{ .Values.tradeHistory.image.repository }}:{{ .Values.tradeHistory.image.tag }}"
+      - name: broker-cqrs
+        image: "{{ .Values.brokerCQRS.image.repository }}:{{ .Values.brokerCQRS.image.tag }}"
         env:
           - name: AUTH_TYPE
             valueFrom:
@@ -56,78 +56,61 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: trace.spec
                 optional: true
-          - name: JWT_AUDIENCE
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config 
-                key: jwt.audience
-          - name: JWT_ISSUER
+          - name: KAFKA_PORTFOLIO_TOPIC
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: jwt.issuer
-          - name: MONGO_USER
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: mongo.user
-                optional: false
-          - name: MONGO_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: mongo.password
-                optional: false
-          - name: MONGO_AUTH_DB
+                key: kafka.portfolioTopic
+                optional: true
+          - name: KAFKA_ACCOUNT_TOPIC
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: mongo.authDB
-                optional: false
-          - name: MONGO_DATABASE
+                key: kafka.accountTopic
+                optional: true
+          - name: KAFKA_HISTORY_TOPIC
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: mongo.database
-                optional: false
-          - name: MONGO_IP
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mongo.ip
-                optional: false
-          - name: MONGO_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mongo.port
-                optional: false
-          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_BOOTSTRAP_SERVERS
+                key: kafka.historyTopic
+                optional: true
+          - name: KAFKA_ADDRESS
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: kafka.address
-                optional: false
+                optional: true
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
                 key: kafka.user
                 optional: true
-          - name: CONSUMER_API_KEY
+          - name: KAFKA_API_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-credentials
                 key: kafka.apiKey
-                optional: false
-          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_JAAS_CONFIG
-            value: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$(KAFKA_USER)\" password=\"$(CONSUMER_API_KEY)\";"
-          - name: MP_MESSAGING_INCOMING_STOCKTRADER_TOPIC
+                optional: true
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-credentials
+                key: redis.url
+          - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: kafka.topic 
-                optional: false
+                key: jwt.audience
+          - name: JWT_ISSUER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: jwt.issuer
+          - name: ACCOUNT_ENABLED
+            value: {{ quote .Values.account.enabled }}
+          - name: TRADE_HISTORY_ENABLED
+            value: {{ quote .Values.tradeHistory.enabled }}
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
@@ -158,65 +141,64 @@ spec:
             path: /health/ready
             port: 9080
           initialDelaySeconds: 60
-          periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+          periodSeconds: 15
+          failureThreshold: 2
         livenessProbe:
           httpGet:
             path: /health/live
             port: 9080
           initialDelaySeconds: 90
-          periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+          periodSeconds: 15
+          failureThreshold: 3
 {{- end }}
         resources:
           limits:
-            cpu: 1000m
-            memory: 1000Mi
+            cpu: 500m
+            memory: 500Mi
           requests:
             cpu: 250m
-            memory: 250Mi
-{{- if .Values.tradeHistory.autoscale }}
+            memory: 256Mi
+{{- if .Values.brokerCQRS.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}-trade-history-hpa
+  name: {{ .Release.Name }}-broker-cqrs-hpa
   labels:
     app: stock-trader
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Release.Name }}-trade-history
-  minReplicas: {{ .Values.tradeHistory.replicas }}
-  maxReplicas: {{ .Values.tradeHistory.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.tradeHistory.cpuThreshold }}
+    name: {{ .Release.Name }}-broker-cqrs
+  minReplicas: {{ .Values.brokerCQRS.replicas }}
+  maxReplicas: {{ .Values.brokerCQRS.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.brokerCQRS.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-trade-history-service
+  name: {{ .Release.Name }}-broker-cqrs-service
+  labels:
+    app: broker-cqrs
 {{- if .Values.global.monitoring }}
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/port: "9080"
 {{- end }}
 spec:
-  # if your cluster supports it, uncomment the following to automatically create
-  # an external load-balanced IP for the frontend service.
-  #type: LoadBalancer
-  #type: NodePort
+  type: NodePort
   ports:
-  # the port that this service should serve on
-  - name: http
-    port: 9080
-  - name: https
-    port: 9443
+    - name: http
+      protocol: TCP
+      port: 9080
+      targetPort: 9080
+    - name: https
+      protocol: TCP
+      port: 9443
+      targetPort: 9443
   selector:
-    app: trade-history
-{{- end }}
+    app: broker-cqrs
