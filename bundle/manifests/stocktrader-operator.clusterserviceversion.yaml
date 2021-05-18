@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: ibmstocktrader/stocktrader-operator:latest
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.6.2
+    operators.operatorframework.io/builder: operator-sdk-v1.7.2
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -17,7 +17,7 @@ metadata:
           "apiVersion": "operators.ibm.com/v1",
           "kind": "StockTrader",
           "metadata": {
-            "name": "sample"
+            "name": "example-stocktrader"
           },
           "spec": {
             "global": {
@@ -50,6 +50,17 @@ metadata:
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
+            },
+            "brokerCQRS": {
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
+              "image": {
+                "repository": "ibmstocktrader/broker-cqrs",
+                "tag": "1.0.0"
+              },
+              "url": "http://{{ .Release.Name }}-broker-cqrs-service:9080/broker"
             },
             "portfolio": {
               "replicas": 1,
@@ -240,7 +251,9 @@ metadata:
             },
             "kafka": {
               "address": "\u003cyour Kafka proxy service\u003e:30000",
-              "topic": "stocktrader",
+              "accountTopic": "account",
+              "historyTopic": "history",
+              "portfolioTopic": "portfolio",
               "user": "token",
               "apiKey": "\u003cyour API key\u003e"
             },
@@ -461,6 +474,52 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+
+          # Section for Broker CQRS settings
+          - path: brokerCQRS
+            displayName: Broker CQRS microservice
+          - path: brokerCQRS.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.image.repository
+            description: Path to locate the Docker image for the broker CQRS microservice
+            displayName: Broker CQRS Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.image.tag
+            description: Tag for the Docker image for the broker CQRS microservice
+            displayName: Broker CQRS Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Broker CQRS URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
 
           # Section for Portfolio settings
           - path: portfolio
@@ -1281,9 +1340,21 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.accountTopic
+            description: Kafka account topic name
+            displayName: Account Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.historyTopic
+            description: Kafka history topic name
+            displayName: History Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
           - path: kafka.topic
-            description: Kafka topic name
-            displayName: Topic
+            description: Kafka portfolio topic name
+            displayName: Portfolio Topic
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
