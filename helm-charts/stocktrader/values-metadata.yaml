@@ -61,11 +61,21 @@ global:
       label: "Enable Readiness and Liveness probes"
       description: "Configure Kubernetes to periodically probe each microservice to determine its health"
       type: boolean
+  disableLogFiles:
+    __metadata:
+      label: "Disable logging into the container filesystem"
+      description: "Only send logs to stdout - don't mutate the container on each log entry"
+      type: boolean
   jsonLogging:
     __metadata:
       label: "Output pod logs in JSON format"
       description: "Enable to send logs to ElasticSearch so they can be viewed in Kibana"
       type: boolean
+  traceSpec:
+    __metadata:
+      label: "Trace specification"
+      description: "Control logging level for each microservice or for Liberty features"
+      type: string
   specifyCerts:
     __metadata:
       label: "Specify SSL Certificates"
@@ -91,6 +101,8 @@ database:
         value: "db2"
       - label: "PostgreSQL"
         value: "postgres"
+      - label: "Cockroach"
+        value: "cockroach"
       - label: "Derby"
         value: "derby"
   host:
@@ -159,6 +171,49 @@ broker:
   url:
     __metadata:
       label: "Broker URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
+brokerCQRS:
+  __metadata:
+    label: "Broker CQRS microservice"
+    description: "Settings that apply to the Broker CQRS microservice"
+  replicas:
+    __metadata:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
+    __metadata:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
+    __metadata:
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
+  image:
+    __metadata:
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the broker-cqrs microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the broker-cqrs microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the broker-cqrs microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Broker CQRS URL"
       description: "URL at which this microservice can be accessed by other microservices"
       type: string
 portfolio:
@@ -871,10 +926,20 @@ kafka:
       label: "Address"
       description: "Specify in ip:port or hostname:port format.  Use the Kube DNS service name and local port when using an intra-cluster deployment of IBM Event Streams"
       type: string
-  topic:
+  accountTopic:
     __metadata:
-      label: "Topic"
-      description: "Kafka topic name"
+      label: "Account topic"
+      description: "Kafka topic for Account updates (for CQRS)"
+      type: string
+  portfolioTopic:
+    __metadata:
+      label: "Portfolio topic"
+      description: "Kafka topic for Portfolio updates (for CQRS)"
+      type: string
+  historyTopic:
+    __metadata:
+      label: "History topic"
+      description: "Kafka topic for Trade History (for ROI calculation)"
       type: string
   user:
     __metadata:

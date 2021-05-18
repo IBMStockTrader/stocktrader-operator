@@ -36,11 +36,22 @@ The parameters allow you to:
 | Parameter                           | Description                                         | Default                                                                         |
 | ----------------------------------- | ----------------------------------------------------| --------------------------------------------------------------------------------|
 | | | |
+| broker.image.repository | image repository |  ibmstocktrader/broker
+| broker.image.tag | image tag | latest
+| | | |
 | portfolio.image.repository | image repository |  ibmstocktrader/portfolio
 | portfolio.image.tag | image tag | latest
 | | | |
 | stockQuote.image.repository | image repository | ibmstocktrader/stock-quote
 | stockQuote.image.tag | image tag | latest
+| | | |
+| brokerCQRS.enabled | Deploy broker-CQRS microservice | false
+| brokerCQRS.image.repository | image repository |  ibmstocktrader/broker-cqrs
+| brokerCQRS.image.tag | image tag | latest
+| | | |
+| account.enabled | Deploy account microservice | false
+| account.image.repository | image repository | ibmstocktrader/account
+| account.image.tag | image tag | latest
 | | | |
 | trader.enabled | Deploy trader microservice | true
 | trader.image.repository | image repository | ibmstocktrader/trader
@@ -61,6 +72,14 @@ The parameters allow you to:
 | notificationTwitter.enabled | Deploy notification-twitter microservice | false
 | notificationTwitter.image.repository | image repository | ibmstocktrader/notification-twitter
 | notificationTwitter.image.tag | image tag | latest
+| | | |
+| looper.enabled | Deploy looper microservice | false
+| looper.image.repository | image repository | ibmstocktrader/looper
+| looper.image.tag | image tag | latest
+| | | |
+| collector.enabled | Deploy collector microservice | false
+| collector.image.repository | image repository | ibmstocktrader/collector
+| collector.image.tag | image tag | latest
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
@@ -68,7 +87,7 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 
 ## Building and Deploying the Chart
 
-After cloning this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-1.5.0.tgz file.
+After cloning this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-1.6.0.tgz file.
 
 It is also handy to change directory into the `stocktrader` directory (where the Chart.yaml is) and run `helm lint` to validate the helm chart.
 
