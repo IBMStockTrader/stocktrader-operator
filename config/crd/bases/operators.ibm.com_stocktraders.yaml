@@ -103,6 +103,44 @@ spec:
                     description: Broker URL
                     type: string
                 type: object
+              brokerCQRS:
+                description: Broker CQRS microservice
+                properties:
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  enabled:
+                    description: Enable the Broker CQRS microservice
+                    type: boolean
+                  image:
+                    description: Docker image settings
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                    type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  url:
+                    description: Broker CQRS URL
+                    type: string
+                type: object
               cloudant:
                 description: IBM Cloudant settings (optional)
                 properties:
@@ -241,6 +279,9 @@ spec:
               kafka:
                 description: Kafka settings (optional)
                 properties:
+                  accountTopic:
+                    description: Account Topic
+                    type: string
                   address:
                     description: Address
                     type: string
@@ -248,8 +289,11 @@ spec:
                     description: API Key
                     format: password
                     type: string
-                  topic:
-                    description: Topic
+                  historyTopic:
+                    description: Trade History Topic
+                    type: string
+                  portfolioTopic:
+                    description: Portfolio Topic
                     type: string
                   user:
                     description: User ID
