@@ -17,7 +17,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-broker-cqrs
+  name: {{ .Release.Name }}-broker-query
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
@@ -30,9 +30,9 @@ spec:
   template:
     metadata:
       labels:
-        app: broker-cqrs
+        app: broker-query
       annotations:
-        git-repo: "https://github.com/IBMStockTrader/broker-cqrs"
+        git-repo: "https://github.com/IBMStockTrader/broker-query"
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
@@ -165,14 +165,14 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}-broker-cqrs-hpa
+  name: {{ .Release.Name }}-broker-query-hpa
   labels:
     app: stock-trader
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Release.Name }}-broker-cqrs
+    name: {{ .Release.Name }}-broker-query
   minReplicas: {{ .Values.brokerCQRS.replicas }}
   maxReplicas: {{ .Values.brokerCQRS.maxReplicas }}
   targetCPUUtilizationPercentage: {{ .Values.brokerCQRS.cpuThreshold }}
@@ -182,9 +182,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-broker-cqrs-service
+  name: {{ .Release.Name }}-broker-query-service
   labels:
-    app: broker-cqrs
+    app: broker-query
 {{- if .Values.global.monitoring }}
   annotations:
     prometheus.io/scrape: 'true'
@@ -202,5 +202,5 @@ spec:
       port: 9443
       targetPort: 9443
   selector:
-    app: broker-cqrs
+    app: broker-query
 {{- end }}
