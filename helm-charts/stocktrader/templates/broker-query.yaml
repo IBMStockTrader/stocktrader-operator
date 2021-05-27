@@ -26,7 +26,7 @@ spec:
   replicas: {{ .Values.brokerCQRS.replicas }}
   selector:
     matchLabels:
-      app: broker-cqrs
+      app: broker-query
   template:
     metadata:
       labels:
