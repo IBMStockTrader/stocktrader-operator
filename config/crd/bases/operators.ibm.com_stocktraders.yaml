@@ -199,6 +199,19 @@ spec:
                     description: Collector URL
                     type: string
                 type: object
+              vault:
+                description: Vault Settings (optional)
+                type: object
+                properties:
+                  enabled:
+                    description: Microservices use secrets from Vault
+                    type: boolean
+                  path:
+                    description: Secrets path in Vault
+                    type: string
+                  role:
+                    description: Authentication role in Vault
+                    type: string
               database:
                 description: Database Settings.  Mandatory - required by the portfolio microservice
                 properties:
@@ -243,6 +256,9 @@ spec:
                     type: string
                   healthCheck:
                     description: Enable Readiness and Liveness probes
+                    type: boolean
+                  externalSecrets:
+                    description: Allow use of a Kubernetes Secret not created by the operator
                     type: boolean
                   ingress:
                     description: Enable Ingress
