@@ -57,10 +57,10 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/broker-cqrs",
+                "repository": "ibmstocktrader/broker-query",
                 "tag": "1.0.0"
               },
-              "url": "http://{{ .Release.Name }}-broker-cqrs-service:9080/broker"
+              "url": "http://{{ .Release.Name }}-broker-query-service:9080/broker"
             },
             "portfolio": {
               "replicas": 1,
