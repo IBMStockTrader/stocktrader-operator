@@ -268,7 +268,7 @@ spec:
                     type: boolean
                   secretsName:
                     description: Name of the Kubernetes Secret where Stock Trader secrets are stored
-                    type: boolean
+                    type: string
                   ingress:
                     description: Enable Ingress
                     type: boolean
