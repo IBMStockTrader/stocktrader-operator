@@ -263,10 +263,10 @@ spec:
                   configMapName:
                     description: Name of the Kubernetes ConfigMap where Stock Trader configuration values are stored
                     type: string
-                  externalSecrets:
+                  externalSecret:
                     description: Allow use of a Kubernetes Secret not created by the operator
                     type: boolean
-                  secretsName:
+                  secretName:
                     description: Name of the Kubernetes Secret where Stock Trader secrets are stored
                     type: string
                   ingress:
