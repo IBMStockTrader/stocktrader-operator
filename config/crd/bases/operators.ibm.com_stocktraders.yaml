@@ -260,6 +260,9 @@ spec:
                   externalSecrets:
                     description: Allow use of a Kubernetes Secret not created by the operator
                     type: boolean
+                  externalConfigMap:
+                    description: Allow use of a Kubernetes ConfigMap not created by the operator
+                    type: boolean
                   ingress:
                     description: Enable Ingress
                     type: boolean
