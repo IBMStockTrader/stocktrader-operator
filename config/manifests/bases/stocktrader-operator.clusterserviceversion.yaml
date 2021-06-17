@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: ibmstocktrader/stocktrader-operator:latest
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.7.2
+    operators.operatorframework.io/builder: operator-sdk-v1.8.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -29,6 +29,11 @@ metadata:
               "route": true,
               "healthCheck": true,
               "jsonLogging": false,
+              "disableLogFiles": false,
+              "externalConfigMap": false,
+              "configMapName": "{{ .Release.Name }}-config",
+              "externalSecret": false,
+              "secretMapName": "{{ .Release.Name }}-credentials",
               "specifyCerts": false,
               "certs": "\u003cyour SSL certs\u003e"
             },
@@ -208,6 +213,11 @@ metadata:
               "baseDN": "o=ibm.com",
               "realm": "BluePages"
             },
+            "vault": {
+              "enabled": false,
+              "path": "\u003cpath to Vault secrets\u003e",
+              "role": "\u003cVault auth role\u003e"
+            },
             "cloudant": {
               "url": "\u003cyour Cloudant URL\u003e",
               "id": "\u003cyour Cloudant ID\u003e",
@@ -370,6 +380,36 @@ spec:
           - path: global.jsonLogging
             description: Enable to send logs to ElasticSearch so they can be viewed in Kibana
             displayName: Output pod logs in JSON format
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.disableLogFiles
+            description: Enable to keep logs from being written to the container's file system
+            displayName: Prevent log files creation
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.externalConfigMap
+            description: Enable to provide your own config map
+            displayName: Prevent config map creation
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.configMapName
+            description: Name of the Kubernetes config map you have pre-created
+            displayName: Name of your config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.externalSecret
+            description: Enable to provide your own secret
+            displayName: Prevent secret creation
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.secretName
+            description: Name of the Kubernetes secret you have pre-created
+            displayName: Name of your secret
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
@@ -1140,6 +1180,28 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ldap
+
+          # Section for Vault settings
+          - path: vault
+            displayName: Vault settings
+          - path: vault.enabled
+            description: SEnable microservices to pull secrets from Hashicorp Vault
+            displayName: Enable Vault integration
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:vault
+          - path: vault.path
+            description: The local path in a Vault instance where the secrets are stored
+            displayName: Vault secrets path
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:vault
+          - path: vault.role
+            description: The registered authentication role created in Vault
+            displayName: Vault authentication role
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:vault
 
           # Section for Cloudant settings
           - path: cloudant
