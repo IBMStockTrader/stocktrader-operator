@@ -64,59 +64,59 @@ spec:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: auth.type
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.issuer
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.audience
           - name: OIDC_NAME
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.name
           - name: OIDC_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.issuer
           - name: OIDC_AUTH
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.auth
           - name: OIDC_TOKEN
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.token
 {{- if not .Values.vault.enabled }}
           - name: OIDC_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: oidc.clientId
           - name: OIDC_SECRET
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: oidc.clientSecret
 {{- end }}
           - name: OIDC_KEY
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.key
           - name: PROXY_HOST
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: ingress.address
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT

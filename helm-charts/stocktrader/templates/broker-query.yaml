@@ -66,66 +66,66 @@ spec:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: trace.spec
                 optional: true
           - name: KAFKA_PORTFOLIO_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.portfolioTopic
                 optional: true
           - name: KAFKA_ACCOUNT_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.accountTopic
                 optional: true
           - name: KAFKA_HISTORY_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.historyTopic
                 optional: true
           - name: KAFKA_ADDRESS
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.address
                 optional: true
 {{- if not .Values.vault.enabled }}
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: kafka.user
                 optional: true
           - name: KAFKA_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: kafka.apiKey
                 optional: true
           - name: REDIS_URL
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: redis.url
 {{- end }}
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.issuer
           - name: ACCOUNT_ENABLED
             value: {{ quote .Values.account.enabled }}
@@ -135,7 +135,7 @@ spec:
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: ssl.certs
                 optional: true
 {{- end }}

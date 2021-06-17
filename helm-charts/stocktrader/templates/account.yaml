@@ -72,144 +72,144 @@ spec:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: trace.spec
                 optional: true
 {{- if not .Values.vault.enabled }}
           - name: MQ_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: mq.id
           - name: MQ_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: mq.password
           - name: WATSON_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: watson.id
                 optional: true
           - name: WATSON_PWD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: watson.password
           - name: ODM_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: odm.id
                 optional: true
           - name: ODM_PWD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: odm.password
                 optional: true
           - name: CLOUDANT_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: cloudant.id
           - name: CLOUDANT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: cloudant.password
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: kafka.user
                 optional: true
           - name: KAFKA_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: kafka.apiKey
                 optional: true
 {{- end }}
           - name: MQ_HOST
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.host
           - name: MQ_PORT
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.port
           - name: MQ_CHANNEL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.channel
           - name: MQ_QUEUE_MANAGER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.queueManager
           - name: MQ_QUEUE
             valueFrom:
                configMapKeyRef:
-                 name: {{ .Values.global.configMapName }}
+                 name: {{ tpl .Values.global.configMapName . }}
                  key: mq.queue
           - name: WATSON_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: watson.url
           - name: ODM_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: odm.url
                 optional: true
           - name: CLOUDANT_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: cloudant.url
           - name: CLOUDANT_DB
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: cloudant.database
           - name: KAFKA_ACCOUNT_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.accountTopic
                 optional: true
           - name: KAFKA_HISTORY_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.historyTopic
                 optional: true
           - name: KAFKA_ADDRESS
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.address
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.issuer
           - name: MESSAGING_ENABLED
             value: {{ quote .Values.messaging.enabled }}
@@ -219,7 +219,7 @@ spec:
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: ssl.certs
                 optional: true
 {{- end }}

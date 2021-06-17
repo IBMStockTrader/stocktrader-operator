@@ -66,72 +66,72 @@ spec:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: trace.spec
                 optional: true
 {{- if not .Values.vault.enabled }}
           - name: MQ_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: mq.id
           - name: MQ_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: mq.password
 {{- end }}
           - name: MQ_HOST
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.host
           - name: MQ_PORT
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.port
           - name: MQ_CHANNEL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.channel
           - name: MQ_QUEUE_MANAGER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.queueManager
           - name: MQ_QUEUE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: mq.queue
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.issuer
           - name: NOTIFICATION_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: messaging.notification.url
                 optional: true
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: ssl.certs
                 optional: true
 {{- end }}

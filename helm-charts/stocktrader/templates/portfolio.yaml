@@ -66,97 +66,97 @@ spec:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: trace.spec
                 optional: true
           - name: JDBC_KIND
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: database.kind
           - name: JDBC_HOST
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: database.host
           - name: JDBC_PORT
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: database.port
           - name: JDBC_DB
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: database.db
 {{- if not .Values.vault.enabled }}
           - name: JDBC_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: database.id
           - name: JDBC_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: database.password
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: kafka.user
                 optional: true
           - name: KAFKA_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: kafka.apiKey
                 optional: true
 {{- end }}
           - name: KAFKA_PORTFOLIO_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.portfolioTopic
                 optional: true
           - name: KAFKA_HISTORY_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.historyTopic
                 optional: true
           - name: KAFKA_ADDRESS
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.address
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.issuer
           - name: STOCK_QUOTE_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: stockQuote.url
                 optional: true
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: ssl.certs
                 optional: true
 {{- end }}

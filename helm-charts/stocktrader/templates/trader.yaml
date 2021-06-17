@@ -67,58 +67,58 @@ spec:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: trace.spec
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.issuer
           - name: LDAP_HOST
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }} 
+                name: {{ tpl .Values.global.configMapName . }} 
                 key: ldap.host
                 optional: true
           - name: LDAP_PORT
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }} 
+                name: {{ tpl .Values.global.configMapName . }} 
                 key: ldap.port
                 optional: true
           - name: LDAP_BASE_DN
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }} 
+                name: {{ tpl .Values.global.configMapName . }} 
                 key: ldap.baseDN
                 optional: true
           - name: LDAP_REALM
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }} 
+                name: {{ tpl .Values.global.configMapName . }} 
                 key: ldap.realm
                 optional: true
           - name: BROKER_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: broker.url
                 optional: true
           - name: COLLECTOR_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: collector.url
                 optional: true
           - name: COLLECTOR_ENABLED
@@ -128,58 +128,58 @@ spec:
           - name: S3_BUCKET
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: s3.bucket
                 optional: true
           - name: S3_LOCATION
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: s3.location
                 optional: true
           - name: S3_ENDPOINT_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: s3.endpointUrl
                 optional: true
           - name: S3_RESOURCE_INSTANCE_ID
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: s3.resourceInstanceId
                 optional: true
 {{- if not .Values.vault.enabled }}
           - name: S3_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: s3.apiKey
                 optional: true
           - name: OIDC_CLIENTID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: oidc.clientId
                 optional: true
           - name: OIDC_CLIENTSECRET
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.secretName }}
+                name: {{ tpl .Values.global.secretName . }}
                 key: oidc.clientSecret
                 optional: true
 {{- end }}
           - name: OIDC_DISCOVERY_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.discoveryUrl
                 optional: true
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.global.configMapName }}
+                name: {{ tpl .Values.global.configMapName . }}
                 key: ssl.certs
                 optional: true
 {{- end }}
