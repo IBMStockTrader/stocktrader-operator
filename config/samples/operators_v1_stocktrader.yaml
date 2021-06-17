@@ -14,6 +14,10 @@ spec:
     jsonLogging: false
     istio: false
     istioNamespace: istio-system
+    externalConfigMap: false
+    configMapName: {{ .Release.Name }}-config
+    externalSecret: false
+    secretName: {{ .Release.Name }}-credentials
     specifyCerts: false
     certs: |
       -----BEGIN CERTIFICATE-----
@@ -155,6 +159,10 @@ spec:
     port: 389
     baseDN: o=ibm.com
     realm: BluePages
+  vault:
+    enabled: false
+    path: <path to Vault secrets>
+    role: <Vault auth role>
   cloudant:
     url: <your Cloudant URL>
     id: <your Cloudant ID>
