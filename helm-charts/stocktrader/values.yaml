@@ -28,6 +28,10 @@ global:
   istioNamespace: istio-system
   specifyCerts: false
   certs: <your SSL certificates>
+  externalConfigMap: false
+  configMapName: ceh-config
+  externalSecret: false
+  secretName: ceh-credentials
 database:
   kind: db2
   host: db2trader1-ibm-db2oltp-dev
@@ -35,6 +39,10 @@ database:
   id: db2inst1
   password: db2inst1
   db: trader
+vault:
+  enabled: false
+  path: <path to Vault secrets>
+  role: <Vault auth role>
 broker:
   replicas: 1
   autoscale: false
@@ -90,9 +98,9 @@ brokerCQRS:
   maxReplicas: 10
   cpuThreshold: 75
   image:
-    repository: ibmstocktrader/broker-query
+    repository: ibmstocktrader/broker-cqrs
     tag: 1.0.0
-  url: http://{{ .Release.Name }}-broker-query-service:9080/broker-cqrs
+  url: http://{{ .Release.Name }}-broker-cqrs-service:9080/broker-cqrs
 account:
   enabled: false
   replicas: 1
