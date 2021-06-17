@@ -34,6 +34,17 @@ spec:
         app: trader
       annotations:
         git-repo: "https://github.com/IBMStockTrader/trader"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export S3_API_KEY={{"{{"}} .Data.data.s3ApiKey {{"}}"}}
+          export OIDC_CLIENTID={{"{{"}} .Data.data.oidcClientId {{"}}"}}
+          export OIDC_CLIENTSECRET={{"{{"}} .Data.data.oidcClientSecret {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
@@ -46,80 +57,68 @@ spec:
       containers:
       - name: trader
         image: "{{ .Values.trader.image.repository }}:{{ .Values.trader.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: trace.spec
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.issuer
-          - name: OIDC_CLIENTID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: oidc.clientId
-                optional: true
-          - name: OIDC_CLIENTSECRET
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-credentials
-                key: oidc.clientSecret
-                optional: true
-          - name: OIDC_DISCOVERY_URL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: oidc.discoveryUrl
-                optional: true
           - name: LDAP_HOST
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config 
+                name: {{ .Values.global.configMapName }} 
                 key: ldap.host
                 optional: true
           - name: LDAP_PORT
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config 
+                name: {{ .Values.global.configMapName }} 
                 key: ldap.port
                 optional: true
           - name: LDAP_BASE_DN
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config 
+                name: {{ .Values.global.configMapName }} 
                 key: ldap.baseDN
                 optional: true
           - name: LDAP_REALM
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config 
+                name: {{ .Values.global.configMapName }} 
                 key: ldap.realm
                 optional: true
           - name: BROKER_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: broker.url
                 optional: true
           - name: COLLECTOR_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: collector.url
                 optional: true
           - name: COLLECTOR_ENABLED
@@ -129,38 +128,58 @@ spec:
           - name: S3_BUCKET
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: s3.bucket
                 optional: true
           - name: S3_LOCATION
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: s3.location
                 optional: true
           - name: S3_ENDPOINT_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: s3.endpointUrl
                 optional: true
           - name: S3_RESOURCE_INSTANCE_ID
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: s3.resourceInstanceId
                 optional: true
+{{- if not .Values.vault.enabled }}
           - name: S3_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: s3.apiKey
+                optional: true
+          - name: OIDC_CLIENTID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.secretName }}
+                key: oidc.clientId
+                optional: true
+          - name: OIDC_CLIENTSECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.secretName }}
+                key: oidc.clientSecret
+                optional: true
+{{- end }}
+          - name: OIDC_DISCOVERY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: oidc.discoveryUrl
                 optional: true
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: ssl.certs
                 optional: true
 {{- end }}

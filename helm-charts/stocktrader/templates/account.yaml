@@ -33,6 +33,24 @@ spec:
         app: account
       annotations:
         git-repo: "https://github.com/IBMStockTrader/account"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export MQ_ID={{"{{"}} .Data.data.mqId {{"}}"}}
+          export MQ_PASSWORD={{"{{"}} .Data.data.mqPassword {{"}}"}}
+          export WATSON_ID={{"{{"}} .Data.data.watsonId {{"}}"}}
+          export WATSON_PWD={{"{{"}} .Data.data.watsonPwd {{"}}"}}
+          export ODM_ID={{"{{"}} .Data.data.odmId {{"}}"}}
+          export ODM_PWD={{"{{"}} .Data.data.odmPwd {{"}}"}}
+          export CLOUDANT_ID={{"{{"}} .Data.data.cloudantId {{"}}"}}
+          export CLOUDANT_PASSWORD={{"{{"}} .Data.data.cloudantPassword {{"}}"}}
+          export KAFKA_USER={{"{{"}} .Data.data.kafkaUser {{"}}"}}
+          export KAFKA_API_KEY={{"{{"}} .Data.data.kafkaApiKey {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
@@ -44,146 +62,154 @@ spec:
       containers:
       - name: account
         image: "{{ .Values.account.image.repository }}:{{ .Values.account.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: trace.spec
                 optional: true
+{{- if not .Values.vault.enabled }}
           - name: MQ_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: mq.id
           - name: MQ_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: mq.password
-          - name: MQ_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mq.host
-          - name: MQ_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mq.port
-          - name: MQ_CHANNEL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mq.channel
-          - name: MQ_QUEUE_MANAGER
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mq.queueManager
-          - name: MQ_QUEUE
-            valueFrom:
-               configMapKeyRef:
-                 name: {{ .Release.Name }}-config
-                 key: mq.queue
-          - name: WATSON_URL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: watson.url
           - name: WATSON_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: watson.id
                 optional: true
           - name: WATSON_PWD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: watson.password
-          - name: ODM_URL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: odm.url
-                optional: true
           - name: ODM_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: odm.id
                 optional: true
           - name: ODM_PWD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: odm.password
                 optional: true
-          - name: CLOUDANT_URL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: cloudant.url
           - name: CLOUDANT_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: cloudant.id
           - name: CLOUDANT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: cloudant.password
-          - name: CLOUDANT_DB
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: cloudant.database
-          - name: KAFKA_ACCOUNT_TOPIC
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.accountTopic
-                optional: true
-          - name: KAFKA_HISTORY_TOPIC
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.historyTopic
-                optional: true
-          - name: KAFKA_ADDRESS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.address
-                optional: true
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: kafka.user
                 optional: true
           - name: KAFKA_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: kafka.apiKey
+                optional: true
+{{- end }}
+          - name: MQ_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mq.host
+          - name: MQ_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mq.port
+          - name: MQ_CHANNEL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mq.channel
+          - name: MQ_QUEUE_MANAGER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mq.queueManager
+          - name: MQ_QUEUE
+            valueFrom:
+               configMapKeyRef:
+                 name: {{ .Values.global.configMapName }}
+                 key: mq.queue
+          - name: WATSON_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: watson.url
+          - name: ODM_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: odm.url
+                optional: true
+          - name: CLOUDANT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: cloudant.url
+          - name: CLOUDANT_DB
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: cloudant.database
+          - name: KAFKA_ACCOUNT_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: kafka.accountTopic
+                optional: true
+          - name: KAFKA_HISTORY_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: kafka.historyTopic
+                optional: true
+          - name: KAFKA_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: kafka.address
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.issuer
           - name: MESSAGING_ENABLED
             value: {{ quote .Values.messaging.enabled }}
@@ -193,7 +219,7 @@ spec:
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: ssl.certs
                 optional: true
 {{- end }}

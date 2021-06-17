@@ -12,6 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+{{- if not .Values.vault.externalConfigMap }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -66,3 +67,4 @@ data:
   s3.resourceInstanceId: "{{ .Values.s3.resourceInstanceId }}"
   ssl.certs: |-
 {{ .Values.global.certs | indent 4 }}
+{{- end }}

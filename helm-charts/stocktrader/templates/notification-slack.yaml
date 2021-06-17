@@ -33,6 +33,16 @@ spec:
         app: notification-slack
       annotations:
         git-repo: "https://github.com/IBMStockTrader/notification-slack"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export OW_ID={{"{{"}} .Data.data.owId {{"}}"}}
+          export OW_PASSWORD={{"{{"}} .Data.data.owPassword {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
@@ -44,48 +54,56 @@ spec:
       containers:
       - name: notification-slack
         image: "{{ .Values.notificationSlack.image.repository }}:{{ .Values.notificationSlack.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: trace.spec
                 optional: true
           - name: OW_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: openwhisk.url
+{{- if not .Values.vault.enabled }}
           - name: OW_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: openwhisk.id
           - name: OW_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: openwhisk.password
+{{- end }}
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config 
+                name: {{ .Values.global.configMapName }} 
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.issuer
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: ssl.certs
                 optional: true
 {{- end }}

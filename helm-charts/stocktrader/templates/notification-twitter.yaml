@@ -33,6 +33,18 @@ spec:
         app: notification-twitter
       annotations:
         git-repo: "https://github.com/IBMStockTrader/notification-twitter"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export TWITTER_ACCESS_TOKEN={{"{{"}} .Data.data.twitterAccessToken {{"}}"}}
+          export TWITTER_ACCESS_TOKEN_SECRET={{"{{"}} .Data.data.twitterAccessTokenSecret {{"}}"}}
+          export TWITTER_CONSUMER_KEY={{"{{"}} .Data.data.twitterConsumerKey {{"}}"}}
+          export TWITTER_CONSUMER_SECRET={{"{{"}} .Data.data.twitterConsumerSecret {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
@@ -44,53 +56,61 @@ spec:
       containers:
       - name: notification-twitter
         image: "{{ .Values.notificationTwitter.image.repository }}:{{ .Values.notificationTwitter.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: trace.spec
                 optional: true
+{{- if not .Values.vault.enabled }}
           - name: TWITTER_CONSUMER_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: twitter.consumerKey
           - name: TWITTER_CONSUMER_SECRET
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: twitter.consumerSecret
           - name: TWITTER_ACCESS_TOKEN
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: twitter.accessToken
           - name: TWITTER_ACCESS_TOKEN_SECRET
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: twitter.accessTokenSecret
+{{- end }}
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.issuer
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: ssl.certs
                 optional: true
 {{- end }}

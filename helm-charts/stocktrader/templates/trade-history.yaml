@@ -32,7 +32,19 @@ spec:
       labels:
         app: trade-history
       annotations:
-        git-repo: "https://github.com/IBMStockTrader/stock-quote"
+        git-repo: "https://github.com/IBMStockTrader/trade-history"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export MONGO_USER={{"{{"}} .Data.data.mongoUser {{"}}"}}
+          export MONGO_PASSWORD={{"{{"}} .Data.data.mongoPassword {{"}}"}}
+          export KAFKA_USER={{"{{"}} .Data.data.kafkaUser {{"}}"}}
+          export CONSUMER_API_KEY={{"{{"}} .Data.data.kafkaApiKey {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
@@ -44,95 +56,103 @@ spec:
       containers:
       - name: trade-history
         image: "{{ .Values.tradeHistory.image.repository }}:{{ .Values.tradeHistory.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: trace.spec
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config 
+                name: {{ .Values.global.configMapName }} 
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.issuer
+{{- if not .Values.vault.enabled }}
           - name: MONGO_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: mongo.user
                 optional: false
           - name: MONGO_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: mongo.password
-                optional: false
-          - name: MONGO_AUTH_DB
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mongo.authDB
-                optional: false
-          - name: MONGO_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mongo.database
-                optional: false
-          - name: MONGO_IP
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mongo.ip
-                optional: false
-          - name: MONGO_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: mongo.port
-                optional: false
-          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_BOOTSTRAP_SERVERS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.address
                 optional: false
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: kafka.user
                 optional: true
           - name: CONSUMER_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: kafka.apiKey
                 optional: false
+{{- end }}
+          - name: MONGO_AUTH_DB
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mongo.authDB
+                optional: false
+          - name: MONGO_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mongo.database
+                optional: false
+          - name: MONGO_IP
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mongo.ip
+                optional: false
+          - name: MONGO_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: mongo.port
+                optional: false
+          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_BOOTSTRAP_SERVERS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: kafka.address
+                optional: false
           - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_JAAS_CONFIG
-            value: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$(KAFKA_USER)\" password=\"$(CONSUMER_API_KEY)\";"
+            value: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"$(KAFKA_USER)\" password=\"$(CONSUMER_API_KEY)\";"
           - name: MP_MESSAGING_INCOMING_STOCKTRADER_TOPIC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.topic 
+                name: {{ .Values.global.configMapName }}
+                key: kafka.historyTopic 
                 optional: false
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: ssl.certs
                 optional: true
 {{- end }}

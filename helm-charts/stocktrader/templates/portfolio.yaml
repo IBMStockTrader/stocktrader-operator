@@ -33,6 +33,18 @@ spec:
         app: portfolio
       annotations:
         git-repo: "https://github.com/IBMStockTrader/portfolio"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export JDBC_ID={{"{{"}} .Data.data.jdbcId {{"}}"}}
+          export JDBC_PASSWORD={{"{{"}} .Data.data.jdbcPassword {{"}}"}}
+          export KAFKA_USER={{"{{"}} .Data.data.kafkaUser {{"}}"}}
+          export KAFKA_API_KEY={{"{{"}} .Data.data.kafkaApiKey {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: "9080"
@@ -44,99 +56,107 @@ spec:
       containers:
       - name: portfolio
         image: "{{ .Values.portfolio.image.repository }}:{{ .Values.portfolio.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
         env:
           - name: AUTH_TYPE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: auth.type
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: trace.spec
                 optional: true
           - name: JDBC_KIND
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: database.kind
           - name: JDBC_HOST
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: database.host
           - name: JDBC_PORT
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: database.port
           - name: JDBC_DB
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: database.db
+{{- if not .Values.vault.enabled }}
           - name: JDBC_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: database.id
           - name: JDBC_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: database.password
-          - name: KAFKA_PORTFOLIO_TOPIC
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.portfolioTopic
-                optional: true
-          - name: KAFKA_HISTORY_TOPIC
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.historyTopic
-                optional: true
-          - name: KAFKA_ADDRESS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: kafka.address
-                optional: true
           - name: KAFKA_USER
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: kafka.user
                 optional: true
           - name: KAFKA_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-credentials
+                name: {{ .Values.global.secretName }}
                 key: kafka.apiKey
+                optional: true
+{{- end }}
+          - name: KAFKA_PORTFOLIO_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: kafka.portfolioTopic
+                optional: true
+          - name: KAFKA_HISTORY_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: kafka.historyTopic
+                optional: true
+          - name: KAFKA_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.configMapName }}
+                key: kafka.address
                 optional: true
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: jwt.issuer
           - name: STOCK_QUOTE_URL
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: stockQuote.url
                 optional: true
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
               configMapKeyRef:
-                name: {{ .Release.Name }}-config
+                name: {{ .Values.global.configMapName }}
                 key: ssl.certs
                 optional: true
 {{- end }}
