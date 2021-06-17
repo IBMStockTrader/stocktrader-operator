@@ -29,9 +29,9 @@ global:
   specifyCerts: false
   certs: <your SSL certificates>
   externalConfigMap: false
-  configMapName: {{ .Release.Name }}-config
+  configMapName: "{{ .Release.Name }}-config"
   externalSecret: false
-  secretName: {{ .Release.Name }}-credentials
+  secretName: "{{ .Release.Name }}-credentials"
 database:
   kind: db2
   host: db2trader1-ibm-db2oltp-dev
