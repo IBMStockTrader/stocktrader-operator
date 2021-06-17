@@ -1,0 +1,219 @@
+apiVersion: operators.ibm.com/v1
+kind: StockTrader
+metadata:
+  name: example-stocktrader
+spec:
+  # Default values copied from <project_dir>/helm-charts/stocktrader/values.yaml
+  
+  global:
+    auth: basic
+    monitoring: true
+    ingress: false
+    route: true
+    healthCheck: true
+    jsonLogging: false
+    istio: false
+    istioNamespace: istio-system
+    externalConfigMap: false
+    configMapName: {{ .Release.Name }}-config
+    externalSecret: false
+    secretName: {{ .Release.Name }}-credentials
+    specifyCerts: false
+    certs: |
+      -----BEGIN CERTIFICATE-----
+      Put your certificate(s) here
+      -----END CERTIFICATE-----
+  database:
+    kind: db2
+    host: db2trader1-ibm-db2oltp-dev
+    port: 50000
+    id: db2inst1
+    password: db2inst1
+    db: trader
+  broker:
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/broker
+      tag: latest
+    url: http://{{ .Release.Name }}-broker-service:9080/broker
+  portfolio:
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/portfolio
+      tag: latest
+    url: http://{{ .Release.Name }}-portfolio-service:9080/portfolio
+  stockQuote:
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/stock-quote
+      tag: latest
+    url: http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote
+    apiConnect: https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks
+    iexTrading: https://cloud.iexapis.com/stable/stock
+    iexApiKey: <your IEX API key>
+  trader:
+    enabled: true
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/trader
+      tag: latest
+  tradr:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/tradr
+      tag: latest
+  account:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/account
+      tag: latest
+    url: http://{{ .Release.Name }}-account-service:9080/account
+  collector:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/collector
+      tag: latest
+    url: http://{{ .Release.Name }}-collector-service:9080/collector
+  messaging:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/messaging
+      tag: latest
+    notification:
+      url: http://{{ .Release.Name }}-notification-service:9080/notification
+  notificationSlack:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/notification-slack
+      tag: latest
+  notificationTwitter:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/notification-twitter
+      tag: latest
+  tradeHistory:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/trade-history
+      tag: latest
+    url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
+  looper:
+    enabled: false
+    replicas: 1
+    autoscale: false
+    maxReplicas: 10
+    cpuThreshold: 75
+    image:
+      repository: ibmstocktrader/looper
+      tag: latest
+    url: http://{{ .Release.Name }}-looper-service:9080/looper
+  jwt:
+    audience: stock-trader
+    issuer: http://stock-trader.ibm.com
+  oidc:
+    clientId: <your client id>
+    clientSecret: <your client secret>
+    discoveryUrl: <your discovery URL>
+  ldap:
+    host: bluepages.ibm.com
+    port: 389
+    baseDN: o=ibm.com
+    realm: BluePages
+  vault:
+    enabled: false
+    path: <path to Vault secrets>
+    role: <Vault auth role>
+  cloudant:
+    url: <your Cloudant URL>
+    id: <your Cloudant ID>
+    password: <your Cloudant Password>
+    database: <your Cloudant account database name>
+    collector: <your Cloudant collector database name>
+  watson:
+    id: apikey
+    passwordOrApiKey: <your API key>
+    url: https://gateway.watsonplatform.net/tone-analyzer/api/v3/tone?version=2017-09-21&sentences=false
+  odm:
+    id: odmAdmin
+    password: odmAdmin
+    url: http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty
+  mq:
+    host: mqtrader1-mqtrader1
+    port: 1414
+    id: app
+    password: pwd
+    queueManager: stocktrader
+    queue: NotificationQ
+    channel: DEV.APP.SVRCONN
+  redis:
+    urlWithCredentials: redis://<your credentials>@redistrader1-ibm-redis-ha-dev-master-svc:6379
+    cacheInterval: 60
+  openwhisk:
+    id: <your id>
+    password: <your password>
+    url: https://openwhisk.ng.bluemix.net/api/v1/namespaces/jalcorn%40us.ibm.com_dev/actions/PostLoyaltyLevelToSlack
+  twitter:
+    consumerKey: <your consumer key>
+    consumerSecret: <your consumer secret>
+    accessToken: <your access token>
+    accessTokenSecret: <your access token secret>
+  kafka:
+    address: <your Kafka proxy service>:30000
+    topic: stocktrader
+    user: token
+    apiKey: <your API key>
+  mongo:
+    ip: <your Mongo IP>
+    port: 27017
+    user: <your Mongo user>
+    password: <your Mongo password>
+    database: <your Mongo database>
+    authDB: <your Mongo auth database>
+  s3:
+    enabled: false
+    bucket: stock-trader
+    location: <your S3 location>
+    endpointUrl: <your S3 endpoint URL>
+    resourceInstanceId: <your S3 CRN>
+    apiKey: <your S3 API Key>
+
