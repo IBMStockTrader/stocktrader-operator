@@ -199,6 +199,19 @@ spec:
                     description: Collector URL
                     type: string
                 type: object
+              vault:
+                description: Vault Settings (optional)
+                type: object
+                properties:
+                  enabled:
+                    description: Microservices use secrets from Vault
+                    type: boolean
+                  path:
+                    description: Secrets path in Vault
+                    type: string
+                  role:
+                    description: Authentication role in Vault
+                    type: string
               database:
                 description: Database Settings.  Mandatory - required by the portfolio microservice
                 properties:
@@ -244,6 +257,18 @@ spec:
                   healthCheck:
                     description: Enable Readiness and Liveness probes
                     type: boolean
+                  externalConfigMap:
+                    description: Allow use of a Kubernetes ConfigMap not created by the operator
+                    type: boolean
+                  configMapName:
+                    description: Name of the Kubernetes ConfigMap where Stock Trader configuration values are stored
+                    type: string
+                  externalSecret:
+                    description: Allow use of a Kubernetes Secret not created by the operator
+                    type: boolean
+                  secretName:
+                    description: Name of the Kubernetes Secret where Stock Trader secrets are stored
+                    type: string
                   ingress:
                     description: Enable Ingress
                     type: boolean
