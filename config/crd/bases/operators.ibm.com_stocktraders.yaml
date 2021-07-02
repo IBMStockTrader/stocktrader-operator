@@ -212,6 +212,9 @@ spec:
                   role:
                     description: Authentication role in Vault
                     type: string
+                  jwtPath:
+                    description: The container path of the ServiceAccount JWT
+                    type: string
               database:
                 description: Database Settings.  Mandatory - required by the portfolio microservice
                 properties:
