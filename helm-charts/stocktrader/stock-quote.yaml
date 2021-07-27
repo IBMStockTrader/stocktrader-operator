@@ -1,0 +1,223 @@
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+#Deploy the pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-stock-quote
+  labels:
+    app: {{ .Release.Name }}-stock-trader
+  annotations:
+{{- if .Values.collector.enabled }}
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-collector"}]'
+{{- end }}
+    prism.subkind: Liberty
+spec:
+  replicas: {{ .Values.stockQuote.replicas }}
+  selector:
+    matchLabels:
+        app: stock-quote
+  template:
+    metadata:
+      labels:
+        app: stock-quote
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/stock-quote"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export REDIS_URL={{"{{"}} .Data.data.redisUrl {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
+{{- if .Values.global.monitoring }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: "9080"
+{{- end }}
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
+{{- end }}
+    spec:
+      containers:
+      - name: stock-quote
+        image: "{{ .Values.stockQuote.image.repository }}:{{ .Values.stockQuote.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
+        env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trace.spec
+                optional: true
+          - name: CACHE_INTERVAL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: redis.cacheInterval
+                optional: true
+          - name: JWT_AUDIENCE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.audience
+          - name: JWT_ISSUER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.issuer
+          - name: APIC_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: apic.url
+                optional: true
+          - name: IEX_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: iex.url
+                optional: true
+          - name: COLLECTOR_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: collector.url
+                optional: true
+          - name: COLLECTOR_ENABLED
+            value: {{ quote .Values.collector.enabled }}
+{{- if not .Values.vault.enabled }}
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: redis.url
+{{- end }}
+{{- if .Values.global.specifyCerts }}
+          - name: cert_defaultTrustStore
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: ssl.certs
+                optional: true
+{{- end }}
+{{- if .Values.global.jsonLogging }}
+          - name: WLP_LOGGING_CONSOLE_FORMAT
+            value: json
+          - name: WLP_LOGGING_CONSOLE_SOURCE
+            value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
+{{- end }}
+        ports:
+          - containerPort: 9080
+          - containerPort: 9443
+        imagePullPolicy: Always
+{{- if .Values.global.healthCheck }}
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 9080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          failureThreshold: 2
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 9080
+          initialDelaySeconds: 90
+          periodSeconds: 15
+          failureThreshold: 3
+{{- end }}
+        resources:
+          limits:
+            cpu: 250m
+            memory: 500Mi
+          requests:
+            cpu: 125m
+            memory: 256Mi
+{{- if .Values.stockQuote.autoscale }}
+---
+#Deploy the autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-stock-quote-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-stock-quote
+  minReplicas: {{ .Values.stockQuote.replicas }}
+  maxReplicas: {{ .Values.stockQuote.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.stockQuote.cpuThreshold }}
+{{- end }}
+---
+#Deploy the service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-stock-quote-service
+  labels:
+    app: stock-quote
+{{- if .Values.global.monitoring }}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: "9080"
+{{- end }}
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9080
+      targetPort: 9080
+    - name: https
+      protocol: TCP
+      port: 9443
+      targetPort: 9443
+  selector:
+    app: stock-quote

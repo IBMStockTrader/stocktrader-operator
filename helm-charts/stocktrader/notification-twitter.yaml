@@ -1,0 +1,189 @@
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+{{- if .Values.notificationTwitter.enabled }}
+#Deploy the pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-notification-twitter
+  labels:
+    app: {{ .Release.Name }}-stock-trader
+  annotations:
+    prism.subkind: Liberty
+spec:
+  replicas: {{ .Values.notificationTwitter.replicas }}
+  selector:
+    matchLabels:
+      app: notification-twitter
+  template:
+    metadata:
+      labels:
+        app: notification-twitter
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/notification-twitter"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export TWITTER_ACCESS_TOKEN={{"{{"}} .Data.data.twitterAccessToken {{"}}"}}
+          export TWITTER_ACCESS_TOKEN_SECRET={{"{{"}} .Data.data.twitterAccessTokenSecret {{"}}"}}
+          export TWITTER_CONSUMER_KEY={{"{{"}} .Data.data.twitterConsumerKey {{"}}"}}
+          export TWITTER_CONSUMER_SECRET={{"{{"}} .Data.data.twitterConsumerSecret {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
+{{- if .Values.global.monitoring }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: "9080"
+{{- end }}
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
+{{- end }}
+    spec:
+      containers:
+      - name: notification-twitter
+        image: "{{ .Values.notificationTwitter.image.repository }}:{{ .Values.notificationTwitter.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
+        env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trace.spec
+                optional: true
+{{- if not .Values.vault.enabled }}
+          - name: TWITTER_CONSUMER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: twitter.consumerKey
+          - name: TWITTER_CONSUMER_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: twitter.consumerSecret
+          - name: TWITTER_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: twitter.accessToken
+          - name: TWITTER_ACCESS_TOKEN_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: twitter.accessTokenSecret
+{{- end }}
+          - name: JWT_AUDIENCE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.audience
+          - name: JWT_ISSUER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.issuer
+{{- if .Values.global.specifyCerts }}
+          - name: cert_defaultTrustStore
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: ssl.certs
+                optional: true
+{{- end }}
+{{- if .Values.global.jsonLogging }}
+          - name: WLP_LOGGING_CONSOLE_FORMAT
+            value: json
+          - name: WLP_LOGGING_CONSOLE_SOURCE
+            value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
+{{- end }}
+        ports:
+          - containerPort: 9080
+          - containerPort: 9443
+        imagePullPolicy: Always
+{{- if .Values.global.healthCheck }}
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 9080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          failureThreshold: 2
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 9080
+          initialDelaySeconds: 90
+          periodSeconds: 15
+          failureThreshold: 3
+{{- end }}
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+{{- if .Values.notificationTwitter.autoscale }}
+---
+#Deploy the autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-notification-twitter-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-notification-twitter
+  minReplicas: {{ .Values.notificationTwitter.replicas }}
+  maxReplicas: {{ .Values.notificationTwitter.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.notificationTwitter.cpuThreshold }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,191 @@
+#       Copyright 2017-2021 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+{{- if .Values.messaging.enabled }}
+#Deploy the pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-messaging
+  labels:
+    app: {{ .Release.Name }}-stock-trader
+  annotations:
+{{- if .Values.notificationSlack.enabled }}
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-notification-slack"}]'
+{{- end }}
+{{- if .Values.notificationTwitter.enabled }}
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-notification-twitter"}]'
+{{- end }}
+    prism.subkind: Liberty
+spec:
+  replicas: {{ .Values.messaging.replicas }}
+  selector:
+    matchLabels:
+      app: messaging
+  template:
+    metadata:
+      labels:
+        app: messaging
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/messaging"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export MQ_ID={{"{{"}} .Data.data.mqId {{"}}"}}
+          export MQ_PASSWORD={{"{{"}} .Data.data.mqPassword {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
+{{- end }}
+    spec:
+      containers:
+      - name: messaging
+        image: "{{ .Values.messaging.image.repository }}:{{ .Values.messaging.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
+        env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trace.spec
+                optional: true
+{{- if not .Values.vault.enabled }}
+          - name: MQ_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: mq.id
+          - name: MQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: mq.password
+{{- end }}
+          - name: MQ_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.host
+          - name: MQ_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.port
+          - name: MQ_CHANNEL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.channel
+          - name: MQ_QUEUE_MANAGER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.queueManager
+          - name: MQ_QUEUE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.queue
+          - name: JWT_AUDIENCE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.audience
+          - name: JWT_ISSUER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.issuer
+          - name: NOTIFICATION_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: messaging.notification.url
+                optional: true
+{{- if .Values.global.specifyCerts }}
+          - name: cert_defaultTrustStore
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: ssl.certs
+                optional: true
+{{- end }}
+{{- if .Values.global.jsonLogging }}
+          - name: WLP_LOGGING_CONSOLE_FORMAT
+            value: json
+          - name: WLP_LOGGING_CONSOLE_SOURCE
+            value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
+{{- end }}
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+{{- if .Values.messaging.autoscale }}
+---
+#Deploy the autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-messaging-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-messaging
+  minReplicas: {{ .Values.messaging.replicas }}
+  maxReplicas: {{ .Values.messaging.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.messaging.cpuThreshold }}
+{{- end }}
+{{- end }}

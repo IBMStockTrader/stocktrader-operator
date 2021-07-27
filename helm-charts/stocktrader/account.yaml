@@ -1,0 +1,324 @@
+#       Copyright 2020-2021 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+{{- if .Values.account.enabled }}
+#Deploy the pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-account
+  labels:
+    app: {{ .Release.Name }}-stock-trader
+  annotations:
+    prism.subkind: Liberty
+spec:
+  replicas: {{ .Values.account.replicas }}
+  selector:
+    matchLabels:
+      app: account
+  template:
+    metadata:
+      labels:
+        app: account
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/account"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export MQ_ID={{"{{"}} .Data.data.mqId {{"}}"}}
+          export MQ_PASSWORD={{"{{"}} .Data.data.mqPassword {{"}}"}}
+          export WATSON_ID={{"{{"}} .Data.data.watsonId {{"}}"}}
+          export WATSON_PWD={{"{{"}} .Data.data.watsonPwd {{"}}"}}
+          export ODM_ID={{"{{"}} .Data.data.odmId {{"}}"}}
+          export ODM_PWD={{"{{"}} .Data.data.odmPwd {{"}}"}}
+          export CLOUDANT_ID={{"{{"}} .Data.data.cloudantId {{"}}"}}
+          export CLOUDANT_PASSWORD={{"{{"}} .Data.data.cloudantPassword {{"}}"}}
+          export KAFKA_USER={{"{{"}} .Data.data.kafkaUser {{"}}"}}
+          export KAFKA_API_KEY={{"{{"}} .Data.data.kafkaApiKey {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
+{{- if .Values.global.monitoring }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: "9080"
+{{- end }}
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
+{{- end }}
+    spec:
+      containers:
+      - name: account
+        image: "{{ .Values.account.image.repository }}:{{ .Values.account.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
+        env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trace.spec
+                optional: true
+{{- if not .Values.vault.enabled }}
+          - name: MQ_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: mq.id
+          - name: MQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: mq.password
+          - name: WATSON_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: watson.id
+                optional: true
+          - name: WATSON_PWD
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: watson.password
+          - name: ODM_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: odm.id
+                optional: true
+          - name: ODM_PWD
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: odm.password
+                optional: true
+          - name: CLOUDANT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: cloudant.id
+          - name: CLOUDANT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: cloudant.password
+          - name: KAFKA_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: kafka.user
+                optional: true
+          - name: KAFKA_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: kafka.apiKey
+                optional: true
+{{- end }}
+          - name: MQ_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.host
+          - name: MQ_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.port
+          - name: MQ_CHANNEL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.channel
+          - name: MQ_QUEUE_MANAGER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.queueManager
+          - name: MQ_QUEUE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.queue
+          - name: WATSON_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: watson.url
+          - name: ODM_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: odm.url
+                optional: true
+          - name: CLOUDANT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: cloudant.url
+          - name: CLOUDANT_DB
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: cloudant.database
+          - name: KAFKA_ACCOUNT_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.accountTopic
+                optional: true
+          - name: KAFKA_HISTORY_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.historyTopic
+                optional: true
+          - name: KAFKA_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.address
+                optional: true
+          - name: JWT_AUDIENCE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.audience
+          - name: JWT_ISSUER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.issuer
+          - name: MESSAGING_ENABLED
+            value: {{ quote .Values.messaging.enabled }}
+          - name: CQRS_ENABLED
+            value: {{ quote .Values.brokerCQRS.enabled }}
+{{- if .Values.global.specifyCerts }}
+          - name: cert_defaultTrustStore
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: ssl.certs
+                optional: true
+{{- end }}
+{{- if .Values.global.jsonLogging }}
+          - name: WLP_LOGGING_CONSOLE_FORMAT
+            value: json
+          - name: WLP_LOGGING_CONSOLE_SOURCE
+            value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
+{{- end }}
+        ports:
+          - containerPort: 9080
+          - containerPort: 9443
+        imagePullPolicy: Always
+{{- if .Values.global.healthCheck }}
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 9080
+          initialDelaySeconds: 90
+          periodSeconds: 15
+          failureThreshold: 2
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 9080
+          initialDelaySeconds: 120
+          periodSeconds: 15
+          failureThreshold: 3
+{{- end }}
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+          requests:
+            cpu: 250m
+            memory: 512Mi
+{{- if .Values.account.autoscale }}
+---
+#Deploy the autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-account-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-account
+  minReplicas: {{ .Values.account.replicas }}
+  maxReplicas: {{ .Values.account.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.account.cpuThreshold }}
+{{- end }}
+---
+#Deploy the service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-account-service
+  labels:
+    app: account
+{{- if .Values.global.monitoring }}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: "9080"
+{{- end }}
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9080
+      targetPort: 9080
+    - name: https
+      protocol: TCP
+      port: 9443
+      targetPort: 9443
+  selector:
+    app: account
+{{- end }}

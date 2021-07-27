@@ -1,0 +1,240 @@
+#       Copyright 2021 IBM Corp All Rights Reserved
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+{{- if .Values.brokerCQRS.enabled }}
+#Deploy the pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-broker-query
+  labels:
+    app: {{ .Release.Name }}-stock-trader
+  annotations:
+    prism.subkind: Liberty
+spec:
+  replicas: {{ .Values.brokerCQRS.replicas }}
+  selector:
+    matchLabels:
+      app: broker-query
+  template:
+    metadata:
+      labels:
+        app: broker-query
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/broker-query"
+{{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
+        vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
+          {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
+          export KAFKA_USER={{"{{"}} .Data.data.kafkaUser {{"}}"}}
+          export KAFKA_API_KEY={{"{{"}} .Data.data.kafkaApiKey {{"}}"}}
+          export REDIS_URL={{"{{"}} .Data.data.redisUrl {{"}}"}}
+          {{"{{"}}- end -{{"}}"}}
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+{{- end }}
+{{- if .Values.global.monitoring }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: "9080"
+{{- end }}
+{{- if .Values.global.istio }}
+        maistra.io/expose-route: 'true'
+        sidecar.istio.io/inject: 'true'
+{{- end }}
+    spec:
+      containers:
+      - name: broker-query
+        image: "{{ .Values.brokerCQRS.image.repository }}:{{ .Values.brokerCQRS.image.tag }}"
+{{- if .Values.vault.enabled }}
+        args:
+          - sh
+          - '-c'
+          - source /vault/secrets/stocktrader-secrets.txt && /opt/ol/helpers/runtime/docker-server.sh /opt/ol/wlp/bin/server run defaultServer
+{{- end }}
+        env:
+          - name: AUTH_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: auth.type
+          - name: TRACE_SPEC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trace.spec
+                optional: true
+          - name: KAFKA_PORTFOLIO_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.portfolioTopic
+                optional: true
+          - name: KAFKA_ACCOUNT_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.accountTopic
+                optional: true
+          - name: KAFKA_HISTORY_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.historyTopic
+                optional: true
+          - name: KAFKA_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.address
+                optional: true
+{{- if not .Values.vault.enabled }}
+          - name: KAFKA_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: kafka.user
+                optional: true
+          - name: KAFKA_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: kafka.apiKey
+                optional: true
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: redis.url
+{{- end }}
+          - name: JWT_AUDIENCE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.audience
+          - name: JWT_ISSUER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: jwt.issuer
+          - name: ACCOUNT_ENABLED
+            value: {{ quote .Values.account.enabled }}
+          - name: TRADE_HISTORY_ENABLED
+            value: {{ quote .Values.tradeHistory.enabled }}
+{{- if .Values.global.specifyCerts }}
+          - name: cert_defaultTrustStore
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: ssl.certs
+                optional: true
+{{- end }}
+{{- if .Values.global.jsonLogging }}
+          - name: WLP_LOGGING_CONSOLE_FORMAT
+            value: json
+          - name: WLP_LOGGING_CONSOLE_SOURCE
+            value: message,ffdc
+{{- end }}
+{{- if .Values.global.disableLogFiles }}
+          - name: WLP_LOGGING_MESSAGE_FORMAT
+            value: json
+          - name: WLP_LOGGING_MESSAGE_SOURCE
+            value: none
+{{- end }}
+        ports:
+          - containerPort: 9080
+          - containerPort: 9443
+        imagePullPolicy: Always
+{{- if .Values.global.healthCheck }}
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 9080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          failureThreshold: 2
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 9080
+          initialDelaySeconds: 90
+          periodSeconds: 15
+          failureThreshold: 3
+{{- end }}
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+{{- if .Values.brokerCQRS.autoscale }}
+---
+#Deploy the autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-broker-query-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-broker-query
+  minReplicas: {{ .Values.brokerCQRS.replicas }}
+  maxReplicas: {{ .Values.brokerCQRS.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.brokerCQRS.cpuThreshold }}
+{{- end }}
+---
+#Deploy the service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-broker-query-service
+  labels:
+    app: broker-query
+{{- if .Values.global.monitoring }}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: "9080"
+{{- end }}
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9080
+      targetPort: 9080
+    - name: https
+      protocol: TCP
+      port: 9443
+      targetPort: 9443
+  selector:
+    app: broker-query
+{{- end }}
