@@ -33,7 +33,7 @@ metadata:
               "externalConfigMap": false,
               "configMapName": "{{ .Release.Name }}-config",
               "externalSecret": false,
-              "secretMapName": "{{ .Release.Name }}-credentials",
+              "secretName": "{{ .Release.Name }}-credentials",
               "specifyCerts": false,
               "certs": "\u003cyour SSL certs\u003e"
             },
@@ -399,7 +399,7 @@ spec:
             description: Name of the Kubernetes config map you have pre-created
             displayName: Name of your config map
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.externalSecret
             description: Enable to provide your own secret
@@ -411,7 +411,7 @@ spec:
             description: Name of the Kubernetes secret you have pre-created
             displayName: Name of your secret
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.specifyCerts
             description: Enable to provide SSL certificates that microservices should trust
