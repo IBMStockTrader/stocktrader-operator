@@ -155,13 +155,28 @@ spec:
 {{- if .Values.collector.autoscale }}
 ---
 #Deploy the autoscaler
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-collector-hpa
   labels:
     app: stock-trader
 spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
