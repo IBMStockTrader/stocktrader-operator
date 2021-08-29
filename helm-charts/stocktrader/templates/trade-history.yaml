@@ -53,6 +53,10 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
+{{- if .Values.global.pullSecret }}
+      imagePullSecrets:
+      - name: {{ tpl .Values.global.pullSecretName . }}
+{{- end }}
       containers:
       - name: trade-history
         image: "{{ .Values.tradeHistory.image.repository }}:{{ .Values.tradeHistory.image.tag }}"
@@ -200,9 +204,11 @@ spec:
           limits:
             cpu: 1000m
             memory: 1000Mi
+            ephemeral-storage: 256Mi
           requests:
             cpu: 250m
-            memory: 250Mi
+            memory: 256Mi
+            ephemeral-storage: 32Mi
 {{- if .Values.tradeHistory.autoscale }}
 ---
 #Deploy the autoscaler

@@ -52,6 +52,10 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
+{{- if .Values.global.pullSecret }}
+      imagePullSecrets:
+      - name: {{ tpl .Values.global.pullSecretName . }}
+{{- end }}
       containers:
       - name: stock-quote
         image: "{{ .Values.stockQuote.image.repository }}:{{ .Values.stockQuote.image.tag }}"
@@ -124,6 +128,12 @@ spec:
                 key: ssl.certs
                 optional: true
 {{- end }}
+{{- if .Values.global.proxyServer }}
+          - name: COM_IBM_HYBRID_CLOUD_SAMPLE_STOCKTRADER_STOCKQUOTE_CLIENT_APICONNECTCLIENT_MP_REST_PROXYADDRESS
+            value: {{ .Values.global.proxyServerAddress }}
+          - name: COM_IBM_HYBRID_CLOUD_SAMPLE_STOCKTRADER_STOCKQUOTE_CLIENT_IEXCLIENT_MP_REST_PROXYADDRESS
+            value: {{ .Values.global.proxyServerAddress }}
+{{- end }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
@@ -158,11 +168,13 @@ spec:
 {{- end }}
         resources:
           limits:
-            cpu: 250m
+            cpu: 500m
             memory: 500Mi
+            ephemeral-storage: 256Mi
           requests:
-            cpu: 125m
+            cpu: 250m
             memory: 256Mi
+            ephemeral-storage: 32Mi
 {{- if .Values.stockQuote.autoscale }}
 ---
 #Deploy the autoscaler

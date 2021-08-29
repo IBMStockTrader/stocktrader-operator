@@ -59,6 +59,10 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
+{{- if .Values.global.pullSecret }}
+      imagePullSecrets:
+      - name: {{ tpl .Values.global.pullSecretName . }}
+{{- end }}
       containers:
       - name: account
         image: "{{ .Values.account.image.repository }}:{{ .Values.account.image.tag }}"
@@ -223,7 +227,14 @@ spec:
                 key: ssl.certs
                 optional: true
 {{- end }}
-{{- if .Values.global.jsonLogging }}
+{{- if .Values.global.proxyServer }}
+          - name: CLOUDANT_TYPE
+            value: cloudantProxy
+          - name: COM_IBM_HYBRID_CLOUD_SAMPLE_STOCKTRADER_ACCOUNT_CLIENT_ODMCLIENT_MP_REST_PROXYADDRESS
+            value: {{ .Values.global.proxyServerAddress }}
+          - name: COM_IBM_HYBRID_CLOUD_SAMPLE_STOCKTRADER_ACCOUNT_CLIENT_WATSONCLIENT_MP_REST_PROXYADDRESS
+            value: {{ .Values.global.proxyServerAddress }}
+{{- end }}{{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
           - name: WLP_LOGGING_CONSOLE_SOURCE
@@ -257,11 +268,13 @@ spec:
 {{- end }}
         resources:
           limits:
-            cpu: 500m
+            cpu: 1000m
             memory: 1000Mi
+            ephemeral-storage: 256Mi
           requests:
-            cpu: 250m
+            cpu: 500m
             memory: 512Mi
+            ephemeral-storage: 32Mi
 {{- if .Values.account.autoscale }}
 ---
 #Deploy the autoscaler

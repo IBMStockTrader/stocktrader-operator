@@ -53,6 +53,10 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
+{{- if .Values.global.pullSecret }}
+      imagePullSecrets:
+      - name: {{ tpl .Values.global.pullSecretName . }}
+{{- end }}
       containers:
       - name: broker-query
         image: "{{ .Values.brokerCQRS.image.repository }}:{{ .Values.brokerCQRS.image.tag }}"
@@ -175,9 +179,11 @@ spec:
           limits:
             cpu: 500m
             memory: 500Mi
+            ephemeral-storage: 256Mi
           requests:
             cpu: 250m
             memory: 256Mi
+            ephemeral-storage: 32Mi
 {{- if .Values.brokerCQRS.autoscale }}
 ---
 #Deploy the autoscaler
