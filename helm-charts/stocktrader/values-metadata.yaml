@@ -106,6 +106,26 @@ global:
       label: "Name of external Kubernetes Secrets"
       description: "Name of a pre-existing Kubernetes Secret not created by the operator"
       type: string
+  proxyServer:
+    __metadata:
+      label: "Specify proxy server"
+      description: "Enable to route http/https traffic from microservices through a proxy"
+      type: boolean
+  proxyServerAddress:
+    __metadata:
+      label: "Proxy server address"
+      description: "Hostname (or IP address) and port of the proxy"
+      type: string
+  pullSecret:
+    __metadata:
+      label: "Use an image pull secret"
+      description: "Enable to provide an image pull secret"
+      type: boolean
+  pullSecretName:
+    __metadata:
+      label: "Specify the name of an existing image pull secret"
+      description: "Name of a pull secret with credentials for pulling microservice Docker images from a secure registry"
+      type: string
 database:
   __metadata:
     label: "Database Settings.  Mandatory - required by the portfolio microservice"
@@ -168,6 +188,11 @@ vault:
     __metadata:
       label: "Vault authentication role"
       description: "The registered authentication role created in Vault"
+      type: string
+  jwtPath:
+    __metadata:
+      label: "Vault ServiceAccount JWT Path"
+      description: "The container path of the ServiceAccount JWT"
       type: string
 broker:
   __metadata:

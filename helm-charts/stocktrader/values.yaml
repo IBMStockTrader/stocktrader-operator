@@ -32,6 +32,10 @@ global:
   configMapName: "{{ .Release.Name }}-config"
   externalSecret: false
   secretName: "{{ .Release.Name }}-credentials"
+  proxyServer: false
+  proxyServerAddress: <your proxy URL>
+  pullSecret: false
+  pullSecretName: <your pull secret>
 database:
   kind: db2
   host: db2trader1-ibm-db2oltp-dev
@@ -39,10 +43,6 @@ database:
   id: db2inst1
   password: db2inst1
   db: trader
-vault:
-  enabled: false
-  path: <path to Vault secrets>
-  role: <Vault auth role>
 broker:
   replicas: 1
   autoscale: false
@@ -182,6 +182,11 @@ ldap:
   port: 389
   baseDN: o=ibm.com
   realm: BluePages
+vault:
+  enabled: false
+  path: <path to Vault secrets>
+  role: <Vault auth role>
+  jwtPath: /var/run/secrets/kubernetes.io/serviceaccount
 watson:
   id: apikey
   passwordOrApiKey: <your API key>
