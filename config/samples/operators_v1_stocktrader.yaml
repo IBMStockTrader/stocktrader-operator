@@ -17,6 +17,10 @@ spec:
     externalConfigMap: false
     configMapName: {{ .Release.Name }}-config
     externalSecret: false
+    proxyServer: false
+    proxyServerAddress: <your proxy address>
+    pullSecret: false
+    pullSecretName: <your pull secret>
     secretName: {{ .Release.Name }}-credentials
     specifyCerts: false
     certs: |
