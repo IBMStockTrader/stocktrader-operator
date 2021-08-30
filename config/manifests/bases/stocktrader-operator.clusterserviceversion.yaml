@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: ibmstocktrader/stocktrader-operator:latest
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.10.0
+    operators.operatorframework.io/builder: operator-sdk-v1.11.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -34,6 +34,10 @@ metadata:
               "configMapName": "{{ .Release.Name }}-config",
               "externalSecret": false,
               "secretName": "{{ .Release.Name }}-credentials",
+              "proxyServer": false,
+              "proxyServerAddress": "\u003cyour proxy server address\u003e",
+              "pullSecret": false,
+              "pullSecretName": "\u003cname of your pull secret\u003e",
               "specifyCerts": false,
               "certs": "\u003cyour SSL certs\u003e"
             },
@@ -216,7 +220,8 @@ metadata:
             "vault": {
               "enabled": false,
               "path": "\u003cpath to Vault secrets\u003e",
-              "role": "\u003cVault auth role\u003e"
+              "role": "\u003cVault auth role\u003e",
+              "jwtPath": "/var/run/secrets/kubernetes.io/serviceaccount"
             },
             "cloudant": {
               "url": "\u003cyour Cloudant URL\u003e",
@@ -412,6 +417,30 @@ spec:
             displayName: Name of your secret
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.proxyServer
+            description: Enable to specify a proxy server
+            displayName: Use a proxy server
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.proxyServerAddress
+            description: Address of the proxy server required to access services outside the cluster
+            displayName: Proxy server address
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.pullSecret
+            description: Enable to specify a secret with credentials used to pull Docker images for microservices
+            displayName: Use a pull secret
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.pullSecretName
+            description: Name of an existing secret with credentials used to pull Docker images for microservices
+            displayName: Pull secret name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:selector:core:v1:Secret
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.specifyCerts
             description: Enable to provide SSL certificates that microservices should trust
@@ -1202,6 +1231,12 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:vault
+          - path: vault.jwtPath
+            description: The path to the mounted serviceaccount file containing the JWT
+            displayName: JWT Path
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:vault
 
           # Section for Cloudant settings
           - path: cloudant
@@ -1726,7 +1761,7 @@ spec:
   maturity: alpha
   maintainers:
     - name: John W. Alcorn
-      email: jalcorn@us.ibm.com
+      email: John.Alcorn@kyndryl.com
   provider:
     name: Cloud Engagement Hub
     url: https://medium.com/cloud-engagement-hub
