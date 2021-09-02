@@ -440,7 +440,7 @@ spec:
             description: Name of an existing secret with credentials used to pull Docker images for microservices
             displayName: Pull secret name
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:selector:core:v1:Secret
+              - urn:alm:descriptor:io.kubernetes:Secret
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.specifyCerts
             description: Enable to provide SSL certificates that microservices should trust
@@ -1883,7 +1883,7 @@ spec:
   installModes:
   - supported: false
     type: OwnNamespace
-  - supported: false
+  - supported: true
     type: SingleNamespace
   - supported: false
     type: MultiNamespace
