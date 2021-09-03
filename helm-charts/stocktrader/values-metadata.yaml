@@ -137,13 +137,17 @@ database:
       description: "Choose from DB2, PostgreSQL, or Derby"
       type: string
       options:
-      - label: "DB2"
+      - label: "IBM DB2"
         value: "db2"
+      - label: "Oracle"
+        value: "oracle"
       - label: "PostgreSQL"
         value: "postgres"
-      - label: "Cockroach"
-        value: "cockroach"
-      - label: "Derby"
+      - label: "MySQL"
+        value: "mysql"
+      - label: "MS SQL Server"
+        value: "sqlserver"
+      - label: "Apache Derby"
         value: "derby"
   host:
     __metadata:
