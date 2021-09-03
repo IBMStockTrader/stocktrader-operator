@@ -463,8 +463,10 @@ spec:
             displayName: Database kind
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:select:db2
+              - urn:alm:descriptor:com.tectonic.ui:select:oracle
               - urn:alm:descriptor:com.tectonic.ui:select:postgres
-              - urn:alm:descriptor:com.tectonic.ui:select:cockroach
+              - urn:alm:descriptor:com.tectonic.ui:select:mysql
+              - urn:alm:descriptor:com.tectonic.ui:select:sqlserver
               - urn:alm:descriptor:com.tectonic.ui:select:derby
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
           - path: database.host
