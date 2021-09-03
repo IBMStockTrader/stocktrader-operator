@@ -215,8 +215,10 @@ spec:
                     description: Kind of database
                     enum:
                     - db2
+                    - oracle
                     - postgres
-                    - cockroach
+                    - mysql
+                    - sqlserver
                     - derby
                     type: string
                   password:
