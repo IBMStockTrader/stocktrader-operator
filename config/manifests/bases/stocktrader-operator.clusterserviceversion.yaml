@@ -1587,6 +1587,7 @@ spec:
                 ports:
                 - containerPort: 8443
                   name: https
+                  protocol: TCP
                 resources: {}
               - name: manager
                 image: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
@@ -1612,11 +1613,13 @@ spec:
                   periodSeconds: 10
                 resources:
                   limits:
-                    cpu: 100m
-                    memory: 256Mi
+                    cpu: 200m
+                    memory: 300Mi
                   requests:
                     cpu: 100m
-                    memory: 128Mi
+                    memory: 100Mi
+              securityContext:
+                runAsNonRoot: true
               terminationGracePeriodSeconds: 10
               serviceAccountName: stocktrader-operator
       permissions:
