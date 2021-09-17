@@ -463,8 +463,10 @@ spec:
             displayName: Database kind
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:select:db2
+              - urn:alm:descriptor:com.tectonic.ui:select:oracle
               - urn:alm:descriptor:com.tectonic.ui:select:postgres
-              - urn:alm:descriptor:com.tectonic.ui:select:cockroach
+              - urn:alm:descriptor:com.tectonic.ui:select:mysql
+              - urn:alm:descriptor:com.tectonic.ui:select:sqlserver
               - urn:alm:descriptor:com.tectonic.ui:select:derby
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
           - path: database.host
@@ -1585,6 +1587,7 @@ spec:
                 ports:
                 - containerPort: 8443
                   name: https
+                  protocol: TCP
                 resources: {}
               - name: manager
                 image: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
@@ -1610,11 +1613,13 @@ spec:
                   periodSeconds: 10
                 resources:
                   limits:
-                    cpu: 100m
-                    memory: 256Mi
+                    cpu: 200m
+                    memory: 300Mi
                   requests:
                     cpu: 100m
-                    memory: 128Mi
+                    memory: 100Mi
+              securityContext:
+                runAsNonRoot: true
               terminationGracePeriodSeconds: 10
               serviceAccountName: stocktrader-operator
       permissions:
