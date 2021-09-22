@@ -98,6 +98,11 @@ spec:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: database.db
+          - name: JDBC_SSL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: database.ssl
 {{- if not .Values.vault.enabled }}
           - name: JDBC_ID
             valueFrom:
