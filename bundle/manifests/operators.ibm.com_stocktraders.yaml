@@ -215,8 +215,10 @@ spec:
                     description: Kind of database
                     enum:
                     - db2
+                    - oracle
                     - postgres
-                    - cockroach
+                    - mysql
+                    - sqlserver
                     - derby
                     type: string
                   password:
@@ -227,6 +229,9 @@ spec:
                     description: Port number
                     format: int32
                     type: integer
+                  ssl:
+                    description: Enable SSL
+                    type: boolean
                 type: object
               global:
                 description: Global Settings
