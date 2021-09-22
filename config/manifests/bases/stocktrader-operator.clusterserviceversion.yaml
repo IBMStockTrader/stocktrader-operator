@@ -47,6 +47,7 @@ metadata:
               "port": 50000,
               "id": "db2inst1",
               "password": "db2inst1",
+              "ssl": "false",
               "db": "trader"
             },
             "broker": {
@@ -492,6 +493,12 @@ spec:
             displayName: Database Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
+          - path: database.ssl
+            description: Use SSL for the database connection.  Put the certificate in the global.certs field
+            displayName: Enable SSL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:database
           - path: database.db
             description: Name of the database containing the Portfolio and Stock tables
