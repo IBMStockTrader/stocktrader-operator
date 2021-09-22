@@ -229,6 +229,9 @@ spec:
                     description: Port number
                     format: int32
                     type: integer
+                  ssl:
+                    description: Enable SSL
+                    type: boolean
                 type: object
               global:
                 description: Global Settings
