@@ -1,0 +1,9 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: cloud-journey-optimization-team
+spec:
+  displayName: Cloud Journey Optimization Team
+  image: 'docker.io/ibmstocktrader/stocktrader-operator-catalog:v0.2.0'
+  publisher: Kyndryl
+  sourceType: grpc
