@@ -1,0 +1,11 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: stocktrader-operator
+spec:
+  channel: alpha
+  installPlanApproval: Automatic
+  name: stocktrader-operator
+  source: cloud-journey-optimization-team
+  sourceNamespace: openshift-marketplace # customize this if in a non-OpenShift Kubernetes
+  startingCSV: stocktrader-operator.v0.2.0
