@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: ibmstocktrader/stocktrader-operator:latest
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.11.0
+    operators.operatorframework.io/builder: operator-sdk-v1.13.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -1559,14 +1559,15 @@ spec:
 
   description: |-
     Umbrella operator for installing and configuring the IBM Stock Trader sample.
-    This operator will install each of the specified microservices, and configure them to
-    receive fields of a config map and secret as environment variables.
+    This operator will install each of the specified microservices, and configure them
+    to receive fields of a config map and secret as environment variables.
     
     ![Architecural Diagram](https://raw.githubusercontent.com/IBMStockTrader/stocktrader-operator/master/images/stock-trader.png)
     
-    This operator will NOT install each of the prerequisites.  Note that DB2 is the only
-    mandatory prereq; each of the others, like MQ or ODM, are optional, and will only be
-    configured if so requested in the input passed to the operator.
+    This operator will NOT install each of the prerequisites.  Note that a relational
+    database, such as DB2, is the only mandatory prereq; each of the others, like MQ
+    or ODM, are optional, and will only be configured if so requested in the input
+    passed to the operator.
   displayName: IBM Stock Trader sample Operator
   install:
     spec:
@@ -1621,10 +1622,10 @@ spec:
                 resources:
                   limits:
                     cpu: 200m
-                    memory: 300Mi
+                    memory: 512Mi
                   requests:
                     cpu: 100m
-                    memory: 100Mi
+                    memory: 256Mi
               securityContext:
                 runAsNonRoot: true
               terminationGracePeriodSeconds: 10
@@ -1906,7 +1907,7 @@ spec:
     - name: John W. Alcorn
       email: John.Alcorn@kyndryl.com
   provider:
-    name: Cloud Engagement Hub
+    name: Cloud Journey Optimization Team
     url: https://medium.com/cloud-engagement-hub
   keywords:
   - cloud-native
