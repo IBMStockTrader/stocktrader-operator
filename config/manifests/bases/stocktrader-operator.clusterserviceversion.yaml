@@ -7,7 +7,7 @@ metadata:
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
     support: IBM
-    containerImage: ibmstocktrader/stocktrader-operator:latest
+    containerImage: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
     operators.operatorframework.io/builder: operator-sdk-v1.13.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
@@ -405,7 +405,7 @@ spec:
             description: Name of the Kubernetes config map you have pre-created
             displayName: Name of your config map
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.externalSecret
             description: Enable to provide your own secret
@@ -417,7 +417,7 @@ spec:
             description: Name of the Kubernetes secret you have pre-created
             displayName: Name of your secret
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:io.kubernetes:Secret
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.proxyServer
             description: Enable to specify a proxy server
@@ -1902,7 +1902,7 @@ spec:
     type: MultiNamespace
   - supported: true
     type: AllNamespaces
-  maturity: alpha
+  maturity: beta
   maintainers:
     - name: John W. Alcorn
       email: John.Alcorn@kyndryl.com
