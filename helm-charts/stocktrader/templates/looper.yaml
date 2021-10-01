@@ -113,13 +113,13 @@ spec:
           httpGet:
             path: /health/started
             port: 9080
+          initialDelaySeconds: 60
           periodSeconds: 15
           failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /health/ready
             port: 9080
-          initialDelaySeconds: 60
           periodSeconds: 15
           failureThreshold: 2
         livenessProbe:
