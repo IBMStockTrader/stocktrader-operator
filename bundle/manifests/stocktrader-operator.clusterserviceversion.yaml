@@ -7,9 +7,9 @@ metadata:
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
     support: IBM
-    containerImage: ibmstocktrader/stocktrader-operator:latest
+    containerImage: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.11.0
+    operators.operatorframework.io/builder: operator-sdk-v1.13.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -405,7 +405,7 @@ spec:
             description: Name of the Kubernetes config map you have pre-created
             displayName: Name of your config map
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.externalSecret
             description: Enable to provide your own secret
@@ -417,7 +417,7 @@ spec:
             description: Name of the Kubernetes secret you have pre-created
             displayName: Name of your secret
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:io.kubernetes:Secret
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.proxyServer
             description: Enable to specify a proxy server
@@ -1559,14 +1559,15 @@ spec:
 
   description: |-
     Umbrella operator for installing and configuring the IBM Stock Trader sample.
-    This operator will install each of the specified microservices, and configure them to
-    receive fields of a config map and secret as environment variables.
+    This operator will install each of the specified microservices, and configure them
+    to receive fields of a config map and secret as environment variables.
     
     ![Architecural Diagram](https://raw.githubusercontent.com/IBMStockTrader/stocktrader-operator/master/images/stock-trader.png)
     
-    This operator will NOT install each of the prerequisites.  Note that DB2 is the only
-    mandatory prereq; each of the others, like MQ or ODM, are optional, and will only be
-    configured if so requested in the input passed to the operator.
+    This operator will NOT install each of the prerequisites.  Note that a relational
+    database, such as DB2, is the only mandatory prereq; each of the others, like MQ
+    or ODM, are optional, and will only be configured if so requested in the input
+    passed to the operator.
   displayName: IBM Stock Trader sample Operator
   install:
     spec:
@@ -1621,10 +1622,10 @@ spec:
                 resources:
                   limits:
                     cpu: 200m
-                    memory: 300Mi
+                    memory: 512Mi
                   requests:
                     cpu: 100m
-                    memory: 100Mi
+                    memory: 256Mi
               securityContext:
                 runAsNonRoot: true
               terminationGracePeriodSeconds: 10
@@ -1901,12 +1902,12 @@ spec:
     type: MultiNamespace
   - supported: true
     type: AllNamespaces
-  maturity: alpha
+  maturity: beta
   maintainers:
     - name: John W. Alcorn
       email: John.Alcorn@kyndryl.com
   provider:
-    name: Cloud Engagement Hub
+    name: Cloud Journey Optimization Team
     url: https://medium.com/cloud-engagement-hub
   keywords:
   - cloud-native
