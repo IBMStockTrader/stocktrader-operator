@@ -294,6 +294,9 @@ spec:
                   specifyCerts:
                     description: Specify SSL certificates that should be trusted by microservices
                     type: boolean
+                  traceSpec:
+                    description: Trace specification string for Liberty-based microservices
+                    type: string
                 type: object
               jwt:
                 description: JSON Web Token (JWT) settings
