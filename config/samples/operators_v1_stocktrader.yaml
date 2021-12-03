@@ -12,6 +12,7 @@ spec:
     route: true
     healthCheck: true
     jsonLogging: false
+    traceSpec: *=info
     istio: false
     istioNamespace: istio-system
     externalConfigMap: false
