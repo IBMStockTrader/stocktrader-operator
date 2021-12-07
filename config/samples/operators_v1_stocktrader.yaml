@@ -35,6 +35,7 @@ spec:
     id: db2inst1
     password: db2inst1
     db: trader
+    ssl: false
   broker:
     replicas: 1
     autoscale: false
