@@ -145,6 +145,8 @@ spec:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.address
                 optional: true
+          - name: TRADE_HISTORY_ENABLED
+            value: {{ quote .Values.tradeHistory.enabled }}
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
