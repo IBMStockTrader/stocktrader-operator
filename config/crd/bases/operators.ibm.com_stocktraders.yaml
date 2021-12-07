@@ -249,6 +249,9 @@ spec:
                   configMapName:
                     description: Name of the Kubernetes ConfigMap where Stock Trader configuration values are stored
                     type: string
+                  disableLogFiles:
+                    description: Enable this to prevent the microservices from logging into their containers (logs only sent to ELK/etc)
+                    type: boolean
                   externalConfigMap:
                     description: Allow use of a Kubernetes ConfigMap not created by the operator
                     type: boolean
@@ -256,7 +259,7 @@ spec:
                     description: Allow use of a Kubernetes Secret not created by the operator
                     type: boolean
                   healthCheck:
-                    description: Enable Readiness and Liveness probes
+                    description: Enable Startup, Readiness and Liveness probes
                     type: boolean
                   ingress:
                     description: Enable Ingress
