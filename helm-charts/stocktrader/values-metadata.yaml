@@ -896,12 +896,22 @@ odm:
       type: string
 mq:
   __metadata:
-    label: "IBM MQ settings (optional)"
+    label: "MQ settings (optional)"
     description: "Configuration for MQ.  Can be in-cluster, or external.  Needed only if you want to receive notifications about changes in loyalty level"
+  kind:
+    __metadata:
+      label: "Kind of MQ Provider"
+      description: "Choose from IBM MQ or Amazon MQ (Apache ActiveMQ)"
+      type: string
+      options:
+        - label: "IBM MQ"
+          value: "ibm-mq"
+        - label: "Amazon MQ (Apache ActiveMQ)"
+          value: "amazon-mq-apache-mq"
   host:
     __metadata:
       label: "Host"
-      description: "Host name, or IP address, for MQ.  Use the Kube DNS service name if using an intra-cluster deployment of MQ"
+      description: "Host name, IP address, or URL connection string for MQ.  Use the Kube DNS service name if using an intra-cluster deployment of MQ"
       type: string
   port:
     __metadata:
@@ -921,17 +931,17 @@ mq:
   queueManager:
     __metadata:
       label: "Queue Manager"
-      description: "Queue Manager to be used in MQ"
+      description: "Queue Manager to be used in IBM MQ"
       type: string
   queue:
     __metadata:
       label: "Queue"
-      description: "Queue to be used in MQ"
+      description: "Physical/Base Queue to be used in the MQ provider"
       type: string
   channel:
     __metadata:
       label: "Channel"
-      description: "Channel to be used in MQ"
+      description: "Channel to be used in IBM MQ"
       type: string
 redis:
   __metadata:

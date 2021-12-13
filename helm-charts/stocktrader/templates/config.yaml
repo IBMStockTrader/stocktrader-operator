@@ -46,6 +46,7 @@ data:
   database.db: {{ .Values.database.db }}
   database.ssl: "{{ .Values.database.ssl }}"
   mq.host: {{ .Values.mq.host }}
+  mq.kind: {{ .Values.mq.kind }}
   mq.port: "{{ .Values.mq.port }}"
   mq.queueManager: {{ .Values.mq.queueManager }}
   mq.queue: {{ .Values.mq.queue }}

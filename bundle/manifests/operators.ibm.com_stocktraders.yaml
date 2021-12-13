@@ -450,13 +450,19 @@ spec:
                     type: string
                 type: object
               mq:
-                description: IBM MQ settings (optional)
+                description: MQ settings (optional)
                 properties:
+                  kind:
+                    description: Kind of MQ Provider
+                    enum:
+                      - ibm-mq
+                      - amazon-mq-apache-mq
+                    type: string
                   channel:
                     description: Channel
                     type: string
                   host:
-                    description: Host name (or IP address)
+                    description: Host name, connection string, or IP address
                     type: string
                   id:
                     description: User ID

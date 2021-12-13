@@ -197,6 +197,7 @@ odm:
   password: odmAdmin
   url: http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty
 mq:
+  kind: ibm-mq
   host: mqtrader1-mqtrader1
   port: 1414
   id: app
