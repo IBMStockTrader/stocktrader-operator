@@ -90,6 +90,11 @@ spec:
                 name: {{ tpl .Values.global.secretName . }}
                 key: mq.password
 {{- end }}
+          - name: MQ_KIND
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.kind
           - name: MQ_HOST
             valueFrom:
               configMapKeyRef:
