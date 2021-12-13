@@ -7,7 +7,7 @@ metadata:
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
     support: IBM
-    containerImage: 719273936648.dkr.ecr.us-east-2.amazonaws.com/ibmstocktrader/stocktrader-operator:v0.2.0
+    containerImage: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
     operators.operatorframework.io/builder: operator-sdk-v1.13.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
@@ -1605,7 +1605,7 @@ spec:
                   protocol: TCP
                 resources: {}
               - name: manager
-                image: 719273936648.dkr.ecr.us-east-2.amazonaws.com/ibmstocktrader/stocktrader-operator:v0.2.0
+                image: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
                 imagePullPolicy: Always
                 args:
                 - --health-probe-bind-address=:8081
