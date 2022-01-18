@@ -1,4 +1,4 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2017-2022 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -170,7 +170,7 @@ spec:
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
           - name: WLP_LOGGING_CONSOLE_SOURCE
-            value: message,ffdc
+            value: message,ffdc,trace
 {{- end }}
 {{- if .Values.global.disableLogFiles }}
           - name: WLP_LOGGING_MESSAGE_FORMAT
@@ -183,6 +183,8 @@ spec:
           - containerPort: 9443
         imagePullPolicy: Always
 {{- if .Values.global.healthCheck }}
+# No startup probe, as this microservice has to be on MicroProfile 3.x due to MP Reactive Messaging 1.0
+# being allergic to MicroProfile 4.x (where startup probes were introduced) in Open Liberty at the moment
         readinessProbe:
           httpGet:
             path: /health/ready

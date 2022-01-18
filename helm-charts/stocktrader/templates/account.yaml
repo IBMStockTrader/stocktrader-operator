@@ -1,4 +1,4 @@
-#       Copyright 2020-2021 IBM Corp All Rights Reserved
+#       Copyright 2020-2022 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -141,6 +141,11 @@ spec:
                 key: kafka.apiKey
                 optional: true
 {{- end }}
+          - name: MQ_KIND
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.kind
           - name: MQ_HOST
             valueFrom:
               configMapKeyRef:
@@ -238,7 +243,7 @@ spec:
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
           - name: WLP_LOGGING_CONSOLE_SOURCE
-            value: message,ffdc
+            value: message,ffdc,trace
 {{- end }}
 {{- if .Values.global.disableLogFiles }}
           - name: WLP_LOGGING_MESSAGE_FORMAT
@@ -255,20 +260,19 @@ spec:
           httpGet:
             path: /health/started
             port: 9080
-          initialDelaySeconds: 90
-          periodSeconds: 15
+          initialDelaySeconds: 120
+          periodSeconds: 30
           failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /health/ready
             port: 9080
           periodSeconds: 15
-          failureThreshold: 2
+          failureThreshold: 3
         livenessProbe:
           httpGet:
             path: /health/live
             port: 9080
-          initialDelaySeconds: 120
           periodSeconds: 15
           failureThreshold: 3
 {{- end }}
