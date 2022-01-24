@@ -7,6 +7,10 @@ It is a follow-on to the helm chart I created earlier, and described at https://
 
 ![Architecural Diagram](images/stock-trader.png)
 
+Initially created for IBM Cloud, we've since tested it in each of the major hyperscalers (AWS, Azure and GCP).  We've gotten the farthest on AWS, where we now have it to where it no longer needs to leave the AWS network during a Looper run (which stress tests a subset of Stock Trader), and only needs to reach back to the IBM Cloud for the optional usage of the Watson Tone Analyzer.
+
+![AWS-specific Diagram](images/stock-trader-aws.png)
+
 This repository contains the results of using the Operator SDK to turn the umbrella helm chart (in the sibling `stocktrader-helm` repo - which must be built first, via `helm package stocktrader` in that repo) into a Kubernetes Operator.
 The SDK was installed to my Mac via `brew install operator-sdk`, which gave me v0.15.0.  I ran the following command to create the contents of this repo:
 ```
