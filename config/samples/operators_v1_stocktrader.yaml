@@ -19,11 +19,11 @@ spec:
     externalConfigMap: false
     configMapName: {{ .Release.Name }}-config
     externalSecret: false
+    secretName: {{ .Release.Name }}-credentials
     proxyServer: false
     proxyServerAddress: <your proxy address>
     pullSecret: false
     pullSecretName: <your pull secret>
-    secretName: {{ .Release.Name }}-credentials
     specifyCerts: false
     certs: |
       -----BEGIN CERTIFICATE-----
@@ -185,6 +185,7 @@ spec:
     password: odmAdmin
     url: http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty
   mq:
+    kind: ibm-mq
     host: mqtrader1-mqtrader1
     port: 1414
     id: app
