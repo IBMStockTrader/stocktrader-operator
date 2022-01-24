@@ -197,6 +197,7 @@ odm:
   password: odmAdmin
   url: http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty
 mq:
+  kind: ibm-mq
   host: mqtrader1-mqtrader1
   port: 1414
   id: app
@@ -217,6 +218,7 @@ twitter:
   accessToken: <your access token>
   accessTokenSecret: <your access token secret>
 kafka:
+  kind: ibm-event-streams
   address: <your Kafka proxy service>:30000
   portfolioTopic: portfolio
   accountTopic: account
