@@ -12,16 +12,18 @@ spec:
     route: true
     healthCheck: true
     jsonLogging: false
+    disableLogFiles: false
+    traceSpec: *=info
     istio: false
     istioNamespace: istio-system
     externalConfigMap: false
     configMapName: {{ .Release.Name }}-config
     externalSecret: false
+    secretName: {{ .Release.Name }}-credentials
     proxyServer: false
     proxyServerAddress: <your proxy address>
     pullSecret: false
     pullSecretName: <your pull secret>
-    secretName: {{ .Release.Name }}-credentials
     specifyCerts: false
     certs: |
       -----BEGIN CERTIFICATE-----
@@ -34,6 +36,7 @@ spec:
     id: db2inst1
     password: db2inst1
     db: trader
+    ssl: false
   broker:
     replicas: 1
     autoscale: false

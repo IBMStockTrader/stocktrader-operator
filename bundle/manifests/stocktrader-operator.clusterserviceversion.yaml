@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.13.0
+    operators.operatorframework.io/builder: operator-sdk-v1.16.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -29,6 +29,7 @@ metadata:
               "route": true,
               "healthCheck": true,
               "jsonLogging": false,
+              "traceSpec": "*=info",
               "disableLogFiles": false,
               "externalConfigMap": false,
               "configMapName": "{{ .Release.Name }}-config",
@@ -242,6 +243,7 @@ metadata:
               "url": "http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty"
             },
             "mq": {
+              "kind": "ibm-mq",
               "host": "mqtrader1-mqtrader1",
               "port": 1414,
               "id": "app",
@@ -388,6 +390,12 @@ spec:
             displayName: Output pod logs in JSON format
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.traceSpec
+            description: Set logging levels (like FINE) for Liberty-based microservices
+            displayName: Trace specifiction
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.disableLogFiles
             description: Enable to keep logs from being written to the container's file system
@@ -1328,6 +1336,12 @@ spec:
           # Section for MQ settings
           - path: mq
             displayName: IBM MQ settings
+          - path: mq.kind
+            description: This controls which JMS resource adapter (.rar file) gets loaded and how it is configured
+            displayName: Select the appropriate MQ vendor for point-to-point messaging
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
           - path: mq.host
             description: Use the Kubernetes service DNS name if using an in-cluster MQ
             displayName: Host name (or IP address) for MQ
@@ -1908,17 +1922,18 @@ spec:
       email: John.Alcorn@kyndryl.com
   provider:
     name: Cloud Journey Optimization Team
-    url: https://medium.com/cloud-engagement-hub
+    url: https://medium.com/hybrid-cloud-engineering
   keywords:
   - cloud-native
   - sample
+  - Kyndryl
   - IBM
   - StockTrader
   links:
   - name: IBM Stock Trader on GitHub
     url: https://github.com/IBMStockTrader
-  - name: Cloud Engagement Hub on Medium
-    url: https://medium.com/cloud-engagement-hub
+  - name: Hybrid Cloud Engineering on Medium
+    url: https://medium.com/hybrid-cloud-engineering
   - name: Cloud Native Programming Model
     url: http://ibm.biz/ProgModel
   - name: Practical Cloud-Native Java Development with MicroProfile (uses Stock Trader throughout as its example)

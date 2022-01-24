@@ -249,6 +249,9 @@ spec:
                   configMapName:
                     description: Name of the Kubernetes ConfigMap where Stock Trader configuration values are stored
                     type: string
+                  disableLogFiles:
+                    description: Enable this to prevent the microservices from logging into their containers (logs only sent to ELK/etc)
+                    type: boolean
                   externalConfigMap:
                     description: Allow use of a Kubernetes ConfigMap not created by the operator
                     type: boolean
@@ -256,7 +259,7 @@ spec:
                     description: Allow use of a Kubernetes Secret not created by the operator
                     type: boolean
                   healthCheck:
-                    description: Enable Readiness and Liveness probes
+                    description: Enable Startup, Readiness and Liveness probes
                     type: boolean
                   ingress:
                     description: Enable Ingress
@@ -294,6 +297,9 @@ spec:
                   specifyCerts:
                     description: Specify SSL certificates that should be trusted by microservices
                     type: boolean
+                  traceSpec:
+                    description: Trace specification string for Liberty-based microservices
+                    type: string
                 type: object
               jwt:
                 description: JSON Web Token (JWT) settings
@@ -450,22 +456,19 @@ spec:
                     type: string
                 type: object
               mq:
-                description: MQ settings (optional)
+                description: IBM MQ settings (optional)
                 properties:
-                  kind:
-                    description: Kind of MQ Provider
-                    enum:
-                      - ibm-mq
-                      - amazon-mq-apache-mq
-                    type: string
                   channel:
                     description: Channel
                     type: string
                   host:
-                    description: Host name, connection string, or IP address
+                    description: Host name (or IP address)
                     type: string
                   id:
                     description: User ID
+                    type: string
+                  kind:
+                    description: MQ vendor
                     type: string
                   password:
                     description: Password
