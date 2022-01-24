@@ -9,7 +9,7 @@ metadata:
     support: IBM
     containerImage: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.13.0
+    operators.operatorframework.io/builder: operator-sdk-v1.16.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -243,6 +243,7 @@ metadata:
               "url": "http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty"
             },
             "mq": {
+              "kind": "ibm-mq",
               "host": "mqtrader1-mqtrader1",
               "port": 1414,
               "id": "app",
@@ -1335,6 +1336,12 @@ spec:
           # Section for MQ settings
           - path: mq
             displayName: IBM MQ settings
+          - path: mq.kind
+            description: This controls which JMS resource adapter (.rar file) gets loaded and how it is configured
+            displayName: Select the appropriate MQ vendor for point-to-point messaging
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
           - path: mq.host
             description: Use the Kubernetes service DNS name if using an in-cluster MQ
             displayName: Host name (or IP address) for MQ
