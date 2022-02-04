@@ -6,10 +6,10 @@ metadata:
     description: Umbrella operator that installs and configures the IBM Stock Trader
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
-    support: IBM
+    support: Kyndryl
     containerImage: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.16.0
+    operators.operatorframework.io/builder: operator-sdk-v1.17.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -1610,7 +1610,13 @@ spec:
                 - containerPort: 8443
                   name: https
                   protocol: TCP
-                resources: {}
+                resources:
+                  limits:
+                    cpu: 500m
+                    memory: 128Mi
+                  requests:
+                    cpu: 10m
+                    memory: 64Mi
               - name: manager
                 image: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
                 imagePullPolicy: Always
