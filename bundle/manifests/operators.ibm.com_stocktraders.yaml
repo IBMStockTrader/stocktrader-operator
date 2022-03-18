@@ -477,9 +477,6 @@ spec:
                   id:
                     description: User ID
                     type: string
-                  kind:
-                    description: MQ vendor
-                    type: string
                   password:
                     description: Password
                     format: password
