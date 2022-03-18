@@ -461,8 +461,13 @@ spec:
                   channel:
                     description: Channel
                     type: string
+                  url:
+                    description: >-
+                      Connection string with protocol(s) and port
+                    type: string
                   host:
-                    description: Host name, connection string, or IP address
+                    description: >-
+                      Host name, connection string, or IP address
                     type: string
                   id:
                     description: User ID

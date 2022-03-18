@@ -518,12 +518,17 @@ odm:
       type: string
 mq:
   __metadata:
-    label: "IBM MQ settings (optional)"
+    label: "MQ settings (optional)"
     description: "Configuration for MQ.  Can be in-cluster, or external.  Needed only if you want to receive notifications about changes in loyalty level"
+  url:
+    __metadata:
+      label: "URL"
+      description: "Connection string with protocol(s) and port"
+      type: string
   host:
     __metadata:
       label: "Host"
-      description: "Host name, or IP address, for MQ.  Use the Kube DNS service name if using an intra-cluster deployment of MQ"
+      description: "Host name, connection string, or IP address"
       type: string
   port:
     __metadata:

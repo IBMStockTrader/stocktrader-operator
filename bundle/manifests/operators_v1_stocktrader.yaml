@@ -184,6 +184,7 @@ spec:
   mq:
     kind: ibm-mq
     host: mqtrader1-mqtrader1
+    url: ssl://mqtrader-amazonaws.com:61617
     port: 1414
     id: app
     password: pwd

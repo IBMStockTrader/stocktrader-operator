@@ -165,6 +165,7 @@ metadata:
             "mq": {
               "host": "mqtrader1-mqtrader1",
               "port": 1414,
+              "url": "ssl://mqtrader-amazonaws.com:61617",
               "id": "app",
               "password": "pwd",
               "queueManager": "stocktrader",
@@ -752,6 +753,12 @@ spec:
           - path: mq.host
             description: Use the Kubernetes service DNS name if using an in-cluster MQ
             displayName: Host name (or IP address) for MQ
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+          - path: mq.url
+            description: Connection string for MQ
+            displayName: MQ connection string
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
