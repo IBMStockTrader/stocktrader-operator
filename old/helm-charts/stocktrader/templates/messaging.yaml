@@ -56,6 +56,11 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: mq.host
+          - name: MQ_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: mq.url
           - name: MQ_PORT
             valueFrom:
               configMapKeyRef:
