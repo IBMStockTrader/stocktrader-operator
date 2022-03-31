@@ -42,6 +42,18 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - broker
+                topologyKey: "kubernetes.io/hostname"
 {{- if .Values.global.pullSecret }}
       imagePullSecrets:
       - name: {{ tpl .Values.global.pullSecretName . }}
