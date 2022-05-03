@@ -248,6 +248,49 @@ spec:
 {{- if .Values.trader.autoscale }}
 ---
 #Deploy the autoscaler
+{{- if .Capabilities.APIVersions.Has "autoscaling/v2" }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-trader-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-trader
+  minReplicas: {{ .Values.trader.replicas }}
+  maxReplicas: {{ .Values.trader.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.trader.cpuThreshold }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+{{- else }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -276,7 +319,14 @@ spec:
     name: {{ .Release.Name }}-trader
   minReplicas: {{ .Values.trader.replicas }}
   maxReplicas: {{ .Values.trader.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.trader.cpuThreshold }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.trader.cpuThreshold }}
+{{- end }}
 {{- end }}
 ---
 #Deploy the service
