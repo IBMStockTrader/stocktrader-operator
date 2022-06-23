@@ -245,6 +245,7 @@ metadata:
             "mq": {
               "kind": "ibm-mq",
               "host": "mqtrader1-mqtrader1",
+              "url": "ssl://mqtrader-amazonaws.com:61617",
               "port": 1414,
               "id": "app",
               "password": "pwd",
@@ -1335,7 +1336,7 @@ spec:
 
           # Section for MQ settings
           - path: mq
-            displayName: IBM MQ settings
+            displayName: MQ settings
           - path: mq.kind
             description: This controls which JMS resource adapter (.rar file) gets loaded and how it is configured
             displayName: Select the appropriate MQ vendor for point-to-point messaging
@@ -1345,6 +1346,12 @@ spec:
           - path: mq.host
             description: Use the Kubernetes service DNS name if using an in-cluster MQ
             displayName: Host name (or IP address) for MQ
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
+          - path: mq.url
+            description: Connection string for MQ
+            displayName: MQ connection string [ssl:// or failover://(ssl://..)]
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq

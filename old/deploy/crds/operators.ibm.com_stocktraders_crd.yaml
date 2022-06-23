@@ -427,11 +427,16 @@ spec:
                   description: URL
                   type: string
             mq:
-              description: IBM MQ settings (optional)
+              description: MQ settings (optional)
               type: object
               properties:
+                url:
+                  description: >-
+                    Connection string with protocol(s) and port
+                  type: string
                 host:
-                  description: Host name (or IP address)
+                  description: >-
+                    Host name, connection string, or IP address
                   type: string
                 port:
                   description: Port number

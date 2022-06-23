@@ -41,6 +41,7 @@ data:
   database.port: "{{ .Values.database.port }}"
   database.db: {{ .Values.database.db }}
   mq.host: {{ .Values.mq.host }}
+  mq.url: "{{ .Values.mq.url }}"
   mq.port: "{{ .Values.mq.port }}"
   mq.queueManager: {{ .Values.mq.queueManager }}
   mq.queue: {{ .Values.mq.queue }}

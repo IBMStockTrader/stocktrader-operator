@@ -908,6 +908,11 @@ mq:
           value: "ibm-mq"
         - label: "Amazon MQ (Apache ActiveMQ)"
           value: "amazon-mq-apache-mq"
+  url:
+    __metadata:
+      label: "URL"
+      description: "Connection string with protocol(s) and port"
+      type: string
   host:
     __metadata:
       label: "Host"
