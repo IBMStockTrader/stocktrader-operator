@@ -243,7 +243,9 @@ metadata:
               "url": "http://odmtrader1-ibm-odm-dev:9060/DecisionService/rest/ICP_Trader_Dev_1/determineLoyalty"
             },
             "mq": {
+              "kind": "ibm-mq",
               "host": "mqtrader1-mqtrader1",
+              "url": "ssl://mqtrader-amazonaws.com:61617",
               "port": 1414,
               "id": "app",
               "password": "pwd",
