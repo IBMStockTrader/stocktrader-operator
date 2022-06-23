@@ -51,6 +51,18 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - notification-slack
+                topologyKey: "kubernetes.io/hostname"
 {{- if .Values.global.pullSecret }}
       imagePullSecrets:
       - name: {{ tpl .Values.global.pullSecretName . }}
@@ -164,7 +176,8 @@ spec:
 {{- if .Values.notificationSlack.autoscale }}
 ---
 #Deploy the autoscaler
-apiVersion: autoscaling/v2beta2
+{{- if .Capabilities.APIVersions.Has "autoscaling/v2" }}
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-notification-slack-hpa
@@ -192,6 +205,55 @@ spec:
     name: {{ .Release.Name }}-notification-slack
   minReplicas: {{ .Values.notificationSlack.replicas }}
   maxReplicas: {{ .Values.notificationSlack.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.notificationSlack.cpuThreshold }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.notificationSlack.cpuThreshold }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+{{- else }}
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-notificationSlack-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-notificationSlack
+  minReplicas: {{ .Values.notificationSlack.replicas }}
+  maxReplicas: {{ .Values.notificationSlack.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.notificationSlack.cpuThreshold }}
+{{- end }}
 {{- end }}
 {{- end }}
