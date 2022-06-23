@@ -462,7 +462,8 @@ spec:
                     description: Kind of MQ Provider
                     enum:
                       - ibm-mq
-                      - amazon-mq-apache-mq
+                      - apache-mq
+                      - amqp
                     type: string
                   channel:
                     description: Channel
