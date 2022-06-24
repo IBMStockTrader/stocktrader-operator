@@ -82,6 +82,7 @@ metadata:
                 "repository": "ibmstocktrader/portfolio",
                 "tag": "1.0.0"
               },
+              "mountFile": false,
               "url": "http://{{ .Release.Name }}-portfolio-service:9080/portfolio"
             },
             "stockQuote": {
@@ -543,6 +544,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
+          - path: broker.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
           - path: broker.image.repository
             description: Path to locate the Docker image for the broker microservice
             displayName: Broker Docker image repository
@@ -588,6 +613,30 @@ spec:
             displayName: CPU Threshold
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+          - path: brokerCQRS.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
           - path: brokerCQRS.image.repository
             description: Path to locate the Docker image for the broker CQRS microservice
@@ -635,6 +684,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
+          - path: portfolio.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:portfolio
           - path: portfolio.image.repository
             description: Path to locate the Docker image for the portfolio microservice
             displayName: Portfolio Docker image repository
@@ -680,6 +753,30 @@ spec:
             displayName: CPU Threshold
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
           - path: stockQuote.image.repository
             description: Path to locate the Docker image for the stock quote microservice
@@ -751,6 +848,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
           - path: trader.image.repository
             description: Path to locate the Docker image for the trader microservice
             displayName: Trader Docker image repository
@@ -797,6 +918,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
+          - path: tradr.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradr
           - path: tradr.image.repository
             description: Path to locate the Docker image for the tradr microservice
             displayName: Tradr Docker image repository
@@ -842,6 +987,30 @@ spec:
             displayName: CPU Threshold
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
+          - path: account.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
           - path: account.image.repository
             description: Path to locate the Docker image for the account microservice
@@ -895,6 +1064,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
+          - path: collector.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
           - path: collector.image.repository
             description: Path to locate the Docker image for the collector microservice
             displayName: Collector Docker image repository
@@ -946,6 +1139,30 @@ spec:
             displayName: CPU Threshold
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
+          - path: messaging.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
           - path: messaging.image.repository
             description: Path to locate the Docker image for the messaging microservice
@@ -999,6 +1216,30 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
+          - path: notificationSlack.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
           - path: notificationSlack.image.repository
             description: Path to locate the Docker image for the notification-slack microservice
             displayName: Notification-Slack Docker image repository
@@ -1045,7 +1286,31 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
-          - path: notificationTwitter.image.repository
+          - path: notificationTwitter.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+          - path: notificationTwitter.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+          - path: notificationTwitter.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+          - path: notificationTwitter.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
+           - path: notificationTwitter.image.repository
             description: Path to locate the Docker image for the notification-twitter microservice
             displayName: Notification-Twitter Docker image repository
             x-descriptors:
@@ -1090,6 +1355,30 @@ spec:
             displayName: CPU Threshold
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
+          - path: tradeHistory.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:tradeHistory
           - path: tradeHistory.image.repository
             description: Path to locate the Docker image for the trade history microservice
@@ -1142,6 +1431,30 @@ spec:
             displayName: CPU Threshold
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.mountFile
+            description: Mount the specified file to the specified path in the container
+            displayName: Enable mounting a file from a config map
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.mountFileName
+            description: Name to use when mounting the file into the container
+            displayName: Name of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.mountFilePath
+            description: Name of the directory in the container to contain the file
+            displayName: Path of the file to be mounted
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
+          - path: looper.mountFromConfigMap
+            description: This config map must be pre-created, with mountFileName as the key
+            displayName: Name of the config map holding the file contents
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:looper
           - path: looper.image.repository
             description: Path to locate the Docker image for the looper microservice
@@ -1341,7 +1654,9 @@ spec:
             description: This controls which JMS resource adapter (.rar file) gets loaded and how it is configured
             displayName: Select the appropriate MQ vendor for point-to-point messaging
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:select:ibm-mq
+              - urn:alm:descriptor:com.tectonic.ui:select:apache-mq
+              - urn:alm:descriptor:com.tectonic.ui:select:amqp
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mq
           - path: mq.host
             description: Use the Kubernetes service DNS name if using an in-cluster MQ
