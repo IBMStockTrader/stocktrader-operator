@@ -906,8 +906,10 @@ mq:
       options:
         - label: "IBM MQ"
           value: "ibm-mq"
-        - label: "Amazon MQ (Apache ActiveMQ)"
-          value: "amazon-mq-apache-mq"
+        - label: "Apache ActiveMQ"
+          value: "apache-mq"
+        - label: "Advanced Message Queueing Protocol (AMQP)"
+          value: "amqp"
   url:
     __metadata:
       label: "URL"
