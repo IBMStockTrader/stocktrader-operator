@@ -31,7 +31,7 @@ spec:
             description: StockTraderSpec defines the desired state of StockTrader
             properties:
               account:
-                description: Account microservice (requires Cloudant)
+                description: Account microservice (requires Cloudant/CouchDB)
                 properties:
                   autoscale:
                     description: Enable a HorizontalPodAutoscaler for this microservice
@@ -59,6 +59,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -94,6 +106,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -132,6 +156,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -142,7 +178,7 @@ spec:
                     type: string
                 type: object
               cloudant:
-                description: IBM Cloudant settings (optional)
+                description: IBM Cloudant settings (optional).  Can also use a generic Apache CouchDB.
                 properties:
                   collector:
                     description: Collector database name
@@ -190,6 +226,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -380,6 +428,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -418,6 +478,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   notification:
                     description: Notification service settings
                     properties:
@@ -523,6 +595,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -558,6 +642,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -565,7 +661,7 @@ spec:
                     type: integer
                 type: object
               odm:
-                description: Operational Decision Manager (ODM) settings (optional)
+                description: Operational Decision Manager (ODM) settings (optional).  Can also use serverless functions that mimic the same OpenAPI definition.
                 properties:
                   id:
                     description: ID
@@ -633,6 +729,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -712,6 +820,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -750,6 +870,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -788,6 +920,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
@@ -823,6 +967,18 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  mountFile:
+                    description: Enable to mount the specified file into the specified location
+                    type: boolean
+                  mountFileName:
+                    description: Name of the file to be mounted
+                    type: string
+                  mountFilePath:
+                    description: Directory in the container where the file should be mounted
+                    type: string
+                  mountFromConfigMap:
+                    description: Name of the config map holding the file (mountFileName is the key within the config map)
+                    type: string
                   replicas:
                     description: Initial number of pods for this microservice
                     format: int32
