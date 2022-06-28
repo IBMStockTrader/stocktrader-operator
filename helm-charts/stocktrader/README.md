@@ -9,13 +9,13 @@ is used instead; that operator wraps this helm chart.
 ## Prerequisites
 
 The user must install and configure (or point to existing installations of) the following dependencies:
-* IBM DB2
+* A relational database, such as IBM DB2
 
 The following dependencies are optional:
-* IBM MQ Advanced for Developers (enables notifications)
+* An MQ product, such as IBM MQ Advanced for Developers (enables notifications)
 * IBM Operational Decision Manager (enables loyalty level determination)
-* IBM Cloudant (enables account metadata)
-* IBM Event Streams (enables Trade History and its return-on-investment calculation)
+* IBM Cloudant (enables account metadata), or a generic CouchDB
+* A Kafka product, such as IBM Event Streams (enables Trade History and its return-on-investment calculation)
 * Mongo DB (enables Trade History and its return-on-investment calculation)
 * Redis (enables stock quote caching)
 
@@ -87,7 +87,7 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 
 ## Building and Deploying the Chart
 
-After cloning this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-1.7.0.tgz file.
+After cloning this repository and changing directory into it, just run `helm package stocktrader` to produce the stocktrader-1.8.0.tgz file.
 
 It is also handy to change directory into the `stocktrader` directory (where the Chart.yaml is) and run `helm lint` to validate the helm chart.
 
