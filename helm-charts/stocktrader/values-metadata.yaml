@@ -227,6 +227,26 @@ broker:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -270,6 +290,26 @@ brokerCQRS:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -313,6 +353,26 @@ portfolio:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -356,6 +416,26 @@ stockQuote:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -419,6 +499,26 @@ trader:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -462,6 +562,26 @@ tradr:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -505,6 +625,26 @@ account:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -548,6 +688,26 @@ messaging:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -599,6 +759,26 @@ notificationSlack:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -642,6 +822,26 @@ notificationTwitter:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -685,6 +885,26 @@ tradeHistory:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -733,6 +953,26 @@ collector:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -781,6 +1021,26 @@ looper:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
+  mountFile:
+    __metadata:
+      label: "Mount file into this microservice container"
+      description: "Enable to mount the specified file into the specified location"
+      type: boolean
+  mountFileName:
+    __metadata:
+      label: "Mount file name"
+      description: "Name of the file to be mounted"
+      type: string
+  mountFilePath:
+    __metadata:
+      label: "Mount file path"
+      description: "Directory in the container where the file should be mounted"
+      type: string
+  mountFromConfigMap:
+    __metadata:
+      label: "Mount from config map"
+      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
+      type: string
   image:
     __metadata:
       label: "Docker image settings"
