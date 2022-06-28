@@ -1,4 +1,4 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2017-2022 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -58,6 +58,10 @@ portfolio:
   autoscale: false
   maxReplicas: 10
   cpuThreshold: 75
+  mountFile: false
+  mountFileName: db2jcc_license_cisuz.jar
+  mountFilePath: /config/prereqs
+  mountFromConfigMap: db2-license
   image:
     repository: ibmstocktrader/portfolio
     tag: 1.0.0
