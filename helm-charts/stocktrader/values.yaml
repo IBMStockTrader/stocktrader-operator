@@ -78,6 +78,9 @@ stockQuote:
   apiConnect: https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks
   iexTrading: https://cloud.iexapis.com/stable/stock
   iexApiKey: <your IEX API key>
+  encryptorType: "noneEncryptor"
+  saltBytes: <generated salt bytes>
+  encryptionPassword: <encryption password>
 trader:
   enabled: true
   replicas: 1
