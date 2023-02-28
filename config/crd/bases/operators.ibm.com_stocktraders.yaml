@@ -9,9 +9,9 @@ spec:
     kind: StockTrader
     listKind: StockTraderList
     plural: stocktraders
+    singular: stocktrader
     shortNames:
     - st
-    singular: stocktrader
   scope: Namespaced
   versions:
   - name: v1
@@ -127,8 +127,8 @@ spec:
                     description: Broker URL
                     type: string
                 type: object
-              brokerCQRS:
-                description: Broker CQRS microservice
+              cashAccount:
+                description: Cash Account microservice (optional)
                 properties:
                   autoscale:
                     description: Enable a HorizontalPodAutoscaler for this microservice
@@ -139,8 +139,11 @@ spec:
                     minimum: 1
                     type: integer
                   enabled:
-                    description: Enable the Broker CQRS microservice
+                    description: Enable the Cash Account microservice
                     type: boolean
+                  exchangeRateUrl:
+                    description: Currency Exchange Rate Service URL
+                    type: string
                   image:
                     description: Docker image settings
                     properties:
@@ -174,7 +177,7 @@ spec:
                     minimum: 1
                     type: integer
                   url:
-                    description: Broker CQRS URL
+                    description: Cash Account URL
                     type: string
                 type: object
               cloudant:
@@ -195,56 +198,6 @@ spec:
                     type: string
                   url:
                     description: URL
-                    type: string
-                type: object
-              collector:
-                description: Collector microservice (requires Cloudant)
-                properties:
-                  autoscale:
-                    description: Enable a HorizontalPodAutoscaler for this microservice
-                    type: boolean
-                  cpuThreshold:
-                    description: CPU Threshold for autoscaling
-                    format: int32
-                    minimum: 1
-                    type: integer
-                  enabled:
-                    description: Enable the Collector microservice
-                    type: boolean
-                  image:
-                    description: Docker image settings
-                    properties:
-                      repository:
-                        description: Docker image registry
-                        type: string
-                      tag:
-                        description: Docker image tag
-                        type: string
-                    type: object
-                  maxReplicas:
-                    description: Maximum number of pods for this microservice
-                    format: int32
-                    minimum: 1
-                    type: integer
-                  mountFile:
-                    description: Enable to mount the specified file into the specified location
-                    type: boolean
-                  mountFileName:
-                    description: Name of the file to be mounted
-                    type: string
-                  mountFilePath:
-                    description: Directory in the container where the file should be mounted
-                    type: string
-                  mountFromConfigMap:
-                    description: Name of the config map holding the file (mountFileName is the key within the config map)
-                    type: string
-                  replicas:
-                    description: Initial number of pods for this microservice
-                    format: int32
-                    minimum: 1
-                    type: integer
-                  url:
-                    description: Collector URL
                     type: string
                 type: object
               database:
@@ -297,6 +250,9 @@ spec:
                   configMapName:
                     description: Name of the Kubernetes ConfigMap where Stock Trader configuration values are stored
                     type: string
+                  cqrs:
+                    description: Enable CQRS
+                    type: boolean
                   disableLogFiles:
                     description: Enable this to prevent the microservices from logging into their containers (logs only sent to ELK/etc)
                     type: boolean
@@ -690,7 +646,7 @@ spec:
                     type: string
                 type: object
               openwhisk:
-                description: OpenWhisk settings (optional)
+                description: OpenWhisk settings (optional - often replaced with serverless functions nowadays)
                 properties:
                   id:
                     description: ID
@@ -762,7 +718,7 @@ spec:
                     type: string
                 type: object
               s3:
-                description: S3 buckets in IBM Cloud Object Storage
+                description: S3 buckets in AWS (or IBM Cloud Object Storage)
                 properties:
                   apiKey:
                     description: Credentials for the S3 bucket
@@ -772,7 +728,7 @@ spec:
                     description: Name of the S3 bucket
                     type: string
                   enabled:
-                    description: Log portfolios to S3 buckets in IBM Cloud Object Storage
+                    description: Log portfolios to S3 buckets in AWS (or IBM Cloud Object Storage)
                     type: boolean
                   endpointUrl:
                     description: URL for interacting with the S3 bucket 
@@ -788,7 +744,7 @@ spec:
                 description: Stock Quote microservice
                 properties:
                   apiConnect:
-                    description: API Connect URL
+                    description: API Connect URL (often replaced with a serverless function)
                     type: string
                   autoscale:
                     description: Enable a HorizontalPodAutoscaler for this microservice
@@ -798,6 +754,23 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  encryption:
+                    description: Settings for encrypting data to Redis (only applies to Spring flavor of Stock Quote)
+                    properties:
+                      type:
+                        description: Encryptor type used for encrypting data to redis, there are 4 modes: springSecurityBytesEncryptor, noneEncryptor, aesGsmEncryptor, springSecurityTextEncryptor
+                        enum:
+                          - aesGsmEncryptor
+                          - noneEncryptor
+                          - springSecurityBytesEncryptor
+                          - springSecurityTextEncryptor
+                        type: string
+                      saltBytes:
+                        description: Salt bytes used for encryption and decryption. Allows to create multiple replicas. Optional if encryptor type is noneEncryptor
+                        type: string
+                      password:
+                        description: Password using for encryption and decryption
+                        type: string
                   iexApiKey:
                     description: IEX API Key
                     format: password
@@ -1022,7 +995,7 @@ spec:
                     description: The container path of the ServiceAccount JWT
                     type: string
               watson:
-                description: Watson Tone Analyzer settings (optional)
+                description: Watson Tone Analyzer settings (optional - often replaced with a serverless function nowadays)
                 properties:
                   id:
                     description: ID
