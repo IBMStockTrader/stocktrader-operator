@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: ibmstocktrader/stocktrader-operator
-  newTag: latest
+  newTag: 1.0.0
