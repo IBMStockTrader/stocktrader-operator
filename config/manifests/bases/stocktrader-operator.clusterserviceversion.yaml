@@ -820,7 +820,10 @@ spec:
             description: Type of encryption to use when caching quotes in Redis
             displayName: Encryption Type
             x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:select:noneEncryptor
+              - urn:alm:descriptor:com.tectonic.ui:select:springSecurityTextEncryptor
+              - urn:alm:descriptor:com.tectonic.ui:select:springSecurityBytesEncryptor
+              - urn:alm:descriptor:com.tectonic.ui:select:aesGsmEncryptor
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
           - path: stockQuote.encryption.saltBytes
             description: Value of the Salt Bytes used in the encryption algorithm
