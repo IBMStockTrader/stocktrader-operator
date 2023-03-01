@@ -1257,7 +1257,7 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:io.kubernetes:ConfigMap
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
-           - path: notificationTwitter.image.repository
+          - path: notificationTwitter.image.repository
             description: Path to locate the Docker image for the notification-twitter microservice
             displayName: Notification-Twitter Docker image repository
             x-descriptors:
