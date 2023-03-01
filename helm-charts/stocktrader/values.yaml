@@ -1,4 +1,5 @@
-#       Copyright 2017-2022 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp, All Rights Reserved
+#       Copyright 2022-2023 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -19,15 +20,14 @@ global:
   auth: basic
   monitoring: true
   ingress: false
-  route: true
+  route: false
   healthCheck: true
   disableLogFiles: false
   jsonLogging: false
   traceSpec: "*=info"
+  cqrs: false
   istio: false
   istioNamespace: istio-system
-  specifyCerts: false
-  certs: <your SSL certificates>
   externalConfigMap: false
   configMapName: "{{ .Release.Name }}-config"
   externalSecret: false
@@ -36,6 +36,8 @@ global:
   proxyServerAddress: <your proxy URL>
   pullSecret: false
   pullSecretName: <your pull secret>
+  specifyCerts: false
+  certs: <your SSL certificates>
 database:
   kind: db2
   host: db2trader1-ibm-db2oltp-dev
@@ -58,10 +60,6 @@ portfolio:
   autoscale: false
   maxReplicas: 10
   cpuThreshold: 75
-  mountFile: false
-  mountFileName: db2jcc_license_cisuz.jar
-  mountFilePath: /config/prereqs
-  mountFromConfigMap: db2-license
   image:
     repository: ibmstocktrader/portfolio
     tag: 1.0.0
@@ -78,6 +76,10 @@ stockQuote:
   apiConnect: https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks
   iexTrading: https://cloud.iexapis.com/stable/stock
   iexApiKey: <your IEX API key>
+  encryption:
+    type: "noneEncryptor"
+    saltBytes: <salt bytes generated>
+    password: <encryption password>
 trader:
   enabled: true
   replicas: 1
@@ -96,16 +98,17 @@ tradr:
   image:
     repository: ibmstocktrader/tradr
     tag: 1.0.0
-brokerCQRS:
+cashAccount:
   enabled: false
   replicas: 1
   autoscale: false
   maxReplicas: 10
   cpuThreshold: 75
   image:
-    repository: ibmstocktrader/broker-cqrs
+    repository: ibmstocktrader/cash-account
     tag: 1.0.0
-  url: http://{{ .Release.Name }}-broker-cqrs-service:9080/broker-cqrs
+  url: http://{{ .Release.Name }}-cash-account-service:8080/cash-account
+  exchangeRateUrl: https://api.frankfurter.app/latest
 account:
   enabled: false
   replicas: 1
@@ -155,16 +158,6 @@ tradeHistory:
     repository: ibmstocktrader/trade-history
     tag: 1.0.0
   url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
-collector:
-  enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
-  image:
-    repository: ibmstocktrader/collector
-    tag: 1.0.0
-  url: http://{{ .Release.Name }}-collector-service:9080/collector
 looper:
   enabled: false
   replicas: 1
@@ -182,6 +175,7 @@ oidc:
   clientId: <your client id>
   clientSecret: <your client secret>
   discoveryUrl: <your discovery endpoint URL>
+  jwksUrl: <your JSON web key set url>
 ldap:
   host: bluepages.ibm.com
   port: 389
@@ -204,7 +198,6 @@ mq:
   kind: ibm-mq
   host: mqtrader1-mqtrader1
   port: 1414
-  url: ssl://mqtrader-amazonaws.com:61617
   id: app
   password: ""
   queueManager: stocktrader
@@ -225,8 +218,10 @@ twitter:
 kafka:
   kind: ibm-event-streams
   address: <your Kafka proxy service>:30000
+  brokerTopic: broker
   portfolioTopic: portfolio
   accountTopic: account
+  cashAccountTopic: cash-account
   historyTopic: history
   user: token
   apiKey: <your API key>

@@ -1,4 +1,5 @@
-#       Copyright 2019-2021 IBM Corp All Rights Reserved
+#       Copyright 2019-2021 IBM Corp, All Rights Reserved
+#       Copyright 2022-2023 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -45,6 +46,11 @@ global:
     __metadata:
       label: "Enable Route"
       description: "Enable an OpenShift Route for each front-end microservice"
+      type: boolean
+  cqrs:
+    __metadata:
+      label: "Enable CQRS"
+      description: "Enable asynchronou interactions (Command Query Responsibility Separation)"
       type: boolean
   istio:
     __metadata:
@@ -227,26 +233,6 @@ broker:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -264,69 +250,6 @@ broker:
   url:
     __metadata:
       label: "Broker URL"
-      description: "URL at which this microservice can be accessed by other microservices"
-      type: string
-brokerCQRS:
-  __metadata:
-    label: "Broker CQRS microservice"
-    description: "Settings that apply to the Broker CQRS microservice"
-  replicas:
-    __metadata:
-      label: "Initial number of pods for this microservice"
-      description: "If auto-scaling is enabled, more may get created if needed"
-      type: number
-  autoscale:
-    __metadata:
-      label: "Enable Auto-scaling"
-      description: "Enable a Horizontal Pod Autoscaler for this microservice"
-      type: boolean
-  maxReplicas:
-    __metadata:
-      label: "Maximum number of pods for this microservice"
-      description: "Only used if auto-scaling is enabled"
-      type: number
-  cpuThreshold:
-    __metadata:
-      label: "CPU Threshold"
-      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
-      type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
-  image:
-    __metadata:
-      label: "Docker image settings"
-      description: "How to locate the Docker image for the broker-cqrs microservice"
-    repository:
-      __metadata:
-        label: "Docker image registry"
-        description: "Path to locate the Docker image for the broker-cqrs microservice"
-        type: string
-    tag:
-      __metadata:
-        label: "Docker image tag"
-        description: "Tag for the Docker image for the broker-cqrs microservice"
-        type: string
-  url:
-    __metadata:
-      label: "Broker CQRS URL"
       description: "URL at which this microservice can be accessed by other microservices"
       type: string
 portfolio:
@@ -353,26 +276,6 @@ portfolio:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -416,26 +319,6 @@ stockQuote:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -470,6 +353,34 @@ stockQuote:
       label: "IEX API Key"
       description: "Your API Key for the IEX Cloud.  Optional: Only used if API Connect isn't working"
       type: password
+  encryption:
+    __metadata:
+      label: "Encryption settings"
+      description: "Encryption settings for encrypting data to redis"
+    type:
+      __metadata:
+        label: "Encryption type"
+        description: "Encryptor type used for encrypting data to redis, there are 4 modes: springSecurityBytesEncryptor, noneEncryptor, aesGsmEncryptor, springSecurityTextEncryptor"
+        type: string
+      options:
+      - label: "None"
+        value: "noneEncryptor"
+      - label: "Text"
+        value: "springSecurityTextEncryptor"
+      - label: "Bytes"
+        value: "springSecurityBytesEncryptor"
+      - label: "AES GSM"
+        value: "aesGsmEncryptor"
+    saltBytes:
+      __metadata:
+        label: "Salt bytes text"
+        description: "Salt bytes used for encryption and decryption. Allows to create multiple replicas. Optional if encryptor type is noneEncryptor"
+        type: string
+    password:
+      __metadata:
+        label: "Encryption password"
+        description: "Password using for encryption and decryption"
+        type: password
 trader:
   __metadata:
     label: "Trader simple UI microservice"
@@ -499,26 +410,6 @@ trader:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -562,26 +453,6 @@ tradr:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -596,14 +467,14 @@ tradr:
         label: "Docker image tag"
         description: "Tag for the Docker image for the tradr microservice"
         type: string
-account:
+cashAccount:
   __metadata:
-    label: "Account microservice (optional - requires Cloudant)"
-    description: "Settings that apply to the Account microservice (which depends upon Cloudant)"
+    label: "Cash Account microservice (optional)"
+    description: "Settings that apply to the Cash Account microservice (which depends upon Redis and a relational database)"
   enabled:
     __metadata:
-      label: "Enable the Account microservice"
-      description: "This microservice keeps track of account balance, commissions, sentiment, and free trades
+      label: "Enable the Cash Account microservice"
+      description: "This microservice keeps track of the cash spent or gained from buying or selling stock"
       type: boolean
   replicas:
     __metadata:
@@ -625,26 +496,59 @@ account:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
+  image:
     __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
+      label: "Docker image settings"
+      description: "How to locate the Docker image for the cash account microservice"
+    repository:
+      __metadata:
+        label: "Docker image registry"
+        description: "Path to locate the Docker image for the cash account microservice"
+        type: string
+    tag:
+      __metadata:
+        label: "Docker image tag"
+        description: "Tag for the Docker image for the cash account microservice"
+        type: string
+  url:
+    __metadata:
+      label: "Cash Account URL"
+      description: "URL at which this microservice can be accessed by other microservices"
+      type: string
+  exchangeRateUrl:
+    __metadata:
+      label: "Currency Exchange Rate Service URL"
+      description: "URL of the service that converts currency to/from US Dollars"
+      type: string
+account:
+  __metadata:
+    label: "Account microservice (optional - requires Cloudant)"
+    description: "Settings that apply to the Account microservice (which depends upon Cloudant)"
+  enabled:
+    __metadata:
+      label: "Enable the Account microservice"
+      description: "This microservice keeps track of account balance, commissions, sentiment, and free trades"
       type: boolean
-  mountFileName:
+  replicas:
     __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
+      label: "Initial number of pods for this microservice"
+      description: "If auto-scaling is enabled, more may get created if needed"
+      type: number
+  autoscale:
     __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
+      label: "Enable Auto-scaling"
+      description: "Enable a Horizontal Pod Autoscaler for this microservice"
+      type: boolean
+  maxReplicas:
     __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
+      label: "Maximum number of pods for this microservice"
+      description: "Only used if auto-scaling is enabled"
+      type: number
+  cpuThreshold:
+    __metadata:
+      label: "CPU Threshold"
+      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
+      type: number
   image:
     __metadata:
       label: "Docker image settings"
@@ -688,26 +592,6 @@ messaging:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -759,26 +643,6 @@ notificationSlack:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -822,26 +686,6 @@ notificationTwitter:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -885,26 +729,6 @@ tradeHistory:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -922,74 +746,6 @@ tradeHistory:
   url:
     __metadata:
       label: "Trade History URL"
-      description: "URL at which this microservice can be accessed by other microservices"
-      type: string
-collector:
-  __metadata:
-    label: "Collector microservice"
-    description: "Settings that apply to the SCC Collector microservice"
-  enabled:
-    __metadata:
-      label: "Enable the Collector microservice"
-      description: "This optional service maintains security and compliance evidence for the IBM Cloud Security and Compliance Center (SCC) to periodically scrape.  Depends on Cloudant as the evidence locker.
-      type: boolean
-  replicas:
-    __metadata:
-      label: "Initial number of pods for this microservice"
-      description: "If auto-scaling is enabled, more may get created if needed"
-      type: number
-  autoscale:
-    __metadata:
-      label: "Enable Auto-scaling"
-      description: "Enable a Horizontal Pod Autoscaler for this microservice"
-      type: boolean
-  maxReplicas:
-    __metadata:
-      label: "Maximum number of pods for this microservice"
-      description: "Only used if auto-scaling is enabled"
-      type: number
-  cpuThreshold:
-    __metadata:
-      label: "CPU Threshold"
-      description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
-      type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
-  image:
-    __metadata:
-      label: "Docker image settings"
-      description: "How to locate the Docker image for the collector microservice"
-    repository:
-      __metadata:
-        label: "Docker image registry"
-        description: "Path to locate the Docker image for the collector microservice"
-        type: string
-    tag:
-      __metadata:
-        label: "Docker image tag"
-        description: "Tag for the Docker image for the collector microservice"
-        type: string
-  url:
-    __metadata:
-      label: "Collector URL"
       description: "URL at which this microservice can be accessed by other microservices"
       type: string
 looper:
@@ -1021,26 +777,6 @@ looper:
       label: "CPU Threshold"
       description: "If auto-scaling is enabled, CPU threshold that results in another replica being created"
       type: number
-  mountFile:
-    __metadata:
-      label: "Mount file into this microservice container"
-      description: "Enable to mount the specified file into the specified location"
-      type: boolean
-  mountFileName:
-    __metadata:
-      label: "Mount file name"
-      description: "Name of the file to be mounted"
-      type: string
-  mountFilePath:
-    __metadata:
-      label: "Mount file path"
-      description: "Directory in the container where the file should be mounted"
-      type: string
-  mountFromConfigMap:
-    __metadata:
-      label: "Mount from config map"
-      description: "Name of the config map holding the file (mountFileName is the key within the config map)"
-      type: string
   image:
     __metadata:
       label: "Docker image settings"
@@ -1091,6 +827,11 @@ oidc:
     __metadata:
       label: "Discovery URL"
       description: "The URL of the discovery endpoint for this OIDC provider"
+      type: string
+  jwksUrl:
+    __metadata:
+      label: "JWKS URL"
+      description: "The URL of the JSON Web Key Set endpoint for this OIDC provider"
       type: string
 ldap:
   __metadata:
@@ -1166,15 +907,8 @@ mq:
       options:
         - label: "IBM MQ"
           value: "ibm-mq"
-        - label: "Apache ActiveMQ"
-          value: "apache-mq"
-        - label: "Advanced Message Queueing Protocol (AMQP)"
-          value: "amqp"
-  url:
-    __metadata:
-      label: "URL"
-      description: "Connection string with protocol(s) and port"
-      type: string
+        - label: "Amazon MQ (Apache ActiveMQ)"
+          value: "amazon-mq-apache-mq"
   host:
     __metadata:
       label: "Host"
@@ -1324,11 +1058,6 @@ cloudant:
     __metadata:
       label: "Account Database"
       description: "Account database name for Cloudant"
-      type: string
-  collector:
-    __metadata:
-      label: "Collector Database"
-      description: "Collector database name for Cloudant"
       type: string
 mongo:
   __metadata:
