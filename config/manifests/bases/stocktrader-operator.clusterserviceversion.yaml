@@ -1,15 +1,15 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
-  name: stocktrader-operator.v0.2.0
+  name: stocktrader-operator.v1.0.0
   annotations:
     description: Umbrella operator that installs and configures the IBM Stock Trader
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
     support: Kyndryl
-    containerImage: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
+    containerImage: docker.io/ibmstocktrader/stocktrader-operator:v1.0.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.17.0
+    operators.operatorframework.io/builder: operator-sdk-v1.27.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -22,6 +22,7 @@ metadata:
           "spec": {
             "global": {
               "auth": "basic",
+              "cqrs": false,
               "monitoring": true,
               "ingress": false,
               "istio": false,
@@ -62,16 +63,17 @@ metadata:
               },
               "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
             },
-            "brokerCQRS": {
+            "cashAccount": {
               "replicas": 1,
               "autoscale": false,
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/broker-query",
+                "repository": "ibmstocktrader/cash-account",
                 "tag": "1.0.0"
               },
-              "url": "http://{{ .Release.Name }}-broker-query-service:9080/broker"
+              "url": "http://{{ .Release.Name }}-cash-account-service:8080/cash-account",
+              "exchangeRateUrl": "http://{{ .Release.Name }}-broker-query-service:9080/broker"
             },
             "portfolio": {
               "replicas": 1,
@@ -132,18 +134,6 @@ metadata:
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-account-service:9080/account"
-            },
-            "collector": {
-              "enabled": false,
-              "replicas": 1,
-              "autoscale": false,
-              "maxReplicas": 10,
-              "cpuThreshold": 75,
-              "image": {
-                "repository": "ibmstocktrader/collector",
-                "tag": "1.0.0"
-              },
-              "url": "http://{{ .Release.Name }}-collector-service:9080/collector"
             },
             "messaging": {
               "enabled": false,
@@ -212,7 +202,8 @@ metadata:
             "oidc": {
               "clientId": "\u003cyour client id\u003e",
               "clientSecret": "\u003cyour client secret\u003e",
-              "discoveryUrl": "\u003cyour discovery url\u003e"
+              "discoveryUrl": "\u003cyour discovery url\u003e",
+              "jwksUrl": "\u003cyour JSON web key set url\u003e"
             },
             "ldap": {
               "host": "bluepages.ibm.com",
@@ -230,8 +221,7 @@ metadata:
               "url": "\u003cyour Cloudant URL\u003e",
               "id": "\u003cyour Cloudant ID\u003e",
               "password": "\u003cyour Cloudant password\u003e",
-              "database": "\u003cyour Cloudant account database name\u003e",
-              "collector": "\u003cyour Cloudant collector database name\u003e"
+              "database": "\u003cyour Cloudant account database name\u003e"
             },
             "watson": {
               "id": "apikey",
@@ -350,6 +340,12 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:select:basic
               - urn:alm:descriptor:com.tectonic.ui:select:ldap
               - urn:alm:descriptor:com.tectonic.ui:select:oidc
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.cqrs
+            description: Enable asynchronous interactions via Command Query Responsibility Separation
+            displayName: Enable CQRS
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.monitoring
             description: Register a Prometheus scraper for the metrics endpoint for each microservice
@@ -587,75 +583,81 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:broker
 
-          # Section for Broker CQRS settings
-          - path: brokerCQRS
-            displayName: Broker CQRS microservice
-          - path: brokerCQRS.replicas
+          # Section for Cash Account settings
+          - path: cashAccount
+            displayName: Cash Account microservice
+          - path: cashAccount.replicas
             description: Initial number of pods for this microservice
             displayName: Replicas
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:podCount
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.autoscale
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.autoscale
             description: Enable a Horizontal Pod Autoscaler for this microservice
             displayName: Enable Auto-scaling
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.maxReplicas
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.maxReplicas
             description: Maximum number of pods for this microservice
             displayName: Maximum Replicas
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:podCount
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.cpuThreshold
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.cpuThreshold
             description: CPU Threshold that results in a scaling up another pod
             displayName: CPU Threshold
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:number
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.mountFile
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.mountFile
             description: Mount the specified file to the specified path in the container
             displayName: Enable mounting a file from a config map
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.mountFileName
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.mountFileName
             description: Name to use when mounting the file into the container
             displayName: Name of the file to be mounted
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.mountFilePath
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.mountFilePath
             description: Name of the directory in the container to contain the file
             displayName: Path of the file to be mounted
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.mountFromConfigMap
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.mountFromConfigMap
             description: This config map must be pre-created, with mountFileName as the key
             displayName: Name of the config map holding the file contents
             x-descriptors:
               - urn:alm:descriptor:io.kubernetes:ConfigMap
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.image.repository
-            description: Path to locate the Docker image for the broker CQRS microservice
-            displayName: Broker CQRS Docker image repository
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.image.repository
+            description: Path to locate the Docker image for the cash account microservice
+            displayName: Cash Account Docker image repository
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.image.tag
-            description: Tag for the Docker image for the broker CQRS microservice
-            displayName: Broker CQRS Docker image tag
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.image.tag
+            description: Tag for the Docker image for the cash account microservice
+            displayName: Cash Account Docker image tag
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
-          - path: brokerCQRS.url
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.url
             description: URL at which this microservice can be accessed by other microservices
-            displayName: Broker CQRS URL
+            displayName: Cash Account URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:brokerCQRS
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
+          - path: cashAccount.exchangeRateUrl
+            description: URL of the service that returns currency exchange rate data
+            displayName: Exchange Rate URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cashAccount
 
           # Section for Portfolio settings
           - path: portfolio
@@ -811,6 +813,24 @@ spec:
           - path: stockQuote.iexApiKey
             description: Your API Key for the IEX Cloud.  Optional - Only used if API Connect isn't working
             displayName: IEX API Key
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.encryption.type
+            description: Type of encryption to use when caching quotes in Redis
+            displayName: Encryption Type
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.encryption.saltBytes
+            description: Value of the Salt Bytes used in the encryption algorithm
+            displayName: Encryption Salt Bytes
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+          - path: stockQuote.encryption.password
+            description: Password for encryption of quotes in Redis
+            displayName: Encryption Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
@@ -1030,82 +1050,6 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:account
-
-          # Section for Collector settings
-          - path: collector
-            displayName: Collector microservice
-          - path: collector.enabled
-            description: Settings that apply to the Collector microservice (which depends upon Cloudant)
-            displayName: Collector microservice (optional - requires Cloudant)
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.replicas
-            description: Initial number of pods for this microservice
-            displayName: Replicas
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:podCount
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.autoscale
-            description: Enable a Horizontal Pod Autoscaler for this microservice
-            displayName: Enable Auto-scaling
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.maxReplicas
-            description: Maximum number of pods for this microservice
-            displayName: Maximum Replicas
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:podCount
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.cpuThreshold
-            description: CPU Threshold that results in a scaling up another pod
-            displayName: CPU Threshold
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:number
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.mountFile
-            description: Mount the specified file to the specified path in the container
-            displayName: Enable mounting a file from a config map
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.mountFileName
-            description: Name to use when mounting the file into the container
-            displayName: Name of the file to be mounted
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.mountFilePath
-            description: Name of the directory in the container to contain the file
-            displayName: Path of the file to be mounted
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.mountFromConfigMap
-            description: This config map must be pre-created, with mountFileName as the key
-            displayName: Name of the config map holding the file contents
-            x-descriptors:
-              - urn:alm:descriptor:io.kubernetes:ConfigMap
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.image.repository
-            description: Path to locate the Docker image for the collector microservice
-            displayName: Collector Docker image repository
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.image.tag
-            description: Tag for the Docker image for the collector microservice
-            displayName: Collector Docker image tag
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
-          - path: collector.url
-            description: URL at which this microservice can be accessed by other microservices
-            displayName: Collector URL
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:collector
 
           # Section for Messaging settings
           - path: messaging
@@ -1512,6 +1456,12 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
+          - path: oidc.jwksUrl
+            description: The URL of the JSON Web Key Service for this OIDC provider
+            displayName: JWKS URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
 
           # Section for LDAP settings
           - path: ldap
@@ -1593,12 +1543,6 @@ spec:
           - path: cloudant.database
             description: Account database for IBM Cloudant
             displayName: Cloudant account database
-            x-descriptors:
-              - urn:alm:descriptor:com.tectonic.ui:text
-              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
-          - path: cloudant.collector
-            description: Collector database for IBM Cloudant
-            displayName: Cloudant collector database
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
@@ -1909,6 +1853,14 @@ spec:
     spec:
       deployments:
       - name: stocktrader-operator
+        labels:
+          control-plane: controller-manager
+          app.kubernetes.io/name: deployment
+          app.kubernetes.io/instance: controller-manager
+          app.kubernetes.io/component: manager
+          app.kubernetes.io/created-by: stocktrader-operator
+          app.kubernetes.io/part-of: stocktrader-operator
+          app.kubernetes.io/managed-by: kustomize
         spec:
           replicas: 1
           selector:
@@ -1917,17 +1869,24 @@ spec:
           strategy: {}
           template:
             metadata:
+              annotations:
+                kubectl.kubernetes.io/default-container: manager
               labels:
                 control-plane: controller-manager
             spec:
               containers:
               - name: kube-rbac-proxy
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
                 args:
-                - --secure-listen-address=0.0.0.0:8443
-                - --upstream=http://127.0.0.1:8080/
-                - --logtostderr=true
-                - --v=10
+                - "--secure-listen-address=0.0.0.0:8443"
+                - "--upstream=http://127.0.0.1:8080/"
+                - "--logtostderr=true"
+                - "--v=0"
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - "ALL"
                 ports:
                 - containerPort: 8443
                   name: https
@@ -1940,7 +1899,7 @@ spec:
                     cpu: 10m
                     memory: 64Mi
               - name: manager
-                image: docker.io/ibmstocktrader/stocktrader-operator:v0.2.0
+                image: docker.io/ibmstocktrader/stocktrader-operator:v1.0.0
                 imagePullPolicy: Always
                 args:
                 - --health-probe-bind-address=:8081
@@ -1949,6 +1908,9 @@ spec:
                 - --leader-election-id=stocktrader-operator
                 securityContext:
                   allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - "ALL"
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -1963,13 +1925,15 @@ spec:
                   periodSeconds: 10
                 resources:
                   limits:
-                    cpu: 200m
+                    cpu: 250m
                     memory: 512Mi
                   requests:
                     cpu: 100m
                     memory: 256Mi
               securityContext:
                 runAsNonRoot: true
+                seccompProfile:
+                  type: RuntimeDefault
               terminationGracePeriodSeconds: 10
               serviceAccountName: stocktrader-operator
       permissions:
