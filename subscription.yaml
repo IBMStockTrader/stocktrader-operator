@@ -8,4 +8,4 @@ spec:
   name: stocktrader-operator
   source: cloud-journey-optimization-team
   sourceNamespace: openshift-marketplace # customize this if in a non-OpenShift Kubernetes
-  startingCSV: stocktrader-operator.v0.2.0
+  startingCSV: stocktrader-operator.v1.0.0
