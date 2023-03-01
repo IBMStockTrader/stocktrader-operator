@@ -757,7 +757,7 @@ spec:
                   encryption:
                     description: Settings for encrypting data to Redis (only applies to Spring flavor of Stock Quote)
                     properties:
-                      type:
+                      class:
                         description: Encryptor type used for encrypting data to redis, there are 4 modes: springSecurityBytesEncryptor, noneEncryptor, aesGsmEncryptor, springSecurityTextEncryptor
                         enum:
                           - aesGsmEncryptor
