@@ -1,4 +1,5 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp, All Rights Reserved
+#       Copyright 2022-2023 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -29,16 +30,19 @@ data:
   looper.url: {{ tpl .Values.looper.url . }}
   apic.url: {{ .Values.stockQuote.apiConnect }}
   iex.url: {{ .Values.stockQuote.iexTrading }}
+  encryption.type: {{ .Values.stockQuote.encryption.type }}
   odm.url: {{ .Values.odm.url }}
   openwhisk.url: {{ .Values.openwhisk.url }}
   account.url: {{ tpl .Values.account.url . }}
+  cashAccount.url: {{ tpl .Values.cashAccount.url . }}
+  cashAccount.exchangeRateUrl: {{ tpl .Values.cashAccount.exchangeRateUrl . }}
   cloudant.url: {{ .Values.cloudant.url }}
   cloudant.database: {{ .Values.cloudant.database }}
-  cloudant.collector: {{ .Values.cloudant.collector }}
-  collector.url: {{ tpl .Values.collector.url . }}
   kafka.address: {{ .Values.kafka.address }}
+  kafka.brokerTopic: {{ .Values.kafka.brokerTopic }}
   kafka.portfolioTopic: {{ .Values.kafka.portfolioTopic }}
   kafka.accountTopic: {{ .Values.kafka.accountTopic }}
+  kafka.cashAccountTopic: {{ .Values.kafka.cashAccountTopic }}
   kafka.historyTopic: {{ .Values.kafka.historyTopic }}
   database.kind: {{ .Values.database.kind }}
   database.host: {{ .Values.database.host }}
@@ -46,13 +50,13 @@ data:
   database.db: {{ .Values.database.db }}
   database.ssl: "{{ .Values.database.ssl }}"
   mq.host: {{ .Values.mq.host }}
-  mq.url: {{ .Values.mq.url }}
   mq.kind: {{ .Values.mq.kind }}
   mq.port: "{{ .Values.mq.port }}"
   mq.queueManager: {{ .Values.mq.queueManager }}
   mq.queue: {{ .Values.mq.queue }}
   mq.channel: {{ .Values.mq.channel }}
   oidc.discoveryUrl: {{ .Values.oidc.discoveryUrl }}
+  oidc.jwksUrl: {{ .Values.oidc.jwksUrl }}
   ldap.host: {{ .Values.ldap.host }}
   ldap.port: "{{ .Values.ldap.port }}"
   ldap.baseDN: {{ .Values.ldap.baseDN }}

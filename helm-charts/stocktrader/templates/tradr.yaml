@@ -1,4 +1,5 @@
-#       Copyright 2017-2021 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp, All Rights Reserved
+#       Copyright 2022-2023 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -24,7 +25,9 @@ metadata:
     app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-broker"}]'
     prism.subkind: Node.js
 spec:
+{{- if not .Values.tradr.autoscale }}
   replicas: {{ .Values.tradr.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: tradr
@@ -51,18 +54,6 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - tradr
-                topologyKey: "kubernetes.io/hostname"
 {{- if .Values.global.pullSecret }}
       imagePullSecrets:
       - name: {{ tpl .Values.global.pullSecretName . }}
@@ -129,11 +120,23 @@ spec:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.key
+          - name: BROKER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: broker.url
+                optional: true
           - name: PROXY_HOST
             valueFrom:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: ingress.address
+          - name: ACCOUNT_ENABLED
+            value: {{ quote .Values.account.enabled }}
+          - name: CASH_ACCOUNT_ENABLED
+            value: {{ quote .Values.cashAccount.enabled }}
+          - name: TRADE_HISTORY_ENABLED
+            value: {{ quote .Values.tradeHistory.enabled }}
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
@@ -155,49 +158,6 @@ spec:
 {{- if .Values.tradr.autoscale }}
 ---
 #Deploy the autoscaler
-{{- if .Capabilities.APIVersions.Has "autoscaling/v2" }}
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: {{ .Release.Name }}-tradr-hpa
-  labels:
-    app: stock-trader
-spec:
-  behavior:
-    scaleUp:
-      stabilizationWindowSeconds: 0
-      selectPolicy: Min
-      policies:
-        - type: Pods
-          value: 1
-          periodSeconds: 15
-    scaleDown:
-      stabilizationWindowSeconds: 300
-      selectPolicy: Max
-      policies:
-        - type: Percent
-          value: 100
-          periodSeconds: 120
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: {{ .Release.Name }}-tradr
-  minReplicas: {{ .Values.tradr.replicas }}
-  maxReplicas: {{ .Values.tradr.maxReplicas }}
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.tradr.cpuThreshold }}
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: 80
-{{- else }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -226,14 +186,7 @@ spec:
     name: {{ .Release.Name }}-tradr
   minReplicas: {{ .Values.tradr.replicas }}
   maxReplicas: {{ .Values.tradr.maxReplicas }}
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.tradr.cpuThreshold }}
-{{- end }}
+  targetCPUUtilizationPercentage: {{ .Values.tradr.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
@@ -241,10 +194,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-tradr-service
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
   labels:
     app: tradr
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 3000
   selector:

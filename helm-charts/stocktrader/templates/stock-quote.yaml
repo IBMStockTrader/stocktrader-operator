@@ -1,4 +1,5 @@
-#       Copyright 2017-2022 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp, All Rights Reserved
+#       Copyright 2022-2023 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -20,12 +21,11 @@ metadata:
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
-{{- if .Values.collector.enabled }}
-    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-collector"}]'
-{{- end }}
     prism.subkind: Liberty
 spec:
+{{- if not .Values.stockQuote.autoscale }}
   replicas: {{ .Values.stockQuote.replicas }}
+{{- end }}
   selector:
     matchLabels:
         app: stock-quote
@@ -41,6 +41,7 @@ spec:
         vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
           {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
           export REDIS_URL={{"{{"}} .Data.data.redisUrl {{"}}"}}
+          export IEX_API_KEY={{"{{"}} .Data.data.iexApiKey {{"}}"}}
           {{"{{"}}- end -{{"}}"}}
         vault.hashicorp.com/role: {{ .Values.vault.role }}
 {{- end }}
@@ -52,18 +53,6 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - stock-quote
-                topologyKey: "kubernetes.io/hostname"
 {{- if .Values.global.pullSecret }}
       imagePullSecrets:
       - name: {{ tpl .Values.global.pullSecretName . }}
@@ -105,6 +94,12 @@ spec:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.issuer
+          - name: OIDC_JWKS_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: oidc.jwksUrl
+                optional: true
           - name: APIC_URL
             valueFrom:
               configMapKeyRef:
@@ -117,26 +112,18 @@ spec:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: iex.url
                 optional: true
-          - name: IEX_API_KEY
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.secretName . }}
-                key: iex.apiKey
-                optional: true
-          - name: COLLECTOR_URL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: collector.url
-                optional: true
-          - name: COLLECTOR_ENABLED
-            value: {{ quote .Values.collector.enabled }}
 {{- if not .Values.vault.enabled }}
           - name: REDIS_URL
             valueFrom:
               secretKeyRef:
                 name: {{ tpl .Values.global.secretName . }}
                 key: redis.url
+          - name: IEX_API_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: iex.apiKey
+                optional: true
 {{- end }}
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
@@ -164,6 +151,8 @@ spec:
           - name: WLP_LOGGING_MESSAGE_SOURCE
             value: none
 {{- end }}
+# Note we have a Spring/Tomcat version of StockQuote, but have set it to run on the ports Liberty uses,
+# so we can switch between them without any operator changes
         ports:
           - containerPort: 9080
           - containerPort: 9443
@@ -201,49 +190,6 @@ spec:
 {{- if .Values.stockQuote.autoscale }}
 ---
 #Deploy the autoscaler
-{{- if .Capabilities.APIVersions.Has "autoscaling/v2" }}
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: {{ .Release.Name }}-stock-quote-hpa
-  labels:
-    app: stock-trader
-spec:
-  behavior:
-    scaleUp:
-      stabilizationWindowSeconds: 0
-      selectPolicy: Min
-      policies:
-        - type: Pods
-          value: 1
-          periodSeconds: 15
-    scaleDown:
-      stabilizationWindowSeconds: 300
-      selectPolicy: Max
-      policies:
-        - type: Percent
-          value: 100
-          periodSeconds: 120
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: {{ .Release.Name }}-stock-quote
-  minReplicas: {{ .Values.stockQuote.replicas }}
-  maxReplicas: {{ .Values.stockQuote.maxReplicas }}
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.stockQuote.cpuThreshold }}
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: 80
-{{- else }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -272,14 +218,7 @@ spec:
     name: {{ .Release.Name }}-stock-quote
   minReplicas: {{ .Values.stockQuote.replicas }}
   maxReplicas: {{ .Values.stockQuote.maxReplicas }}
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.stockQuote.cpuThreshold }}
-{{- end }}
+  targetCPUUtilizationPercentage: {{ .Values.stockQuote.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service

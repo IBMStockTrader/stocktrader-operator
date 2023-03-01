@@ -1,5 +1,4 @@
-#       Copyright 2020-2021 IBM Corp, All Rights Reserved
-#       Copyright 2022-2023 Kyndryl, All Rights Reserved
+#       Copyright 2023 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -13,44 +12,45 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-{{- if .Values.tradeHistory.enabled }}
+{{- if .Values.cashAccount.enabled }}
 #Deploy the pod
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-trade-history
+  name: {{ .Release.Name }}-cash-account
   labels:
     app: {{ .Release.Name }}-stock-trader
   annotations:
-    prism.subkind: Liberty
+    prism.subkind: Spring
 spec:
-{{- if not .Values.tradeHistory.autoscale }}
-  replicas: {{ .Values.tradeHistory.replicas }}
+{{- if not .Values.cashAccount.autoscale }}
+  replicas: {{ .Values.cashAccount.replicas }}
 {{- end }}
   selector:
     matchLabels:
-      app: trade-history
+      app: cash-account
   template:
     metadata:
       labels:
-        app: trade-history
+        app: cash-account
       annotations:
-        git-repo: "https://github.com/IBMStockTrader/trade-history"
+        git-repo: "https://github.com/IBMStockTrader/cash-account"
 {{- if .Values.vault.enabled }}
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-inject-secret-stocktrader-secrets.txt: {{ .Values.vault.path }}
         vault.hashicorp.com/agent-inject-template-stocktrader-secrets.txt: |
           {{"{{"}}- with secret "{{ .Values.vault.path }}" -{{"}}"}}
-          export MONGO_USER={{"{{"}} .Data.data.mongoUser {{"}}"}}
-          export MONGO_PASSWORD={{"{{"}} .Data.data.mongoPassword {{"}}"}}
+          export JDBC_ID={{"{{"}} .Data.data.jdbcId {{"}}"}}
+          export JDBC_PASSWORD={{"{{"}} .Data.data.jdbcPassword {{"}}"}}
+          export REDIS_URL={{"{{"}} .Data.data.redisUrl {{"}}"}}
           export KAFKA_USER={{"{{"}} .Data.data.kafkaUser {{"}}"}}
-          export CONSUMER_API_KEY={{"{{"}} .Data.data.kafkaApiKey {{"}}"}}
+          export KAFKA_API_KEY={{"{{"}} .Data.data.kafkaApiKey {{"}}"}}
           {{"{{"}}- end -{{"}}"}}
         vault.hashicorp.com/role: {{ .Values.vault.role }}
 {{- end }}
 {{- if .Values.global.monitoring }}
         prometheus.io/scrape: 'true'
-        prometheus.io/port: "9080"
+        prometheus.io/port: "8080"
 {{- end }}
 {{- if .Values.global.istio }}
         sidecar.istio.io/inject: 'true'
@@ -61,8 +61,8 @@ spec:
       - name: {{ tpl .Values.global.pullSecretName . }}
 {{- end }}
       containers:
-      - name: trade-history
-        image: "{{ .Values.tradeHistory.image.repository }}:{{ .Values.tradeHistory.image.tag }}"
+      - name: cash-account
+        image: "{{ .Values.cashAccount.image.repository }}:{{ .Values.cashAccount.image.tag }}"
 {{- if .Values.vault.enabled }}
         args:
           - sh
@@ -81,10 +81,93 @@ spec:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: trace.spec
                 optional: true
+          - name: JDBC_KIND
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: database.kind
+          - name: JDBC_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: database.host
+          - name: JDBC_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: database.port
+          - name: JDBC_DB
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: database.db
+          - name: JDBC_SSL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: database.ssl
+{{- if not .Values.vault.enabled }}
+          - name: JDBC_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: database.id
+          - name: JDBC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: database.password
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: redis.url
+          - name: KAFKA_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: kafka.user
+                optional: true
+          - name: KAFKA_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: kafka.apiKey
+                optional: true
+{{- end }}
+          - name: KAFKA_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.address
+                optional: true
+          - name: KAFKA_CASH_ACCOUNT_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.cashAccountTopic
+                optional: true
+          - name: KAFKA_BROKER_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.brokerTopic
+                optional: true
+          - name: KAFKA_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.address
+                optional: true
+          - name: CURRENCY_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: cashAccount.exchangeRateUrl
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }} 
+                name: {{ tpl .Values.global.configMapName . }}
                 key: jwt.audience
           - name: JWT_ISSUER
             valueFrom:
@@ -97,76 +180,8 @@ spec:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: oidc.jwksUrl
                 optional: true
-          - name: STOCK_QUOTE_URL
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: stockQuote.url
-                optional: true
-{{- if not .Values.vault.enabled }}
-          - name: MONGO_USER
-            valueFrom:
-              secretKeyRef:
-                name: {{ tpl .Values.global.secretName . }}
-                key: mongo.user
-                optional: false
-          - name: MONGO_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ tpl .Values.global.secretName . }}
-                key: mongo.password
-                optional: false
-          - name: KAFKA_USER
-            valueFrom:
-              secretKeyRef:
-                name: {{ tpl .Values.global.secretName . }}
-                key: kafka.user
-                optional: true
-          - name: CONSUMER_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ tpl .Values.global.secretName . }}
-                key: kafka.apiKey
-                optional: false
-{{- end }}
-          - name: MONGO_AUTH_DB
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: mongo.authDB
-                optional: false
-          - name: MONGO_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: mongo.database
-                optional: false
-          - name: MONGO_IP
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: mongo.ip
-                optional: false
-          - name: MONGO_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: mongo.port
-                optional: false
-          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_BOOTSTRAP_SERVERS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: kafka.address
-                optional: false
-          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_JAAS_CONFIG
-            value: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"$(KAFKA_USER)\" password=\"$(CONSUMER_API_KEY)\";"
-          - name: MP_MESSAGING_INCOMING_STOCKTRADER_TOPIC
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: kafka.historyTopic 
-                optional: false
+          - name: CQRS_ENABLED
+            value: {{ quote .Values.global.cqrs }}
 {{- if .Values.global.specifyCerts }}
           - name: cert_defaultTrustStore
             valueFrom:
@@ -188,28 +203,29 @@ spec:
             value: none
 {{- end }}
         ports:
-          - containerPort: 9080
-          - containerPort: 9443
+          - containerPort: 8080
+          - containerPort: 8443
         imagePullPolicy: Always
 {{- if .Values.global.healthCheck }}
-# No startup probe, as this microservice has to be on MicroProfile 3.x due to MP Reactive Messaging 1.0
-# being allergic to MicroProfile 4.x (where startup probes were introduced) in Open Liberty at the moment
-        readinessProbe:
+        startupProbe:
           httpGet:
-            path: /health/ready
-            port: 9080
+            path: /actuator/startup
+            port: 8080
           initialDelaySeconds: 60
           periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          periodSeconds: 15
+          failureThreshold: 3
         livenessProbe:
           httpGet:
-            path: /health/live
-            port: 9080
-          initialDelaySeconds: 90
-          periodSeconds: 30
-          successThreshold: 1
-          failureThreshold: 5
+            path: /actuator/health/liveness
+            port: 8080
+          periodSeconds: 15
+          failureThreshold: 3
 {{- end }}
         resources:
           limits:
@@ -217,16 +233,16 @@ spec:
             memory: 1000Mi
             ephemeral-storage: 256Mi
           requests:
-            cpu: 250m
-            memory: 256Mi
+            cpu: 500m
+            memory: 512Mi
             ephemeral-storage: 32Mi
-{{- if .Values.tradeHistory.autoscale }}
+{{- if .Values.cashAccount.autoscale }}
 ---
 #Deploy the autoscaler
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}-trade-history-hpa
+  name: {{ .Release.Name }}-cash-account-hpa
   labels:
     app: stock-trader
 spec:
@@ -248,33 +264,35 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Release.Name }}-trade-history
-  minReplicas: {{ .Values.tradeHistory.replicas }}
-  maxReplicas: {{ .Values.tradeHistory.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.tradeHistory.cpuThreshold }}
+    name: {{ .Release.Name }}-cash-account
+  minReplicas: {{ .Values.cashAccount.replicas }}
+  maxReplicas: {{ .Values.cashAccount.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.cashAccount.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-trade-history-service
+  name: {{ .Release.Name }}-cash-account-service
+  labels:
+    app: cash-account
 {{- if .Values.global.monitoring }}
   annotations:
     prometheus.io/scrape: 'true'
-    prometheus.io/port: "9080"
+    prometheus.io/port: "8080"
 {{- end }}
 spec:
-  # if your cluster supports it, uncomment the following to automatically create
-  # an external load-balanced IP for the frontend service.
-  #type: LoadBalancer
-  #type: NodePort
+  type: NodePort
   ports:
-  # the port that this service should serve on
-  - name: http
-    port: 9080
-  - name: https
-    port: 9443
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: https
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
   selector:
-    app: trade-history
+    app: cash-account
 {{- end }}

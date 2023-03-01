@@ -1,4 +1,5 @@
-#       Copyright 2017-2022 IBM Corp All Rights Reserved
+#       Copyright 2017-2021 IBM Corp, All Rights Reserved
+#       Copyright 2022-2023 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -24,7 +25,9 @@ metadata:
     app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"{{ .Release.Name }}-broker"}]'
     prism.subkind: Liberty
 spec:
+{{- if not .Values.looper.autoscale }}
   replicas: {{ .Values.looper.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: looper
@@ -43,18 +46,6 @@ spec:
         sidecar.istio.io/inject: 'true'
 {{- end }}
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - looper
-                topologyKey: "kubernetes.io/hostname"
 {{- if .Values.global.pullSecret }}
       imagePullSecrets:
       - name: {{ tpl .Values.global.pullSecretName . }}
@@ -153,49 +144,6 @@ spec:
 {{- if .Values.looper.autoscale }}
 ---
 #Deploy the autoscaler
-{{- if .Capabilities.APIVersions.Has "autoscaling/v2" }}
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: {{ .Release.Name }}-looper-hpa
-  labels:
-    app: stock-trader
-spec:
-  behavior:
-    scaleUp:
-      stabilizationWindowSeconds: 0
-      selectPolicy: Min
-      policies:
-        - type: Pods
-          value: 1
-          periodSeconds: 15
-    scaleDown:
-      stabilizationWindowSeconds: 300
-      selectPolicy: Max
-      policies:
-        - type: Percent
-          value: 100
-          periodSeconds: 120
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: {{ .Release.Name }}-looper
-  minReplicas: {{ .Values.looper.replicas }}
-  maxReplicas: {{ .Values.looper.maxReplicas }}
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.looper.cpuThreshold }}
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: 80
-{{- else }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -224,14 +172,7 @@ spec:
     name: {{ .Release.Name }}-looper
   minReplicas: {{ .Values.looper.replicas }}
   maxReplicas: {{ .Values.looper.maxReplicas }}
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.looper.cpuThreshold }}
-{{- end }}
+  targetCPUUtilizationPercentage: {{ .Values.looper.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
