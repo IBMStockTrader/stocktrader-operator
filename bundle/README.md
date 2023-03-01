@@ -4,7 +4,7 @@ docker build -t stocktrader-operator-bundle:v1.0.0 -f bundle.Dockerfile .
 ```
 Then tag and push the image to your desired image registry.  For example, I push mine to *DockerHub*, so after doing a `docker login`, I do the following:
 ```
-docker tag stocktrader-operator-bundle:v0.2.0 docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
+docker tag stocktrader-operator-bundle:v1.0.0 docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
 docker push docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
 ```
 At that point, you have your bundle available.  Now it is ready to be used by the Operator Package Manager (`opm`) to produce a catalog index image that can be loaded into your cluster's *OperatorHub*.
