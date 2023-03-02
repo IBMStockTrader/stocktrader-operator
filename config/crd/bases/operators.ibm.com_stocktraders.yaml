@@ -757,10 +757,10 @@ spec:
                       class:
                         description: Encryptor type used for encrypting data to redis, there are 4 modes: springSecurityBytesEncryptor, noneEncryptor, aesGsmEncryptor, springSecurityTextEncryptor
                         enum:
-                          - aesGsmEncryptor
-                          - noneEncryptor
-                          - springSecurityBytesEncryptor
-                          - springSecurityTextEncryptor
+                        - aesGsmEncryptor
+                        - noneEncryptor
+                        - springSecurityBytesEncryptor
+                        - springSecurityTextEncryptor
                         type: string
                       saltBytes:
                         description: Salt bytes used for encryption and decryption. Allows to create multiple replicas. Optional if encryptor type is noneEncryptor
