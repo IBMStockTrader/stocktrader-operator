@@ -183,9 +183,6 @@ spec:
               cloudant:
                 description: IBM Cloudant settings (optional).  Can also use a generic Apache CouchDB.
                 properties:
-                  collector:
-                    description: Collector database name
-                    type: string
                   database:
                     description: Account database name
                     type: string
@@ -757,7 +754,7 @@ spec:
                   encryption:
                     description: Settings for encrypting data to Redis (only applies to Spring flavor of Stock Quote)
                     properties:
-                      type:
+                      class:
                         description: Encryptor type used for encrypting data to redis, there are 4 modes: springSecurityBytesEncryptor, noneEncryptor, aesGsmEncryptor, springSecurityTextEncryptor
                         enum:
                           - aesGsmEncryptor
