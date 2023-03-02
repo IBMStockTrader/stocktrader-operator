@@ -357,10 +357,10 @@ stockQuote:
     __metadata:
       label: "Encryption settings"
       description: "Encryption settings for encrypting data to redis"
-    type:
+    class:
       __metadata:
-        label: "Encryption type"
-        description: "Encryptor type used for encrypting data to redis, there are 4 modes: springSecurityBytesEncryptor, noneEncryptor, aesGsmEncryptor, springSecurityTextEncryptor"
+        label: "Encryption class"
+        description: "Encryptor class used for encrypting data to redis, there are 4 modes: springSecurityBytesEncryptor, noneEncryptor, aesGsmEncryptor, springSecurityTextEncryptor"
         type: string
       options:
       - label: "None"

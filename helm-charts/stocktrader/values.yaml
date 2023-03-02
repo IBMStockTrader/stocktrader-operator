@@ -77,7 +77,7 @@ stockQuote:
   iexTrading: https://cloud.iexapis.com/stable/stock
   iexApiKey: <your IEX API key>
   encryption:
-    type: "noneEncryptor"
+    class: "noneEncryptor"
     saltBytes: <salt bytes generated>
     password: <encryption password>
 trader:
