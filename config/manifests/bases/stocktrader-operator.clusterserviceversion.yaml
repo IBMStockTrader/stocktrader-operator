@@ -99,7 +99,12 @@ metadata:
               "url": "http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote",
               "apiConnect": "https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks",
               "iexTrading": "https://cloud.iexapis.com/stable/stock",
-              "iexApiKey": "\u003cyour IEX API key\u003e"
+              "iexApiKey": "\u003cyour IEX API key\u003e",
+              "encryption": {
+                "class": "noneEncryptor",
+                "password": "1234",
+                "saltBytes": "\u003cyour salt bytes\u003e"
+              }
             },
             "trader": {
               "enabled": true,
@@ -816,9 +821,9 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
-          - path: stockQuote.encryption.type
+          - path: stockQuote.encryption.class
             description: Type of encryption to use when caching quotes in Redis
-            displayName: Encryption Type
+            displayName: Encryption Class
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:select:noneEncryptor
               - urn:alm:descriptor:com.tectonic.ui:select:springSecurityTextEncryptor
