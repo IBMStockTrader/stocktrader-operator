@@ -2217,6 +2217,7 @@ spec:
   - supported: true
     type: AllNamespaces
   maturity: beta
+  minKubeVersion: 1.19
   maintainers:
     - name: John W. Alcorn
       email: John.Alcorn@kyndryl.com
