@@ -30,7 +30,7 @@ data:
   looper.url: {{ tpl .Values.looper.url . }}
   apic.url: {{ .Values.stockQuote.apiConnect }}
   iex.url: {{ .Values.stockQuote.iexTrading }}
-  encryption.type: {{ .Values.stockQuote.encryption.type }}
+  encryption.type: {{ .Values.stockQuote.encryption.class }}
   odm.url: {{ .Values.odm.url }}
   openwhisk.url: {{ .Values.openwhisk.url }}
   account.url: {{ tpl .Values.account.url . }}
