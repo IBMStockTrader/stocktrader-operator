@@ -183,9 +183,6 @@ spec:
               cloudant:
                 description: IBM Cloudant settings (optional).  Can also use a generic Apache CouchDB.
                 properties:
-                  collector:
-                    description: Collector database name
-                    type: string
                   database:
                     description: Account database name
                     type: string
