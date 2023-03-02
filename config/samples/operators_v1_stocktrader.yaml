@@ -35,7 +35,6 @@ spec:
     replicas: 1
     url: http://{{ .Release.Name }}-cash-account-service:8080/cash-account
   cloudant:
-    collector: <your Cloudant Collector database name>
     database: <your Cloudant Account database name>
     id: <your Cloudant ID>
     password: <your Cloudant Password>
@@ -185,7 +184,7 @@ spec:
     encryption:
       password: <encryption password>
       saltBytes: <salt bytes generated>
-      type: noneEncryptor
+      class: noneEncryptor
     iexApiKey: <your IEX API key>
     iexTrading: https://cloud.iexapis.com/stable/stock
     image:
