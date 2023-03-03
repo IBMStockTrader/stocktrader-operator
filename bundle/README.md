@@ -7,20 +7,9 @@ Then tag and push the image to your desired image registry.  For example, I push
 docker tag stocktrader-operator-bundle:v1.0.0 docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
 docker push docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
 ```
-At that point, you have your bundle available.  Now it is ready to be used by the Operator Package Manager (`opm`) to produce a catalog index image that can be loaded into your cluster's *OperatorHub*.
-Unfortunately, the `opm` tool only works on Linux, and I develop on a Mac.  So I build a Docker container in which I run the `opm` tool.  In the directory above this one, run the following command:
-```
-docker build -t opm -f opm.Dockerfile .
-```
-Then just run the following commands.  The first one puts you in a shell where you can run the rest:
-```
-docker run -it opm bash
-/operator-registry/bin/opm index add --bundles docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0 --tag docker.io/ibmstocktrader/stocktrader-operator-catalog:v1.0.0
-podman login docker.io
-podman push docker.io/ibmstocktrader/stocktrader-operator-catalog:v1.0.0
-exit
-```
-In the above, I'm pushing the catalog index image to *DockerHub*; you can of course push it to any registry you want, such as `quay.io` or your cluster's local image registry or your cloud provider's image registry.
+At that point, you have your bundle available.  Now it is ready to be used by the Operator Package Manager (`opm`) to produce a catalog image that can be loaded into your cluster's *OperatorHub*.
+See the ../catalog/README.md for details on how to produce the catalog image
+
 Once the catalog image is available in an image registry, you just add it to your cluster's *OperatorHub*, via the following steps:
 1. Login to your OpenShift (4.5 or later) cluster as a cluster administrator
 2. Navigate to *Administration->Cluster Settings* in the left nav, then click on the *Global Configuration* tab, and scroll down and click on *OperatorHub*.
