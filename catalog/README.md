@@ -2,7 +2,7 @@ Catalog image built following the guidance at
 https://olm.operatorframework.io/docs/tasks/creating-a-catalog/#catalog-creation-with-raw-file-based-catalogs
 
 Specifically, the following commands were run (from the directory above this one):
-
+```
 make opm
 
 mkdir catalog
@@ -29,3 +29,4 @@ docker build . -f catalog.Dockerfile -t stocktrader-operator-catalog:v1.0.0
 docker tag stocktrader-operator-catalog:v1.0.0 ibmstocktrader/stocktrader-operator-catalog:v1.0.0
 
 docker push ibmstocktrader/stocktrader-operator-catalog:v1.0.0
+```
