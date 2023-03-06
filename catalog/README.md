@@ -9,14 +9,14 @@ mkdir catalog
 
 ./bin/opm generate dockerfile catalog
 
-./bin/opm init stocktrader-operator-package -c stable -o yaml > catalog/operator.yaml
+./bin/opm init stocktrader-operator -c stable -o yaml > catalog/operator.yaml
 
 ./bin/opm render docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0 -o yaml >> catalog/operator.yaml
 
 cat << EOF >> catalog/operator.yaml
 ---
 schema: olm.channel
-package: stocktrader-operator-package
+package: stocktrader-operator
 name: stable
 entries:
   - name: stocktrader-operator-bundle.v1.0.0
