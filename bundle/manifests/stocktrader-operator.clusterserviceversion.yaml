@@ -2074,6 +2074,12 @@ spec:
           - routes
           verbs:
           - '*'
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
+          - leases
+          verbs:
+          - '*'
         serviceAccountName: stocktrader-operator
       clusterPermissions:
       - rules:
@@ -2203,6 +2209,12 @@ spec:
           - route.openshift.io
           resources:
           - routes
+          verbs:
+          - '*'
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
+          - leases
           verbs:
           - '*'
         serviceAccountName: stocktrader-operator
