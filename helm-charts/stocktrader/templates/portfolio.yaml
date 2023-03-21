@@ -150,6 +150,8 @@ spec:
                 optional: true
           - name: TRADE_HISTORY_ENABLED
             value: {{ quote .Values.tradeHistory.enabled }}
+          - name: CASH_ACCOUNT_ENABLED
+            value: {{ quote .Values.cashAccount.enabled }}
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
