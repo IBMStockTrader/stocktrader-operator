@@ -275,15 +275,14 @@ metadata:
   name: {{ .Release.Name }}-trader-service
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
+{{- if .Values.global.monitoring }}
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: "9080"
+{{- end }}
   finalizers:
   - service.kubernetes.io/load-balancer-cleanup
   labels:
     app: trader
-{{- if .Values.global.monitoring }}
-  annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/port: "9080"
-{{- end }}
 spec:
   type: LoadBalancer
   ports:
