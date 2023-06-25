@@ -325,11 +325,23 @@ spec:
                     description: API Key
                     format: password
                     type: string
+                  brokerTopic:
+                    description: Broker Topic
+                    type: string
+                  cashAaccountTopic:
+                    description: Account Topic
+                    type: string
                   historyTopic:
                     description: Trade History Topic
                     type: string
                   portfolioTopic:
                     description: Portfolio Topic
+                    type: string
+                  saslMechanism:
+                    description: SASL Mechanism
+                    type: string
+                  saslJaasConfig:
+                    description: SASL JAAS Config
                     type: string
                   user:
                     description: User ID
@@ -341,8 +353,33 @@ spec:
                   baseDN:
                     description: Base Distinguished Name (DN)
                     type: string
+                  bindAuthMechanism:
+                    description: Bind Authentication Mechanism
+                    enum:
+                    - none
+                    - simple
+                    type: string
+                  bindDN:
+                    description: Bind Distinguished Name (DN)
+                    type: string
+                  bindPassword:
+                    description: Bind Password
+                    format: password
+                    type: string
                   host:
                     description: LDAP host (or IP address)
+                    type: string
+                  kind:
+                    description: LDAP vendor
+                    enum:
+                    - custom
+                    - domino
+                    - microsoft
+                    - netscape
+                    - novell
+                    - secureway
+                    - sun
+                    - tivoli
                     type: string
                   port:
                     description: LDAP Port number
@@ -351,6 +388,9 @@ spec:
                   realm:
                     description: LDAP realm
                     type: string
+                  ssl:
+                    description: Enable SSL
+                    type: boolean
                 type: object
               looper:
                 description: Looper microservice (optional - used for load/stress testing)
@@ -640,6 +680,9 @@ spec:
                     type: string
                   discoveryUrl:
                     description: Discovery URL
+                    type: string
+                  jwksUrl:
+                    description: JWKS URL
                     type: string
                 type: object
               openwhisk:
