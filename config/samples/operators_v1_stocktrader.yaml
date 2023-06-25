@@ -51,7 +51,7 @@ spec:
     auth: basic
     certs: |
       -----BEGIN CERTIFICATE-----
-      Put your certificate(s) here
+      Put your certificate(s) here, indented appropriately
       -----END CERTIFICATE-----
     configMapName: '{{ .Release.Name }}-config'
     cqrs: false
@@ -82,14 +82,19 @@ spec:
     brokerTopic: broker
     cashAccountTopic: cash-account
     historyTopic: history
-    kind: ibm-event-streams
     portfolioTopic: portfolio
+    saslMechanism: PLAIN
+    saslJaasConfig: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";'
     user: token
   ldap:
     baseDN: o=ibm.com
+    bindAuthMechanism: simple
+    bindDN: cn=stocktrader,o=ibm.com
+    bindPassword: stocktrader-password
     host: bluepages.ibm.com
     port: 389
     realm: BluePages
+    ssl: false
   looper:
     autoscale: false
     cpuThreshold: 75
