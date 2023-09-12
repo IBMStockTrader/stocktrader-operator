@@ -811,6 +811,7 @@ spec:
                       password:
                         description: Password using for encryption and decryption
                         type: string
+                    type: object
                   iexApiKey:
                     description: IEX API Key
                     format: password
