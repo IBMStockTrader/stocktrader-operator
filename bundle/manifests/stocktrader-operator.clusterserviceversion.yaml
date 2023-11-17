@@ -271,6 +271,8 @@ metadata:
               "portfolioTopic": "portfolio",
               "user": "token",
               "apiKey": "\u003cyour API key\u003e"
+              "saslMechanism": "PLAIN"
+              "saslJaasConfig": "\u003cyour API key\u003"
             },
             "mongo": {
               "ip": "\u003cyour Mongo IP\u003e",
@@ -1747,6 +1749,18 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
           - path: kafka.topic
+            description: Kafka portfolio topic name
+            displayName: Portfolio Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.saslMechanism
+            description: Kafka portfolio topic name
+            displayName: Portfolio Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.saslJaasConfig
             description: Kafka portfolio topic name
             displayName: Portfolio Topic
             x-descriptors:

@@ -160,7 +160,17 @@ spec:
                 key: kafka.address
                 optional: false
           - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_JAAS_CONFIG
-            value: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"$(KAFKA_USER)\" password=\"$(CONSUMER_API_KEY)\";"
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.saslJaasConfig
+                optional: false
+          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.saslMechanism
+                optional: false
           - name: MP_MESSAGING_INCOMING_STOCKTRADER_TOPIC
             valueFrom:
               configMapKeyRef:

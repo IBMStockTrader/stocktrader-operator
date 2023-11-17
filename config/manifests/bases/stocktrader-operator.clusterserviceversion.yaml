@@ -271,6 +271,8 @@ metadata:
               "portfolioTopic": "portfolio",
               "user": "token",
               "apiKey": "\u003cyour API key\u003e"
+              "saslMechanism": "PLAIN"
+              "saslJaasConfig": "\u003cyour API key\u003"
             },
             "mongo": {
               "ip": "\u003cyour Mongo IP\u003e",

@@ -203,6 +203,7 @@ mq:
   queueManager: stocktrader
   queue: NotificationQ
   channel: DEV.APP.SVRCONN
+  url: <your mq url>
 redis:
   urlWithCredentials: redis://<your credentials>@redistrader1-ibm-redis-ha-dev-master-svc:6379
   cacheInterval: 60
@@ -222,6 +223,8 @@ kafka:
   portfolioTopic: portfolio
   accountTopic: account
   cashAccountTopic: cash-account
+  saslMechanism: PLAIN
+  saslConfig: <your sasl jaas config>
   historyTopic: history
   user: token
   apiKey: <your API key>
