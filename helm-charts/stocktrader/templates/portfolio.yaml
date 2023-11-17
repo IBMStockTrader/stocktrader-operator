@@ -148,6 +148,18 @@ spec:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.address
                 optional: true
+          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_JAAS_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.saslJaasConfig
+                optional: true
+          - name: MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.saslMechanism
+                optional: true
           - name: TRADE_HISTORY_ENABLED
             value: {{ quote .Values.tradeHistory.enabled }}
           - name: CASH_ACCOUNT_ENABLED

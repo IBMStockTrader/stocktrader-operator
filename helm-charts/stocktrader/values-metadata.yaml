@@ -1035,6 +1035,16 @@ kafka:
       label: "API Key"
       description: "Kafka API key"
       type: password
+  saslMechanism:
+    __metadata:
+      label: "Sasl Mechanism"
+      description: "The mechanism used for the sasl authentication"
+      type: string
+  saslJaasConfig:
+    __metadata:
+      label: "Sasl Config"
+      description: "Configures the Simple Authentication and Security Layer (SASL) for Java Authentication and Authorization Service (Jaas), specifying authentication details."
+      type: string
 cloudant:
   __metadata:
     label: "Cloudant settings (optional)"

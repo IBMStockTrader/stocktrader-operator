@@ -44,6 +44,8 @@ data:
   kafka.accountTopic: {{ .Values.kafka.accountTopic }}
   kafka.cashAccountTopic: {{ .Values.kafka.cashAccountTopic }}
   kafka.historyTopic: {{ .Values.kafka.historyTopic }}
+  kafka.saslMechanism: {{ .Values.kafka.saslMechanism }}
+  kafka.saslJaasConfig: {{ .Values.kafka.saslJaasConfig }}
   database.kind: {{ .Values.database.kind }}
   database.host: {{ .Values.database.host }}
   database.port: "{{ .Values.database.port }}"
@@ -55,6 +57,7 @@ data:
   mq.queueManager: {{ .Values.mq.queueManager }}
   mq.queue: {{ .Values.mq.queue }}
   mq.channel: {{ .Values.mq.channel }}
+  mq.url: {{ .Values.mq.url }}
   oidc.discoveryUrl: {{ .Values.oidc.discoveryUrl }}
   oidc.jwksUrl: {{ .Values.oidc.jwksUrl }}
   ldap.host: {{ .Values.ldap.host }}

@@ -123,6 +123,11 @@ spec:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: mq.queue
+          - name: MQ_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: mq.url
           - name: JWT_AUDIENCE
             valueFrom:
               configMapKeyRef:
