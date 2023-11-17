@@ -328,7 +328,7 @@ spec:
                   brokerTopic:
                     description: Broker Topic
                     type: string
-                  cashAaccountTopic:
+                  cashAccountTopic:
                     description: Account Topic
                     type: string
                   historyTopic:
@@ -1000,7 +1000,7 @@ spec:
                     type: integer
                 type: object
               twitter:
-                description: Twitter settings (optional)
+                description: Twitter (X) settings (optional)
                 properties:
                   accessToken:
                     description: Access Token
