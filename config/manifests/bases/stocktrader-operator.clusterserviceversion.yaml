@@ -267,11 +267,12 @@ metadata:
             "kafka": {
               "address": "\u003cyour Kafka proxy service\u003e:30000",
               "accountTopic": "account",
+              "cashAccountTopic": "cash-account",
               "historyTopic": "history",
               "portfolioTopic": "portfolio",
               "user": "token",
-              "apiKey": "\u003cyour API key\u003e"
-              "saslMechanism": "PLAIN"
+              "apiKey": "\u003cyour API key\u003e",
+              "saslMechanism": "PLAIN",
               "saslJaasConfig": "\u003cyour API key\u003"
             },
             "mongo": {
@@ -1742,6 +1743,12 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.cashAccountTopic
+            description: Kafka cash account topic name
+            displayName: Cash Account Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
           - path: kafka.historyTopic
             description: Kafka history topic name
             displayName: History Topic
@@ -1751,6 +1758,18 @@ spec:
           - path: kafka.topic
             description: Kafka portfolio topic name
             displayName: Portfolio Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.saslMechanism
+            description: Kafka SASL Mechanism.  Defaults to 'PLAIN'
+            displayName: SASL Mechanism
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.saslJaasConfig
+            description: Kafka JAAS Configuration
+            displayName: SASL JAAS Config
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
