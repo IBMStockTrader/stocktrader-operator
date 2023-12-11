@@ -123,7 +123,7 @@ spec:
     password: <your Mongo password>
     port: 27017
     user: <your Mongo user>
-    MONGO_CONNECTION_STRING: <your Mongo connection string>
+    connectionString: <your Mongo connection string>
   mq:
     channel: DEV.APP.SVRCONN
     host: mqtrader1-mqtrader1

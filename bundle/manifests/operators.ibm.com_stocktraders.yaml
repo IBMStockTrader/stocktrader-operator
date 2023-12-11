@@ -508,7 +508,7 @@ spec:
                   ip:
                     description: Host name (or IP address)
                     type: string
-                  MONGO_CONNECTION_STRING:
+                  connectionString:
                     description: Connection string for Mongo
                     type: string
                   password:

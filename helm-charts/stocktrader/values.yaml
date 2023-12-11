@@ -240,7 +240,7 @@ mongo:
   password: <your Mongo password>
   database: <your Mongo database>
   authDB: <your Mongo auth database>
-  MONGO_CONNECTION_STRING: <your Mongo connection string>
+  connectionString: <your Mongo connection string>
 s3:
   enabled: false
   bucket: stock-trader
