@@ -1083,6 +1083,11 @@ mongo:
       label: "Port"
       description: "Port number for Mongo.  Use the local port number (not the node port or Ingress port) if using an intra-cluster deployment of Mongo"
       type: number
+  connectionString:
+    __metadata:
+    label: "Connection string"
+    description: "Connection string for mongo"
+    type: string
   user:
     __metadata:
       label: "User ID"

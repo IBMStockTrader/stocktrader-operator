@@ -276,6 +276,7 @@ metadata:
               "saslJaasConfig": "\u003cyour API key\u003"
             },
             "mongo": {
+              "connectionString": "\u003cyour Mongo string\u003e",
               "ip": "\u003cyour Mongo IP\u003e",
               "port": 27017,
               "user": "\u003cyour Mongo user\u003e",

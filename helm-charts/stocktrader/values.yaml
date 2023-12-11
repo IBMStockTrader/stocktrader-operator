@@ -234,6 +234,7 @@ cloudant:
   password: <your Cloudant Password>
   database: <your Cloudant Account database name>
 mongo:
+  connectionString: <your Mongo connection string>
   ip: <your Mongo IP>
   port: 27017
   user: <your Mongo user>
