@@ -71,6 +71,7 @@ data:
   mongo.port: "{{ .Values.mongo.port }}"
   mongo.database: {{ .Values.mongo.database }}
   mongo.authDB: {{ .Values.mongo.authDB }}
+  mongo.MONGO_CONNECTION_STRING: {{ .Values.mongo.MONGO_CONNECTION_STRING }}
   s3.bucket: {{ .Values.s3.bucket }}
   s3.location: {{ .Values.s3.location }}
   s3.endpointUrl: {{ .Values.s3.endpointUrl }}

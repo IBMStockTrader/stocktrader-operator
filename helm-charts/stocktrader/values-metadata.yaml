@@ -1103,6 +1103,12 @@ mongo:
       label: "Auth database"
       description: "Auth database name for Mongo"
       type: string
+  MONGO_CONNECTION_STRING:
+    __metadata:
+      label: "Connection string"
+      description: Connection string for mongo
+      type: string
+
 s3:
   __metadata:
     label: "S3 settings (optional)"
