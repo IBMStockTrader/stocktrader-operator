@@ -151,7 +151,7 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
-                key: MONGO.CONNECTION.STRING
+                key: mongo.connectionString
                 optional: false
           - name: MONGO_PORT
             valueFrom:
