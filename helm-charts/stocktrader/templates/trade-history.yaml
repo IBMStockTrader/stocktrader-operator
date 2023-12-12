@@ -147,6 +147,12 @@ spec:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: mongo.ip
                 optional: false
+          - name: MONGO_CONNECTION_STRING
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: MONGO.CONNECTION.STRING
+                optional: false
           - name: MONGO_PORT
             valueFrom:
               configMapKeyRef:

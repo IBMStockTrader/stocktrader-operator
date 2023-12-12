@@ -239,6 +239,7 @@ mongo:
   user: <your Mongo user>
   password: <your Mongo password>
   database: <your Mongo database>
+  connectionString: <your Mongo connection string>
   authDB: <your Mongo auth database>
 s3:
   enabled: false

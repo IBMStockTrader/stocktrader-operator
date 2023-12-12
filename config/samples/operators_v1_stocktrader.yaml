@@ -122,6 +122,7 @@ spec:
     ip: <your Mongo IP>
     password: <your Mongo password>
     port: 27017
+    connectionString: <your Mongo connection string>
     user: <your Mongo user>
   mq:
     channel: DEV.APP.SVRCONN
