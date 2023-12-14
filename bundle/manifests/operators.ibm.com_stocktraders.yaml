@@ -502,6 +502,9 @@ spec:
                   authDB:
                     description: Auth database
                     type: string
+                  connectionString:
+                    description: Connection string for mongo
+                    type: string
                   database:
                     description: Database
                     type: string

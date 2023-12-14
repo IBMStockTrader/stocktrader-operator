@@ -1093,6 +1093,11 @@ mongo:
       label: "Password"
       description: "Login password for Mongo"
       type: password
+  connectionString:
+    __metadata:
+      label: "Connection string"
+      description: "Connection string for mongo"
+      type: string
   database:
     __metadata:
       label: "Database"

@@ -279,6 +279,7 @@ metadata:
               "ip": "\u003cyour Mongo IP\u003e",
               "port": 27017,
               "user": "\u003cyour Mongo user\u003e",
+              "connectionString": "\u003cyour Mongo string\u003e",
               "password": "\u003cyour Mongo password\u003e",
               "database": "\u003cyour Mongo database\u003e",
               "authDB": "\u003cyour Mongo auth database\u003e"
