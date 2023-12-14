@@ -124,38 +124,6 @@ spec:
       version: v1
 ---
 {{- end }}
-{{- if .Values.collector.enabled }}
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: {{ .Release.Name }}-collector
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - {{ .Release.Name }}-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /collector
-    route:
-    - destination:
-        host: {{ .Release.Name }}-collector-service
-        port:
-          number: 9080
----
-apiVersion: networking.istio.io/v1beta1
-kind: DestinationRule
-metadata:
-  name: {{ .Release.Name }}-collector
-spec:
-  host: {{ .Release.Name }}-collector-service
-  subsets:
-  - name: v1
-    labels:
-      version: v1
----
-{{- end }}
 {{- if .Values.looper.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
