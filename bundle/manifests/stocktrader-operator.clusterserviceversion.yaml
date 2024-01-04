@@ -9,7 +9,7 @@ metadata:
     support: Kyndryl
     containerImage: docker.io/ibmstocktrader/stocktrader-operator:v1.0.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.32.0
+    operators.operatorframework.io/builder: operator-sdk-v1.33.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -349,6 +349,7 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:select:basic
               - urn:alm:descriptor:com.tectonic.ui:select:ldap
               - urn:alm:descriptor:com.tectonic.ui:select:oidc
+              - urn:alm:descriptor:com.tectonic.ui:select:none
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.cqrs
             description: Enable asynchronous interactions via Command Query Responsibility Separation
@@ -1813,6 +1814,12 @@ spec:
             displayName: Password
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
+          - path: mongo.connectionString
+            description: Connection string for Mongo
+            displayName: Connection String
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mongo
           - path: mongo.database
             description: Database name for Mongo
