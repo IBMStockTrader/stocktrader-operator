@@ -240,6 +240,7 @@ spec:
                     - basic
                     - ldap
                     - oidc
+                    - none
                     type: string
                   certs:
                     description: SSL certificates that should be trusted by microservices
