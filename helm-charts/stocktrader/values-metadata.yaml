@@ -1,5 +1,5 @@
 #       Copyright 2019-2021 IBM Corp, All Rights Reserved
-#       Copyright 2022-2023 Kyndryl, All Rights Reserved
+#       Copyright 2022-2024 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ global:
   auth:
     __metadata:
       label: "Select the type of authentication"
-      description: "Choose from Basic, LDAP or OIDC"
+      description: "Choose from Basic, LDAP, OIDC or None"
       type: string
       options:
       - label: "Basic"
@@ -32,6 +32,8 @@ global:
         value: "ldap"
       - label: "OIDC"
         value: "oidc"
+      - label: "None"
+        value: "none"
   monitoring:
     __metadata:
       label: "Enable Prometheus monitoring"
