@@ -39,6 +39,8 @@ spec:
     id: <your Cloudant ID>
     password: <your Cloudant Password>
     url: <your Cloudant URL>
+    host: <your Cloudant Host>
+    port: 5984
   database:
     db: trader
     host: db2trader1-ibm-db2oltp-dev
