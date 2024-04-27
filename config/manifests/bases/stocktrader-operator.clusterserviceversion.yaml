@@ -9,7 +9,7 @@ metadata:
     support: Kyndryl
     containerImage: docker.io/ibmstocktrader/stocktrader-operator:v1.0.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.33.0
+    operators.operatorframework.io/builder: operator-sdk-v1.34.1
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -224,6 +224,8 @@ metadata:
             },
             "cloudant": {
               "url": "\u003cyour Cloudant URL\u003e",
+              "host": "\u003cyour Cloudant hostname of IP\u003e",
+              "port": "\u003cyour Cloudant port\u003e",
               "id": "\u003cyour Cloudant ID\u003e",
               "password": "\u003cyour Cloudant password\u003e",
               "database": "\u003cyour Cloudant account database name\u003e"
@@ -267,6 +269,7 @@ metadata:
             "kafka": {
               "address": "\u003cyour Kafka proxy service\u003e:30000",
               "accountTopic": "account",
+              "brokerTopic": "broker",
               "cashAccountTopic": "cash-account",
               "historyTopic": "history",
               "portfolioTopic": "portfolio",
@@ -1140,12 +1143,12 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:messaging
 
-          # Section for Notification-Slack settings
+          # Section for Notification-Slack/Teams settings
           - path: notificationSlack
-            displayName: Notification-Slack microservice
+            displayName: Notification-Slack/Teams microservice
           - path: notificationSlack.enabled
-            description: This optional service posts to a Slack channel when your loyalty level changes.  Requires messaging microservice
-            displayName: Enable the Slack-based notification microservice (choose this or the Twitter-based one, not both)
+            description: This optional service posts to a Slack/Teams channel when your loyalty level changes.  Requires messaging microservice
+            displayName: Enable the Slack/Teams-based notification microservice (choose this or the Twitter-based one, not both)
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationSlack
@@ -1215,7 +1218,7 @@ spec:
             displayName: Notification-Twitter microservice
           - path: notificationTwitter.enabled
             description: This optional service tweets when your loyalty level changes.  Requires messaging microservice
-            displayName: Enable the Twitter-based notification microservice (choose this or the Slack-based one, not both)
+            displayName: Enable the Twitter-based notification microservice (choose this or the Slack/Teams-based one, not both)
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:notificationTwitter
@@ -1434,7 +1437,7 @@ spec:
 
           # Section for JWT settings
           - path: jwt
-            displayName: JWT settings
+            displayName: JSON Web Token (JWT) settings
           - path: jwt.issuer
             description: The default value is usually sufficient
             displayName: JWT Issuer URL
@@ -1450,7 +1453,7 @@ spec:
 
           # Section for OIDC settings
           - path: oidc
-            displayName: OIDC settings
+            displayName: OpenID Connect (OIDC) settings
           - path: oidc.clientId
             description: The client ID issued to you by the OIDC provider
             displayName: Client ID
@@ -1470,7 +1473,7 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:oidc
           - path: oidc.jwksUrl
-            description: The URL of the JSON Web Key Service for this OIDC provider
+            description: The URL of the JSON Web Key Set (JWKS) service for this OIDC provider
             displayName: JWKS URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
@@ -1508,7 +1511,7 @@ spec:
           - path: vault
             displayName: Vault settings
           - path: vault.enabled
-            description: SEnable microservices to pull secrets from Hashicorp Vault
+            description: Enable microservices to pull secrets from Hashicorp Vault
             displayName: Enable Vault integration
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
@@ -1532,14 +1535,26 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:vault
 
-          # Section for Cloudant settings
+          # Section for Cloudant/CouchDB settings
           - path: cloudant
-            displayName: IBM Cloudant settings
+            displayName: IBM Cloudant or Apache CouchDB settings
           - path: cloudant.url
             description: URL for IBM Cloudant
             displayName: Cloudant URL
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
+          - path: cloudant.host
+            description: Hostname or IP for IBM Cloudant
+            displayName: Cloudant Hostname or IP
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
+          - path: cloudant.port
+            description: Port number for IBM Cloudant
+            displayName: Cloudant Port
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:cloudant
           - path: cloudant.id
             description: Login ID for IBM Cloudant
@@ -1702,9 +1717,9 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:openwhisk
 
-          # Section for Twitter settings
+          # Section for Twitter (X) settings
           - path: twitter
-            displayName: Twitter settings
+            displayName: Twitter (X) settings
           - path: twitter.consumerKey
             description: Consumer Key for your Twitter ID
             displayName: Consumer Key
@@ -1745,6 +1760,12 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
+          - path: kafka.brokerTopic
+            description: Kafka broker topic name
+            displayName: Broker Topic
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
           - path: kafka.cashAccountTopic
             description: Kafka cash account topic name
             displayName: Cash Account Topic
@@ -1757,7 +1778,7 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafka
-          - path: kafka.topic
+          - path: kafka.portfolioTopic
             description: Kafka portfolio topic name
             displayName: Portfolio Topic
             x-descriptors:
@@ -1869,7 +1890,7 @@ spec:
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:s3
 
   description: |-
-    Umbrella operator for installing and configuring the IBM Stock Trader sample.
+    Umbrella operator for installing and configuring the IBM/Kyndryl Stock Trader sample.
     This operator will install each of the specified microservices, and configure them
     to receive fields of a config map and secret as environment variables.
     
@@ -1879,7 +1900,7 @@ spec:
     database, such as DB2, is the only mandatory prereq; each of the others, like MQ
     or ODM, are optional, and will only be configured if so requested in the input
     passed to the operator.
-  displayName: IBM Stock Trader sample Operator
+  displayName: IBM/Kyndryl Stock Trader sample Operator
   install:
     spec:
       deployments:
