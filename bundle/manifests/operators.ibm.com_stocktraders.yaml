@@ -194,8 +194,15 @@ spec:
                     format: password
                     type: string
                   url:
-                    description: URL
+                    description: URL (deprecated - we use host and port nowadays)
                     type: string
+                  host:
+                    description: Hostname or IP address
+                    type: string
+                  port:
+                    description: Port Number
+                    format: int32
+                    type: integer
                 type: object
               database:
                 description: Database Settings.  Mandatory - required by the portfolio microservice
@@ -531,12 +538,10 @@ spec:
                     description: Channel
                     type: string
                   url:
-                    description: >-
-                      Connection string with protocol(s) and port
+                    description: Connection string with protocol(s) and port
                     type: string
                   host:
-                    description: >-
-                      Host name, connection string, or IP address
+                    description: Host name, connection string, or IP address
                     type: string
                   id:
                     description: User ID
