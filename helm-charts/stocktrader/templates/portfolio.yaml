@@ -1,5 +1,5 @@
 #       Copyright 2020-2021 IBM Corp, All Rights Reserved
-#       Copyright 2022-2023 Kyndryl, All Rights Reserved
+#       Copyright 2022-2024 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -135,6 +135,12 @@ spec:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.portfolioTopic
+                optional: true
+          - name: KAFKA_BROKER_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: kafka.brokerTopic
                 optional: true
           - name: KAFKA_HISTORY_TOPIC
             valueFrom:
