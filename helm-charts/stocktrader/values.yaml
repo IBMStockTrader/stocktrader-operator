@@ -230,6 +230,8 @@ kafka:
   apiKey: <your API key>
 cloudant:
   url: <your Cloudant URL>
+  host: <your Cloudant Hostname/IP>
+  port: <your Cloudant port>
   id: <your Cloudant ID>
   password: <your Cloudant Password>
   database: <your Cloudant Account database name>
