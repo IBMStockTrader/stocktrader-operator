@@ -1,4 +1,4 @@
-#       Copyright 2023 Kyndryl, All Rights Reserved
+#       Copyright 2023-2024 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -152,12 +152,6 @@ spec:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: kafka.brokerTopic
-                optional: true
-          - name: KAFKA_ADDRESS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: kafka.address
                 optional: true
           - name: CURRENCY_API_URL
             valueFrom:
