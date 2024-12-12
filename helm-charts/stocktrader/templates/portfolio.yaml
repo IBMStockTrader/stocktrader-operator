@@ -240,11 +240,11 @@ spec:
         resources:
           limits:
             cpu: 500m
-            memory: 500Mi
+            memory: 2Gi
             ephemeral-storage: 256Mi
           requests:
             cpu: 250m
-            memory: 256Mi
+            memory: 1Gi
             ephemeral-storage: 32Mi
 {{- if .Values.portfolio.autoscale }}
 ---
