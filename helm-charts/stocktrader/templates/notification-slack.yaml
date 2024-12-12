@@ -1,5 +1,5 @@
 #       Copyright 2017-2021 IBM Corp All Rights Reserved
-#       Copyright 2022-2023 IBM Corp All Rights Reserved
+#       Copyright 2022-2024 IBM Corp All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -164,11 +164,11 @@ spec:
         resources:
           limits:
             cpu: 500m
-            memory: 500Mi
+            memory: 1Gi
             ephemeral-storage: 256Mi
           requests:
             cpu: 250m
-            memory: 256Mi
+            memory: 512Mi
             ephemeral-storage: 32Mi
 {{- if .Values.notificationSlack.autoscale }}
 ---
