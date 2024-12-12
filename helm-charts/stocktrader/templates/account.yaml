@@ -280,6 +280,7 @@ spec:
           - containerPort: 9443
         imagePullPolicy: Always
 {{- if .Values.global.healthCheck }}
+        # Per https://github.com/IBMStockTrader/account/issues/15, need to update paths below for Quarkus
         startupProbe:
           httpGet:
             path: /health/started
@@ -303,11 +304,11 @@ spec:
         resources:
           limits:
             cpu: 1000m
-            memory: 1000Mi
+            memory: 2Gi
             ephemeral-storage: 256Mi
           requests:
             cpu: 500m
-            memory: 512Mi
+            memory: 1Gi
             ephemeral-storage: 32Mi
 {{- if .Values.account.autoscale }}
 ---
