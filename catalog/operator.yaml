@@ -3,7 +3,7 @@ defaultChannel: alpha
 name: stocktrader-operator
 schema: olm.package
 ---
-image: docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
+image: ghcr.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
 name: stocktrader-operator.v1.0.0
 package: stocktrader-operator
 properties:
