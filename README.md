@@ -44,7 +44,7 @@ For futher details on installing OLM, refer to their [home page](https://olm.ope
 
 We then run the operator bundle using:
 ```
-operator-sdk run bundle docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
+operator-sdk run bundle ghcr.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
 ```
 
 Now you should have the OLM-enabled Stock Trader operator running in the cluster. With the operator, you can install an instance of Stock Trader using:
