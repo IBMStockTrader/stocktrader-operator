@@ -58,7 +58,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/broker",
+                "repository": "ghcr.io/ibmstocktrader/broker",
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-broker-service:9080/broker"
@@ -69,7 +69,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/cash-account",
+                "repository": "ghcr.io/ibmstocktrader/cash-account",
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-cash-account-service:8080/cash-account",
@@ -81,7 +81,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/portfolio",
+                "repository": "ghcr.io/ibmstocktrader/portfolio",
                 "tag": "1.0.0"
               },
               "mountFile": false,
@@ -93,7 +93,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/stock-quote",
+                "repository": "ghcr.io/ibmstocktrader/stock-quote",
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote",
@@ -113,7 +113,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/trader",
+                "repository": "ghcr.io/ibmstocktrader/trader",
                 "tag": "1.0.0"
               }
             },
@@ -124,7 +124,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/tradr",
+                "repository": "ghcr.io/ibmstocktrader/tradr",
                 "tag": "1.0.0"
               }
             },
@@ -135,7 +135,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/account",
+                "repository": "ghcr.io/ibmstocktrader/account",
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-account-service:9080/account"
@@ -147,7 +147,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/messaging",
+                "repository": "ghcr.io/ibmstocktrader/messaging",
                 "tag": "1.0.0"
               },
               "notification": {
@@ -161,7 +161,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/notification-slack",
+                "repository": "ghcr.io/ibmstocktrader/notification-slack",
                 "tag": "1.0.0"
               }
             },
@@ -172,7 +172,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/notification-twitter",
+                "repository": "ghcr.io/ibmstocktrader/notification-twitter",
                 "tag": "1.0.0"
               }
             },
@@ -183,7 +183,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/trade-history",
+                "repository": "ghcr.io/ibmstocktrader/trade-history",
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-trade-history-service:9080/trade-history"
@@ -195,7 +195,7 @@ metadata:
               "maxReplicas": 10,
               "cpuThreshold": 75,
               "image": {
-                "repository": "ibmstocktrader/looper",
+                "repository": "ghcr.io/ibmstocktrader/looper",
                 "tag": "1.0.0"
               },
               "url": "http://{{ .Release.Name }}-looper-service:9080/looper"
