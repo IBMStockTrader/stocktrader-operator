@@ -7,7 +7,7 @@ metadata:
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
     support: Kyndryl
-    containerImage: docker.io/ibmstocktrader/stocktrader-operator:v1.0.0
+    containerImage: ghcr.io/ibmstocktrader/stocktrader-operator:v1.0.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
     operators.operatorframework.io/builder: operator-sdk-v1.34.1
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
@@ -1951,7 +1951,7 @@ spec:
                     cpu: 10m
                     memory: 64Mi
               - name: manager
-                image: docker.io/ibmstocktrader/stocktrader-operator:v1.0.0
+                image: ghcr.io/ibmstocktrader/stocktrader-operator:v1.0.0
                 imagePullPolicy: Always
                 args:
                 - --health-probe-bind-address=:8081
