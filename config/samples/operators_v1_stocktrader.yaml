@@ -1,7 +1,7 @@
 apiVersion: operators.ibm.com/v1
 kind: StockTrader
 metadata:
-  name: example-stocktrader
+  name: example
 spec:
   # Default values copied from <project_dir>/helm-charts/stocktrader/values.yaml
   account:
@@ -9,7 +9,7 @@ spec:
     cpuThreshold: 75
     enabled: false
     image:
-      repository: ibmstocktrader/account
+      repository: ghcr.io/ibmstocktrader/account
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -18,7 +18,7 @@ spec:
     autoscale: false
     cpuThreshold: 75
     image:
-      repository: ibmstocktrader/broker
+      repository: ghcr.io/ibmstocktrader/broker
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -29,7 +29,7 @@ spec:
     enabled: false
     exchangeRateUrl: https://api.frankfurter.app/latest
     image:
-      repository: ibmstocktrader/cash-account
+      repository: ghcr.io/ibmstocktrader/cash-account
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -102,7 +102,7 @@ spec:
     cpuThreshold: 75
     enabled: false
     image:
-      repository: ibmstocktrader/looper
+      repository: ghcr.io/ibmstocktrader/looper
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -112,7 +112,7 @@ spec:
     cpuThreshold: 75
     enabled: false
     image:
-      repository: ibmstocktrader/messaging
+      repository: ghcr.io/ibmstocktrader/messaging
       tag: 1.0.0
     maxReplicas: 10
     notification:
@@ -140,7 +140,7 @@ spec:
     cpuThreshold: 75
     enabled: false
     image:
-      repository: ibmstocktrader/notification-slack
+      repository: ghcr.io/ibmstocktrader/notification-slack
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -149,7 +149,7 @@ spec:
     cpuThreshold: 75
     enabled: false
     image:
-      repository: ibmstocktrader/notification-twitter
+      repository: ghcr.io/ibmstocktrader/notification-twitter
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -170,7 +170,7 @@ spec:
     autoscale: false
     cpuThreshold: 75
     image:
-      repository: ibmstocktrader/portfolio
+      repository: ghcr.io/ibmstocktrader/portfolio
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -196,7 +196,7 @@ spec:
     iexApiKey: <your IEX API key>
     iexTrading: https://cloud.iexapis.com/stable/stock
     image:
-      repository: ibmstocktrader/stock-quote
+      repository: ghcr.io/ibmstocktrader/stock-quote
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -206,7 +206,7 @@ spec:
     cpuThreshold: 75
     enabled: false
     image:
-      repository: ibmstocktrader/trade-history
+      repository: ghcr.io/ibmstocktrader/trade-history
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -216,7 +216,7 @@ spec:
     cpuThreshold: 75
     enabled: true
     image:
-      repository: ibmstocktrader/trader
+      repository: ghcr.io/ibmstocktrader/trader
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
@@ -225,7 +225,7 @@ spec:
     cpuThreshold: 75
     enabled: false
     image:
-      repository: ibmstocktrader/tradr
+      repository: ghcr.io/ibmstocktrader/tradr
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
