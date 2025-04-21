@@ -3,13 +3,13 @@ kind: ClusterServiceVersion
 metadata:
   name: stocktrader-operator.v1.0.0
   annotations:
-    description: Umbrella operator that installs and configures the IBM Stock Trader
+    description: Umbrella operator that installs and configures the IBM/Kyndryl Stock Trader
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
     support: Kyndryl
     containerImage: ghcr.io/ibmstocktrader/stocktrader-operator:v1.0.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.34.1
+    operators.operatorframework.io/builder: operator-sdk-v1.39.2
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -17,7 +17,7 @@ metadata:
           "apiVersion": "operators.ibm.com/v1",
           "kind": "StockTrader",
           "metadata": {
-            "name": "example-stocktrader"
+            "name": "example"
           },
           "spec": {
             "global": {
@@ -1927,29 +1927,6 @@ spec:
                 control-plane: controller-manager
             spec:
               containers:
-              - name: kube-rbac-proxy
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
-                args:
-                - "--secure-listen-address=0.0.0.0:8443"
-                - "--upstream=http://127.0.0.1:8080/"
-                - "--logtostderr=true"
-                - "--v=0"
-                securityContext:
-                  allowPrivilegeEscalation: false
-                  capabilities:
-                    drop:
-                      - "ALL"
-                ports:
-                - containerPort: 8443
-                  name: https
-                  protocol: TCP
-                resources:
-                  limits:
-                    cpu: 500m
-                    memory: 128Mi
-                  requests:
-                    cpu: 10m
-                    memory: 64Mi
               - name: manager
                 image: ghcr.io/ibmstocktrader/stocktrader-operator:v1.0.0
                 imagePullPolicy: Always
