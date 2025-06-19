@@ -17,7 +17,7 @@ spec:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: Schema for the IBM Stock Trader cloud-native sample application
+        description: Schema for the IBM/Kyndryl Stock Trader cloud-native sample application
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
@@ -960,6 +960,15 @@ spec:
                     format: int32
                     minimum: 1
                     type: integer
+                  whiteLabelHeaderImage:
+                    description: URL for alternate header image (for white-labeling)
+                    type: string
+                  whiteLabelFooterImage:
+                    description: URL for alternate footer image (for white-labeling)
+                    type: string
+                  whiteLabelLoginMessage:
+                    description: Alternate login message (for white-labeling)
+                    type: string
                 type: object
               tradr:
                 description: Tradr fancy UI microservice (requires OIDC)
