@@ -9,7 +9,7 @@ metadata:
     support: Kyndryl
     containerImage: ghcr.io/ibmstocktrader/stocktrader-operator:v1.0.0
     repository: https://github.com/IBMStockTrader/stocktrader-operator
-    operators.operatorframework.io/builder: operator-sdk-v1.39.2
+    operators.operatorframework.io/builder: operator-sdk-v1.40.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     alm-examples: |-
       [
@@ -27,7 +27,7 @@ metadata:
               "ingress": false,
               "istio": false,
               "istioNamespace": "istio-system",
-              "route": true,
+              "route": false,
               "healthCheck": true,
               "jsonLogging": false,
               "traceSpec": "*=info",
@@ -115,7 +115,10 @@ metadata:
               "image": {
                 "repository": "ghcr.io/ibmstocktrader/trader",
                 "tag": "1.0.0"
-              }
+              },
+              "whiteLabelHeaderImage": "header.jpg",
+              "whiteLabelFooterImage": "footer.jpg",
+              "whiteLabelLoginMessage": "Login to Stock Trader"
             },
             "tradr": {
               "enabled": false,
@@ -303,10 +306,10 @@ spec:
   customresourcedefinitions:
     owned:
       - name: stocktraders.operators.ibm.com
-        displayName: IBM Stock Trader application
+        displayName: IBM/Kyndryl Stock Trader application
         kind: StockTrader
         version: v1
-        description: This operator deploys the IBM Stock Trader microservices and configures them
+        description: This operator deploys the IBM/Kyndryl Stock Trader microservices and configures them
         resources:
           - name: ''
             kind: Deployment
@@ -334,13 +337,13 @@ spec:
             version: autoscaling/v1
           - name: ''
             kind: Gateway
-            version: networking.istio.io/v1beta1
+            version: networking.istio.io/v1
           - name: ''
             kind: VirtualService
-            version: networking.istio.io/v1beta1
+            version: networking.istio.io/v1
           - name: ''
             kind: DestinationRule
-            version: networking.istio.io/v1beta1
+            version: networking.istio.io/v1
         specDescriptors:
           # Section for global settings
           - path: global
@@ -855,7 +858,7 @@ spec:
           - path: trader
             displayName: Trader simple UI microservice
           - path: trader.enabled
-            description: This is a simple form-based browser client for IBM Stock Trader
+            description: This is a simple form-based browser client for IBM/Kyndryl Stock Trader
             displayName: Enable the basic UI microservice
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
@@ -917,6 +920,24 @@ spec:
           - path: trader.image.tag
             description: Tag for the Docker image for the trader microservice
             displayName: Trader Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.whiteLabelHeaderImage
+            description: URL for alternate header image (for white-labeling)
+            displayName: Header image
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.whiteLabelFooterImage
+            description: URL for alternate footer image (for white-labeling)
+            displayName: Footer image
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
+          - path: trader.whiteLabelLoginMessage
+            description: Alternate login message (for white-labeling)
+            displayName: Login message
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:trader
