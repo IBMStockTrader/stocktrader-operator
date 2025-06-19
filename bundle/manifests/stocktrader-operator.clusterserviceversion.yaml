@@ -3,7 +3,7 @@ kind: ClusterServiceVersion
 metadata:
   name: stocktrader-operator.v1.0.0
   annotations:
-    description: Umbrella operator that installs and configures the IBM Stock Trader
+    description: Umbrella operator that installs and configures the IBM/Kyndryl Stock Trader
     capabilities: Basic Install
     createdAt: 2020-01-31 16:00:00
     support: Kyndryl
@@ -115,7 +115,10 @@ metadata:
               "image": {
                 "repository": "ibmstocktrader/trader",
                 "tag": "1.0.0"
-              }
+              },
+              "whiteLabelHeaderImage": "header.jpg",
+              "whiteLabelFooterImage": "footer.jpg",
+              "whiteLabelLoginMessage": "Login to Stock Trader"
             },
             "tradr": {
               "enabled": false,
