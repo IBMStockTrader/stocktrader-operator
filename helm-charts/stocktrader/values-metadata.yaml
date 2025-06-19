@@ -426,6 +426,21 @@ trader:
         label: "Docker image tag"
         description: "Tag for the Docker image for the trader microservice"
         type: string
+  whiteLabelHeaderImage:
+    __metadata:
+      label: "Header image URL"
+      description: "URL for alternate header image (for white-labeling)"
+      type: string
+  whiteLabelFooterImage:
+    __metadata:
+      label: "Footer image URL"
+      description: "URL for alternate footer image (for white-labeling)"
+      type: string
+  whiteLabelLoginMessage:
+    __metadata:
+      label: "Login message"
+      description: "URL for alternate login message (for white-labeling)"
+      type: string
 tradr:
   __metadata:
     label: "Tradr fancy UI microservice"
