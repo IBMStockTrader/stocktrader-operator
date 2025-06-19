@@ -220,6 +220,9 @@ spec:
       tag: 1.0.0
     maxReplicas: 10
     replicas: 1
+    whiteLabelHeaderImage: header.jpg
+    whiteLabelFooterImage: footer.jpg
+    whiteLabelLoginMessage: Login to Stock Trader
   tradr:
     autoscale: false
     cpuThreshold: 75
