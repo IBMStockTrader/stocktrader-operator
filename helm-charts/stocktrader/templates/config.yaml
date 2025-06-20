@@ -1,5 +1,5 @@
 #       Copyright 2017-2021 IBM Corp, All Rights Reserved
-#       Copyright 2022-2024 Kyndryl, All Rights Reserved
+#       Copyright 2022-2025 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ data:
   stockQuote.url: {{ tpl .Values.stockQuote.url . }}
   watson.url: {{ .Values.watson.url }}
   tradeHistory.url: {{ tpl .Values.tradeHistory.url . }}
+  trader.whiteLabelHeaderImage: {{ .Values.trader.whiteLabelHeaderImage }}
+  trader.whiteLabelFooterImage: {{ .Values.trader.whiteLabelFooterImage }}
+  trader.whiteLabelLoginMessage: {{ .Values.trader.whiteLabelLoginMessage }}
   messaging.notification.url: {{ tpl .Values.messaging.notification.url . }}
   looper.url: {{ tpl .Values.looper.url . }}
   apic.url: {{ .Values.stockQuote.apiConnect }}
