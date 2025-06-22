@@ -1,5 +1,5 @@
 #       Copyright 2017-2021 IBM Corp, All Rights Reserved
-#       Copyright 2022-2024 Kyndryl, All Rights Reserved
+#       Copyright 2022-2025 Kyndryl, All Rights Reserved
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -188,6 +188,24 @@ spec:
             value: {{ quote .Values.cashAccount.enabled }}
           - name: TRADE_HISTORY_ENABLED
             value: {{ quote .Values.tradeHistory.enabled }}
+          - name: WHITE_LABEL_HEADER_IMAGE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.whiteLabelHeaderImage
+                optional: true
+          - name: WHITE_LABEL_FOOTER_IMAGE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.whiteLabelFooterImage
+                optional: true
+          - name: WHITE_LABEL_LOGIN_MESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.whiteLabelLoginMessage
+                optional: true
 {{- if .Values.global.jsonLogging }}
           - name: WLP_LOGGING_CONSOLE_FORMAT
             value: json
