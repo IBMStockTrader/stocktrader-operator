@@ -64,6 +64,16 @@ global:
       label: "Istio namespace"
       description: "Namespace for the OpenShift Service Mesh (aka Istio)"
       type: string
+  istioIngress:
+    __metadata:
+      label: "Istio ingress"
+      description: "Name of the ingress gateway for the OpenShift Service Mesh (aka Istio)"
+      type: string
+  istioEgress:
+    __metadata:
+      label: "Istio egress"
+      description: "Name of the egress gateway for the OpenShift Service Mesh (aka Istio)"
+      type: string
   healthCheck:
     __metadata:
       label: "Enable Readiness and Liveness probes"
