@@ -20,7 +20,7 @@ metadata:
   name: {{ .Release.Name }}-gateway
 spec:
   selector:
-    istio: ingressgateway # use istio default controller
+    istio: {{ .Values.global.istioIngress }}
   servers:
   - port:
       number: 80
