@@ -26,6 +26,8 @@ metadata:
               "monitoring": true,
               "ingress": false,
               "istio": false,
+              "istioEgress": "egressgateway",
+              "istioIngress": "ingressgateway",
               "istioNamespace": "istio-system",
               "route": false,
               "healthCheck": true,
@@ -380,6 +382,18 @@ spec:
             displayName: Enable Istio
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.istioEgress
+            description: Egress gateway for the OpenShift Service Mesh (Istio)
+            displayName: Istio Egress
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.istioIngress
+            description: Ingress gateway for the OpenShift Service Mesh (Istio)
+            displayName: Istio Ingress
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
           - path: global.istioNamespace
             description: Namespace for the OpenShift Service Mesh (Istio)
