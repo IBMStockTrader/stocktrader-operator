@@ -28,6 +28,8 @@ global:
   cqrs: false
   istio: false
   istioNamespace: istio-system
+  istioIngress: ingressgateway
+  istioEgress: egressgateway
   externalConfigMap: false
   configMapName: "{{ .Release.Name }}-config"
   externalSecret: false
