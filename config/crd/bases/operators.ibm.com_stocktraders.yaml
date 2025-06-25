@@ -276,6 +276,12 @@ spec:
                   istio:
                     description: Enable the OpenShift Service Mesh (Istio)
                     type: boolean
+                  istioEgress:
+                    description: Egress gateway for the OpenShift Service Mesh (Istio)
+                    type: string
+                  istioIngress:
+                    description: Ingress gateway for the OpenShift Service Mesh (Istio)
+                    type: string
                   istioNamespace:
                     description: Namespace for the OpenShift Service Mesh (Istio)
                     type: string
