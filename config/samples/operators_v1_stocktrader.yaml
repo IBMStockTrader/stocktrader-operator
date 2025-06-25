@@ -63,6 +63,8 @@ spec:
     healthCheck: true
     ingress: false
     istio: false
+    istioEgress: ingressgateway
+    istioIngress: egressgateway
     istioNamespace: istio-system
     jsonLogging: false
     monitoring: true
