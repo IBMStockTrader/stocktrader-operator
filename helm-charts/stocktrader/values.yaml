@@ -255,3 +255,6 @@ s3:
   endpointUrl: <your S3 endpoint URL>
   resourceInstanceId: <your S3 CRN>
   apiKey: <your S3 API Key>
+azureInstrumentation:
+  enabled: true
+  connectionString: <your instrumentation connection string>

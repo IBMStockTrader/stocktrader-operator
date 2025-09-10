@@ -75,6 +75,14 @@ spec:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: auth.type
+{{- if .Values.azureInstrumentation.enabled }}
+          - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: azureInstrumentation.connectionString
+                optional: true
+{{- end }}
           - name: TRACE_SPEC
             valueFrom:
               configMapKeyRef:
