@@ -1073,6 +1073,17 @@ spec:
                     description: URL
                     type: string
                 type: object
+              azureInstrumentation:
+                description: Azure Instrumentation settings (optional)
+                properties:
+                  enabled:
+                    description: Enable Azure Instrumentation using App Insights.
+                    type: boolean
+                  connectionString:
+                    description: Azure App Insight Connection String.
+                    format: password
+                    type: string
+                type: object
             type: object
         x-kubernetes-preserve-unknown-fields: true
     served: true
