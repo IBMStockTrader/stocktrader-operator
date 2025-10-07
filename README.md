@@ -7,7 +7,7 @@ It is a follow-on to the helm chart I created earlier, and described at https://
 
 ![Architecural Diagram](images/stock-trader.png)
 
-Initially created for IBM Cloud, we've since tested it in each of the major hyperscalers (AWS, Azure and GCP).  
+Initially created for IBM Cloud, we've since tested it in each of the major hyperscalers (AWS, Azure and GCP). Here's an example of a deployment to AWS: 
 
 ![AWS-specific Diagram](images/stock-trader-aws.png)
 
@@ -59,7 +59,7 @@ kubectl get svc
 ```
 and copy the external IP endpoint with the name ending in `trader-service` to access the application.
 
-In a browser, enter the url in this format: `https://<trader-service-url>:9443/trader`
+In a browser, enter the url in this format: `https://<trader-service-ip>:9443/trader`
 
 The following page should pop up:
 ![Login](images/Login.png)
