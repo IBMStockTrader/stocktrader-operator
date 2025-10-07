@@ -1,13 +1,13 @@
 # IBM Stock Trader operator
 This operator is intended to install all of the microservices from the IBM Stock Trader sample, and configure them to talk to services they require.
 
-Note it does NOT install such prereqs, like DB2 or MQ - it just asks you to tell it how to connect to such services you already have - whether they be running in the same Kube cluster, or out in a public cloud.
+Note it does NOT install such prereqs, like DB2 or MQ - it just asks you to tell it how to connect to such services you already have - whether they be running in the same Kube cluster, or out in a public cloud. See the sibling [stocktrader-setup](https://github.com/IBMStockTrader/stocktrader-setp) repository for Terraform/OpenTofu scripts to set up the prereqs.
 
 It is a follow-on to the helm chart I created earlier, and described at https://medium.com/cloud-engagement-hub/using-an-umbrella-helm-chart-to-deploy-the-composite-ibm-stock-trader-sample-3b8b69af900d.
 
 ![Architecural Diagram](images/stock-trader.png)
 
-Initially created for IBM Cloud, we've since tested it in each of the major hyperscalers (AWS, Azure and GCP).  We've gotten the farthest on AWS, where we now have it to where it no longer needs to leave the AWS network during a Looper run (which stress tests a subset of Stock Trader), and only needs to reach back to the IBM Cloud for the optional usage of the Watson Tone Analyzer.
+Initially created for IBM Cloud, we've since tested it in each of the major hyperscalers (AWS, Azure and GCP).  
 
 ![AWS-specific Diagram](images/stock-trader-aws.png)
 
@@ -22,12 +22,12 @@ The operator is built by going to the `stocktrader-operator` subdirectory and ru
 ```
 operator-sdk build stocktrader-operator
 ```
-This produces a `stocktrader-operator:latest` Docker image, which I then pushed to DockerHub via the following usual commands (if building yourself, you'll need to push to somewhere that you have authority, and will need to update the `operator.yaml` to reference that location):
+This produces a `stocktrader-operator:latest` Docker image, which I then pushed to the GitHub Container Registry via the following usual commands (if building yourself, you'll need to push to somewhere that you have authority, and will need to update the `operator.yaml` to reference that location):
 ```
-docker tag stocktrader-operator:latest ibmstocktrader/stocktrader-operator:latest
-docker push ibmstocktrader/stocktrader-operator:latest
+docker tag stocktrader-operator:latest ghcr.io/ibmstocktrader/stocktrader-operator:latest
+docker push ghcr.io/ibmstocktrader/stocktrader-operator:latest
 ```
-The results of building this repo are in DockerHub at https://hub.docker.com/r/ibmstocktrader/stocktrader-operator
+The results of building this repo are in GHCR, [here](https://github.com/IBMStockTrader/stocktrader-operator/pkgs/container/stocktrader-operator)
 
 ## Installing the Operator via the CLI
 The prequisites to the following commands require a Mac with Homebrew installed. It also assumes you are logged in to your cluster.
