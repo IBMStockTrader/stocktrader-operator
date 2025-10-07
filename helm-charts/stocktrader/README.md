@@ -9,20 +9,15 @@ is used instead; that operator wraps this helm chart.
 ## Prerequisites
 
 The user must install and configure (or point to existing installations of) the following dependencies:
-* A relational (JDBC-compliant) database, such as IBM DB2
+* A relational (JDBC-compliant) database, such as IBM DB2 or PostgreSQL
 
 The following dependencies are optional:
-* IBM MQ Advanced for Developers (enables notifications)
-* IBM Operational Decision Manager (enables loyalty level determination)
-* IBM Cloudant (enables account metadata)
-* IBM Event Streams (enables Trade History and its return-on-investment calculation)
+* An MQ product, such as IBM MQ Series, or Apache ActiveMQ (enables notifications)
+* IBM Operational Decision Manager (enables loyalty level determination - can use a serverless function instead)
+* A CouchDB database, such as IBM Cloudant (enables account metadata)
+* A Kafka service, such as IBM Event Streams (enables Trade History and its return-on-investment calculation)
 * Mongo DB (enables Trade History and its return-on-investment calculation)
 * Redis (enables stock quote caching)
-
-The user must create and configure the following services in the IBM Cloud:
-* Watson Tone Analyzer
-* API Connect
-* Cloud Functions
 
 The [stocktrader-helm project](../README.md) provides instructions for setting up these dependencies.
 
@@ -36,50 +31,50 @@ The parameters allow you to:
 | Parameter                           | Description                                         | Default                                                                         |
 | ----------------------------------- | ----------------------------------------------------| --------------------------------------------------------------------------------|
 | | | |
-| broker.image.repository | image repository |  ibmstocktrader/broker
+| broker.image.repository | image repository |  ghcr.io/ibmstocktrader/broker
 | broker.image.tag | image tag | latest
 | | | |
-| portfolio.image.repository | image repository |  ibmstocktrader/portfolio
+| portfolio.image.repository | image repository |  ghcr.io/ibmstocktrader/portfolio
 | portfolio.image.tag | image tag | latest
 | | | |
-| stockQuote.image.repository | image repository | ibmstocktrader/stock-quote
+| stockQuote.image.repository | image repository | ghcr.io/ibmstocktrader/stock-quote
 | stockQuote.image.tag | image tag | latest
 | | | |
 | brokerCQRS.enabled | Deploy broker-CQRS microservice | false
-| brokerCQRS.image.repository | image repository |  ibmstocktrader/broker-cqrs
+| brokerCQRS.image.repository | image repository |  ghcr.io/ibmstocktrader/broker-cqrs
 | brokerCQRS.image.tag | image tag | latest
 | | | |
 | account.enabled | Deploy account microservice | false
-| account.image.repository | image repository | ibmstocktrader/account
+| account.image.repository | image repository | ghcr.io/ibmstocktrader/account
 | account.image.tag | image tag | latest
 | | | |
 | trader.enabled | Deploy trader microservice | true
-| trader.image.repository | image repository | ibmstocktrader/trader
+| trader.image.repository | image repository | ghcr.io/ibmstocktrader/trader
 | trader.image.tag | image tag | basicregistry
 | | | |
 | tradr.enabled | Deploy tradr microservice | false
-| tradr.image.repository | image repository | ibmstocktrader/tradr
+| tradr.image.repository | image repository | ghcr.io/ibmstocktrader/tradr
 | tradr.image.tag | image tag | latest
 | | | |
 | messaging.enabled | Deploy messaging microservice | false
-| messaging.image.repository | image repository | ibmstocktrader/messaging
+| messaging.image.repository | image repository | ghcr.io/ibmstocktrader/messaging
 | messaging.image.tag | image tag | latest
 | | | |
 | notificationSlack.enabled | Deploy notification-slack microservice | false
-| notificationSlack.image.repository | image repository | ibmstocktrader/notification-slack
+| notificationSlack.image.repository | image repository | ghcr.io/ibmstocktrader/notification-slack
 | notificationSlack.image.tag | image tag | latest
 | | | |
 | notificationTwitter.enabled | Deploy notification-twitter microservice | false
-| notificationTwitter.image.repository | image repository | ibmstocktrader/notification-twitter
+| notificationTwitter.image.repository | image repository | ghcr.io/ibmstocktrader/notification-twitter
 | notificationTwitter.image.tag | image tag | latest
 | | | |
 | looper.enabled | Deploy looper microservice | false
-| looper.image.repository | image repository | ibmstocktrader/looper
+| looper.image.repository | image repository | ghcr.io/ibmstocktrader/looper
 | looper.image.tag | image tag | latest
 | | | |
-| collector.enabled | Deploy collector microservice | false
-| collector.image.repository | image repository | ibmstocktrader/collector
-| collector.image.tag | image tag | latest
+| cashAccount.enabled | Deploy cash account microservice | false
+| cashAccount.image.repository | image repository | ghcr.io/ibmstocktrader/collector
+| cashAccount.image.tag | image tag | latest
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
@@ -91,25 +86,19 @@ After cloning this repository and changing directory into it, just run `helm pac
 
 It is also handy to change directory into the `stocktrader` directory (where the Chart.yaml is) and run `helm lint` to validate the helm chart.
 
-To load it into ICP, first do a `cloudctl login`, then a `cloudctl catalog load-chart --archive stocktrader-2.0.0.tgz --repo local-charts`.
-
 ## Installing the Chart
 
 You can install the chart by setting the current directory to the folder where this chart is located and running the following command:
 
 ```console
-helm install --tls --name stocktrader --namespace stocktrader . 
+helm install cjot stocktrader-2.0.0.tgz -n stocktrader . 
 ```
 
-This sets the Helm release name to `stocktrader` and creates all Kubernetes resources in a namespace called `stocktrader`.
+This sets the Helm release name to `cjot` and creates all Kubernetes resources in a namespace called `stocktrader`.
 
 Note you need to make sure that the namespace to which you install it has an image policy allowing it to pull images from
-DockerHub (unless you have built the sample yourself and are pulling it from your local Docker image registry).  In the ICP console, choose Manage->Resource Security, then choose Image Policies and create one that allows access to `docker.io/ibmstocktrader/*`.
+the GitHub Container Registry (unless you have built the sample yourself and are pulling it from your local Docker image registry).
 
-You can also install this helm chart via the ICP console.  Choose Manage->Helm Repositories, and click "Sync repositories".
-Wait a few minutes, then click Catalog in the top right, and scroll down to "stocktrader" (or start typing "stock"
-under Search repositories" and it will filter the list down to just charts containing that string).  Then just click
-on it and follow the directions, which will show this readme.
 
 ## Uninstalling the Chart
 
