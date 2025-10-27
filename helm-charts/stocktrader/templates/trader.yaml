@@ -255,7 +255,7 @@ spec:
 {{- if .Values.trader.autoscale }}
 ---
 #Deploy the autoscaler
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-trader-hpa
@@ -283,7 +283,14 @@ spec:
     name: {{ .Release.Name }}-trader
   minReplicas: {{ .Values.trader.replicas }}
   maxReplicas: {{ .Values.trader.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.trader.cpuThreshold }}
+  # Replace legacy targetCPUUtilizationPercentage with proper v2 metrics
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.trader.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
