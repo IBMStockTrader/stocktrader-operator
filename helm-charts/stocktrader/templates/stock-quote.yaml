@@ -211,7 +211,7 @@ spec:
 {{- if .Values.stockQuote.autoscale }}
 ---
 #Deploy the autoscaler
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-stock-quote-hpa
@@ -239,7 +239,14 @@ spec:
     name: {{ .Release.Name }}-stock-quote
   minReplicas: {{ .Values.stockQuote.replicas }}
   maxReplicas: {{ .Values.stockQuote.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.stockQuote.cpuThreshold }}
+  # Replace legacy targetCPUUtilizationPercentage with proper v2 metrics
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.stockQuote.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
