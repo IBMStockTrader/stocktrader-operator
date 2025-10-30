@@ -313,7 +313,7 @@ spec:
 {{- if .Values.account.autoscale }}
 ---
 #Deploy the autoscaler
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-account-hpa
@@ -341,7 +341,14 @@ spec:
     name: {{ .Release.Name }}-account
   minReplicas: {{ .Values.account.replicas }}
   maxReplicas: {{ .Values.account.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.account.cpuThreshold }}
+  # Replace legacy targetCPUUtilizationPercentage with proper v2 metrics
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.account.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service

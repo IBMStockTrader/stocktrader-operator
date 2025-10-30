@@ -249,7 +249,7 @@ spec:
 {{- if .Values.portfolio.autoscale }}
 ---
 #Deploy the autoscaler
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-portfolio-hpa
@@ -277,7 +277,14 @@ spec:
     name: {{ .Release.Name }}-portfolio
   minReplicas: {{ .Values.portfolio.replicas }}
   maxReplicas: {{ .Values.portfolio.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.portfolio.cpuThreshold }}
+  # Replace legacy targetCPUUtilizationPercentage with proper v2 metrics
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.portfolio.cpuThreshold }}
 {{- end }}
 ---
 #Deploy the service
