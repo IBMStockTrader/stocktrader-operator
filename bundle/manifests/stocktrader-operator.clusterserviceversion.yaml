@@ -336,7 +336,7 @@ spec:
             version: route.openshift.io/v1
           - name: ''
             kind: HorizontalPodAutoscaler
-            version: autoscaling/v1
+            version: autoscaling/v2
           - name: ''
             kind: Gateway
             version: networking.istio.io/v1
