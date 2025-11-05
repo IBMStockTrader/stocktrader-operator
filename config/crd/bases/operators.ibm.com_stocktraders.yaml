@@ -291,6 +291,28 @@ spec:
                   monitoring:
                     description: Enable Prometheus monitoring
                     type: boolean
+                  opentelemetry:
+                    description: OpenTelemetry settings
+                    properties:
+                      disable:
+                        description: Disable OpenTelemetry instrumentation
+                        type: boolean
+                      collectorEndpoint:
+                        description: OpenTelemetry Collector endpoint
+                        type: string
+                      serviceName:
+                        description: Service name for OpenTelemetry traces/metrics/logs
+                        type: string
+                      logExporter:
+                        description: Log exporter for OpenTelemetry
+                        type: string
+                      metricExporter:
+                        description: Metric exporter for OpenTelemetry
+                        type: string
+                      traceExporter:
+                        description: Trace exporter for OpenTelemetry
+                        type: string
+                    type: object
                   proxyServer:
                     description: Enable use of a proxy server
                     type: boolean
@@ -975,28 +997,6 @@ spec:
                   whiteLabelLoginMessage:
                     description: Alternate login message (for white-labeling)
                     type: string
-                  opentelemetry:
-                    description: Enable OpenTelemetry for this microservice
-                    properties:
-                      disable:
-                        description: Disable OpenTelemetry SDK instrumentation for this microservice
-                        type: boolean
-                      collectorEndpoint:
-                        description: Endpoint for the OpenTelemetry Collector
-                        type: string
-                      serviceName:
-                        description: Service name to be used in OpenTelemetry traces
-                        type: string
-                      logExporter:
-                        description: Enable OpenTelemetry logging exporter for this microservice
-                        type: string
-                      metricExporter:
-                        description: Enable OpenTelemetry metrics exporter for this microservice
-                        type: string
-                      traceExporter:
-                        description: Enable OpenTelemetry trace exporter for this microservice
-                        type: string
-                    type: object
                 type: object
               tradr:
                 description: Tradr fancy UI microservice (requires OIDC)
