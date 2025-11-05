@@ -451,6 +451,40 @@ trader:
       label: "Login message"
       description: "URL for alternate login message (for white-labeling)"
       type: string
+  opentelemetry:
+    __metadata:
+      label: "Enable OpenTelemetry"
+      description: "Enable OpenTelemetry for this microservice"
+    disable:
+      __metadata:
+        label: "Disable SDK instrumentation"
+        description: "Disable OpenTelemetry SDK instrumentation for this microservice"
+        type: boolean
+    collectorEndpoint:
+      __metadata:
+        label: "OpenTelemetry Collector endpoint"
+        description: "Endpoint for the OpenTelemetry Collector"
+        type: string
+    serviceName:
+      __metadata:
+        label: "OpenTelemetry Service Name"
+        description: "Service name to be used in OpenTelemetry traces"
+        type: string
+    logExporter:
+      __metadata:
+        label: "Enable logging exporter"
+        description: "Enable OpenTelemetry logging exporter for this microservice"
+        type: string
+    metricExporter:
+      __metadata:
+        label: "Enable metrics exporter"
+        description: "Enable OpenTelemetry metrics exporter for this microservice"
+        type: string
+    traceExporter:
+      __metadata:
+        label: "Enable tracing exporter"
+        description: "Enable OpenTelemetry tracing exporter for this microservice"
+        type: string
 tradr:
   __metadata:
     label: "Tradr fancy UI microservice"

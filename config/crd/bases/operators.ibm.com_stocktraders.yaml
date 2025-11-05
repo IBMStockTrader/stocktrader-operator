@@ -975,6 +975,28 @@ spec:
                   whiteLabelLoginMessage:
                     description: Alternate login message (for white-labeling)
                     type: string
+                  opentelemetry:
+                    description: Enable OpenTelemetry for this microservice
+                    properties:
+                      disable:
+                        description: Disable OpenTelemetry SDK instrumentation for this microservice
+                        type: boolean
+                      collectorEndpoint:
+                        description: Endpoint for the OpenTelemetry Collector
+                        type: string
+                      serviceName:
+                        description: Service name to be used in OpenTelemetry traces
+                        type: string
+                      logExporter:
+                        description: Enable OpenTelemetry logging exporter for this microservice
+                        type: string
+                      metricExporter:
+                        description: Enable OpenTelemetry metrics exporter for this microservice
+                        type: string
+                      traceExporter:
+                        description: Enable OpenTelemetry trace exporter for this microservice
+                        type: string
+                    type: object
                 type: object
               tradr:
                 description: Tradr fancy UI microservice (requires OIDC)

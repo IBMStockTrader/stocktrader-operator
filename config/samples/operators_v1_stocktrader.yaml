@@ -225,6 +225,13 @@ spec:
     whiteLabelHeaderImage: header.jpg
     whiteLabelFooterImage: footer.jpg
     whiteLabelLoginMessage: Login to Stock Trader
+    opentelemetry:
+      disable: false
+      collectorEndpoint: http://localhost:4317
+      serviceName: trader
+      logExporter: otlp
+      metricExporter: otlp
+      traceExporter: otlp
   tradr:
     autoscale: false
     cpuThreshold: 75

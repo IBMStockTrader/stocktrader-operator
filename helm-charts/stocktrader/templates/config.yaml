@@ -29,6 +29,14 @@ data:
   trader.whiteLabelHeaderImage: {{ .Values.trader.whiteLabelHeaderImage }}
   trader.whiteLabelFooterImage: {{ .Values.trader.whiteLabelFooterImage }}
   trader.whiteLabelLoginMessage: {{ .Values.trader.whiteLabelLoginMessage }}
+  {{- if not .Values.trader.opentelemetry.disable }}
+  trader.opentelemetry.disable: "{{ .Values.trader.opentelemetry.disable }}"
+  trader.opentelemetry.collectorEndpoint: {{ .Values.trader.opentelemetry.collectorEndpoint }}
+  trader.opentelemetry.serviceName: {{ .Values.trader.opentelemetry.serviceName }}
+  trader.opentelemetry.logExporter: {{ .Values.trader.opentelemetry.logExporter }}
+  trader.opentelemetry.metricExporter: {{ .Values.trader.opentelemetry.metricExporter }}
+  trader.opentelemetry.traceExporter: {{ .Values.trader.opentelemetry.traceExporter }}
+  {{- end }}
   messaging.notification.url: {{ tpl .Values.messaging.notification.url . }}
   looper.url: {{ tpl .Values.looper.url . }}
   apic.url: {{ .Values.stockQuote.apiConnect }}
