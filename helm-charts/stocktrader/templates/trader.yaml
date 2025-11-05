@@ -218,7 +218,7 @@ spec:
           - name: WLP_LOGGING_MESSAGE_SOURCE
             value: none
 {{- end }}
-{{- if not .Values.trader.opentelemetry.disable }}
+{{- if not .Values.global.opentelemetry.disable }}
           - name: OTEL_SDK_DISABLED 
             valueFrom:
               configMapKeyRef:

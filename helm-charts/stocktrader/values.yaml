@@ -19,6 +19,13 @@
 global:
   auth: basic
   monitoring: true
+  opentelemetry:
+    disable: false
+    collectorEndpoint: http://otel-collector.default:4317
+    serviceName: trader
+    logExporter: otlp
+    metricExporter: otlp
+    traceExporter: otlp
   ingress: false
   route: false
   healthCheck: true
@@ -94,13 +101,6 @@ trader:
   whiteLabelHeaderImage: header.jpg
   whiteLabelFooterImage: footer.jpg
   whiteLabelLoginMessage: Log in to Stock Trader
-  opentelemetry:
-    disable: false
-    collectorEndpoint: http://localhost:4317
-    serviceName: trader
-    logExporter: otlp
-    metricExporter: otlp
-    traceExporter: otlp
 tradr:
   enabled: false
   replicas: 1

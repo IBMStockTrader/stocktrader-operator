@@ -227,7 +227,7 @@ spec:
     whiteLabelLoginMessage: Login to Stock Trader
     opentelemetry:
       disable: false
-      collectorEndpoint: http://localhost:4317
+      collectorEndpoint: http://otel-collector.default:4317
       serviceName: trader
       logExporter: otlp
       metricExporter: otlp
