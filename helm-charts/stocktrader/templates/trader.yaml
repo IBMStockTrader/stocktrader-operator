@@ -218,13 +218,18 @@ spec:
           - name: WLP_LOGGING_MESSAGE_SOURCE
             value: none
 {{- end }}
-{{- if not .Values.global.opentelemetry.disable }}
-          - name: OTEL_SDK_DISABLED 
-            valueFrom:
-              configMapKeyRef:
-                name: {{ tpl .Values.global.configMapName . }}
-                key: trader.opentelemetry.disable
-                optional: true
+{{- if .Values.global.opentelemetry.disable }}
+          - name: OTEL_SDK_DISABLED
+            value: "true"
+          - name: OTEL_TRACES_EXPORTER
+            value: "none"
+          - name: OTEL_LOGS_EXPORTER
+            value: "none"
+          - name: OTEL_METRICS_EXPORTER
+            value: "none"
+{{- else }}
+          - name: OTEL_SDK_DISABLED
+            value: "false"
           - name:  OTEL_EXPORTER_OTLP_ENDPOINT
             valueFrom:
               configMapKeyRef:
@@ -251,7 +256,7 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: {{ tpl .Values.global.configMapName . }}
-                key: trader.opentelemetry.metricExporter
+                key: trader.opentelemetry.traceExporter
                 optional: true
 {{- end }}
         ports:
