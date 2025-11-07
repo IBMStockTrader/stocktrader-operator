@@ -1,0 +1,39 @@
+{{- if not .Values.global.opentelemetry.disable }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-otel-collector-conf
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-collector-conf
+data:
+  otel-collector-config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
+          http:
+            endpoint: ${env:MY_POD_IP}:4318
+    processors:
+      memory_limiter:
+        # 80% of maximum memory up to 2G
+        limit_mib: 1500
+        # 25% of limit up to 2G
+        spike_limit_mib: 512
+        check_interval: 5s
+    extensions:
+      zpages: {}
+    exporters:
+      otlp:
+        endpoint: "http://someotlp.target.com:4317" # Replace with a real endpoint.
+        tls:
+          insecure: true
+    service:
+      extensions: [zpages]
+      pipelines:
+        traces/1:
+          receivers: [otlp]
+          processors: [memory_limiter]
+          exporters: [otlp]
+{{- end }}
