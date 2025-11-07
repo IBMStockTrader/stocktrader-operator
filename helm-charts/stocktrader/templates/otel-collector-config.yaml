@@ -12,9 +12,9 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: ${env:MY_POD_IP}:4317
+            endpoint: 0.0.0.0:4317
           http:
-            endpoint: ${env:MY_POD_IP}:4318
+            endpoint: 0.0.0.0:4318
     processors:
       memory_limiter:
         # 80% of maximum memory up to 2G
@@ -25,15 +25,26 @@ data:
     extensions:
       zpages: {}
     exporters:
-      otlp:
-        endpoint: "http://someotlp.target.com:4317" # Replace with a real endpoint.
-        tls:
-          insecure: true
+    # Debug exporter added for troubleshooting and demonstration purposes
+      debug:
+        verbosity: detailed
+        sampling_initial: 5
+        sampling_thereafter: 200
+      azuremonitor:
+        connection_string: "InstrumentationKey=03c29666-d159-43d9-aada-dfd05c12f17c;IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/;ApplicationId=d85904fa-65c6-46ff-9cd2-da6c26506d49"
     service:
       extensions: [zpages]
       pipelines:
-        traces/1:
+        traces:
           receivers: [otlp]
           processors: [memory_limiter]
-          exporters: [otlp]
+          exporters: [debug, azuremonitor]
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter]
+          exporters: [debug, azuremonitor]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter]
+          exporters: [debug, azuremonitor]
 {{- end }}

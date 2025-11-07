@@ -31,7 +31,7 @@ data:
   trader.whiteLabelLoginMessage: {{ .Values.trader.whiteLabelLoginMessage }}
   {{- if not .Values.global.opentelemetry.disable }}
   trader.opentelemetry.disable: "{{ .Values.global.opentelemetry.disable }}"
-  trader.opentelemetry.collectorEndpoint: {{ .Values.global.opentelemetry.collectorEndpoint }}
+  trader.opentelemetry.collectorEndpoint: {{ tpl .Values.global.opentelemetry.collector.endpoint . }}
   trader.opentelemetry.serviceName: {{ .Values.global.opentelemetry.serviceName }}
   trader.opentelemetry.logExporter: {{ .Values.global.opentelemetry.logExporter }}
   trader.opentelemetry.metricExporter: {{ .Values.global.opentelemetry.metricExporter }}

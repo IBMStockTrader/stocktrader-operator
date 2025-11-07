@@ -13,7 +13,7 @@ spec:
       component: {{ .Release.Name }}-otel-collector
   minReadySeconds: 5
   progressDeadlineSeconds: 120
-  replicas: 1 #TODO - adjust this to your own requirements
+  replicas: {{ .Values.global.opentelemetry.collector.replicas }}
   template:
     metadata:
       labels:
@@ -21,11 +21,12 @@ spec:
         component: {{ .Release.Name }}-otel-collector
     spec:
       containers:
-      - command:
-          - "/otelcol"
-          - "--config=/conf/otel-collector-config.yaml"
-        image: otel/opentelemetry-collector:latest
+      - image: otel/opentelemetry-collector-contrib:latest
+      # contributor image includes more exporters and receivers
+      # original collector image: otel/opentelemetry-collector:latest
         name: otel-collector
+        args:
+          - "--config=/conf/otel-collector-config.yaml"
         resources:
           limits:
             cpu: 1
@@ -55,7 +56,7 @@ spec:
 #          mountPath: /secrets
       volumes:
         - configMap:
-            name: otel-collector-conf
+            name: {{ .Release.Name }}-otel-collector-conf
             items:
               - key: otel-collector-config
                 path: otel-collector-config.yaml
