@@ -26,6 +26,8 @@ global:
     collector:
       replicas: 1
       endpoint: http://{{ .Release.Name }}-otel-collector:4317
+    azuremonitor:
+      connectionString: "InstrumentationKey=03c29666-d159-43d9-aada-dfd05c12f17c;IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/;ApplicationId=d85904fa-65c6-46ff-9cd2-da6c26506d49"
     autoscaling:
       enabled: true
       minReplicas: 1
@@ -42,6 +44,7 @@ global:
   disableLogFiles: false
   jsonLogging: false
   traceSpec: "*=info"
+  environment: production
   cqrs: false
   istio: false
   istioNamespace: istio-system

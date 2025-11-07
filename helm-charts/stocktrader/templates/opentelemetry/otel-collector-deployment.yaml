@@ -20,6 +20,7 @@ spec:
         app: {{ .Release.Name }}-opentelemetry
         component: {{ .Release.Name }}-otel-collector
     spec:
+      serviceAccountName: {{ .Release.Name }}-otel-collector
       containers:
       - image: otel/opentelemetry-collector-contrib:latest
       # contributor image includes more exporters and receivers
@@ -41,6 +42,24 @@ spec:
         - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
         - containerPort: 9411 # Default endpoint for Zipkin receiver.
         - containerPort: 8888  # Default endpoint for querying metrics.
+        - containerPort: 13133 # Default endpoint for health checks.
+        - containerPort: 8889  # Prometheus exporter endpoint.
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
         env:
           - name: MY_POD_IP
             valueFrom:
@@ -49,6 +68,11 @@ spec:
                 fieldPath: status.podIP
           - name: GOMEMLIMIT
             value: 1600MiB
+          - name: AZURE_MONITOR_CONNECTION_STRING
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-otel-collector-secrets
+                key: azure-monitor-connection-string
         volumeMounts:
         - name: otel-collector-config-vol
           mountPath: /conf

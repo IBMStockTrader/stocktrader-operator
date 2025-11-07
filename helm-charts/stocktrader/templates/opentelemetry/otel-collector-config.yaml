@@ -1,0 +1,96 @@
+{{- if not .Values.global.opentelemetry.disable }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-otel-collector-conf
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-collector-conf
+data:
+  otel-collector-config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    processors:
+      memory_limiter:
+        # 80% of maximum memory up to 2G
+        limit_mib: 1500
+        # 25% of limit up to 2G
+        spike_limit_mib: 512
+        check_interval: 5s
+      batch:
+        timeout: 10s
+        send_batch_size: 1024
+        send_batch_max_size: 2048
+      resourcedetection:
+        detectors: [env, system, azure]
+        timeout: 5s
+        override: false
+      k8sattributes:
+        auth_type: "serviceAccount"
+        passthrough: false
+        extract:
+          metadata:
+            - k8s.namespace.name
+            - k8s.deployment.name
+            - k8s.statefulset.name
+            - k8s.daemonset.name
+            - k8s.cronjob.name
+            - k8s.job.name
+            - k8s.node.name
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.pod.start_time
+          labels:
+            - tag_name: app
+              key: app
+              from: pod
+            - tag_name: component
+              key: component
+              from: pod
+      attributes:
+        actions:
+          - key: service.namespace
+            value: {{ .Release.Namespace }}
+            action: insert
+          - key: deployment.environment
+            value: {{ .Values.global.environment | default "production" }}
+            action: insert
+    extensions:
+      zpages: {}
+      health_check:
+        endpoint: 0.0.0.0:13133
+        path: "/"
+    exporters:
+    # Debug exporter added for troubleshooting and demonstration purposes
+      debug:
+        verbosity: detailed
+        sampling_initial: 5
+        sampling_thereafter: 200
+      azuremonitor:
+        connection_string: ${env:AZURE_MONITOR_CONNECTION_STRING}
+      prometheus:
+        endpoint: "0.0.0.0:8889"
+        namespace: otel
+        const_labels:
+          deployment: {{ .Release.Name }}
+    service:
+      extensions: [zpages, health_check]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, resourcedetection, k8sattributes, attributes, batch]
+          exporters: [debug, azuremonitor]
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter, resourcedetection, k8sattributes, attributes, batch]
+          exporters: [debug, azuremonitor, prometheus]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resourcedetection, k8sattributes, attributes, batch]
+          exporters: [debug, azuremonitor]
+{{- end }}
