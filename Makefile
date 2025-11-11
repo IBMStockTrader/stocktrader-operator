@@ -158,13 +158,13 @@ endif
 .PHONY: bundle
 bundle: kustomize ## Generate bundle manifests and metadata, then validate generated files.
 	operator-sdk generate kustomize manifests -q
-	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
-	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle $(BUNDLE_GEN_FLAGS)
+	cd config/manager && kustomize edit set image controller=$(IMG)
+	kustomize build config/manifests | operator-sdk generate bundle $(BUNDLE_GEN_FLAGS)
 	operator-sdk bundle validate ./bundle
 
 .PHONY: bundle-build
 bundle-build: ## Build the bundle image.
-	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
+	podman build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 .PHONY: bundle-push
 bundle-push: ## Push the bundle image.
