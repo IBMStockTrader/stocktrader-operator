@@ -1,0 +1,17 @@
+{{- if not .Values.global.opentelemetry.disable }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-otel-collector
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-collector
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}-otel-collector
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Release.Name }}-otel-collector
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

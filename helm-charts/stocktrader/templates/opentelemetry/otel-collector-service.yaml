@@ -1,0 +1,23 @@
+{{- if not .Values.global.opentelemetry.disable }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-otel-collector
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-collector
+spec:
+  ports:
+  - name: otlp-grpc
+    port: 4317
+    protocol: TCP
+    targetPort: 4317
+  - name: otlp-http
+    port: 4318
+    protocol: TCP
+    targetPort: 4318
+  - name: metrics
+    port: 8888
+  selector:
+    component: {{ .Release.Name }}-otel-collector
+{{- end }}

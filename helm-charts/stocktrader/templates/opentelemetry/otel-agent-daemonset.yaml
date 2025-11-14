@@ -1,0 +1,55 @@
+{{- if and (not .Values.global.opentelemetry.disable) .Values.global.opentelemetry.agent.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}-otel-agent
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-agent
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-opentelemetry
+      component: {{ .Release.Name }}-otel-agent
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-opentelemetry
+        component: {{ .Release.Name }}-otel-agent
+    spec:
+      containers:
+      - command:
+          - "/otelcol"
+          - "--config=/conf/otel-agent-config.yaml"
+        image: otel/opentelemetry-collector:latest
+        name: otel-agent
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 55679 # ZPages endpoint.
+        - containerPort: 4317 # Default OpenTelemetry receiver port.
+        - containerPort: 8888  # Metrics.
+        env:
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: GOMEMLIMIT
+            value: 400MiB
+        volumeMounts:
+        - name: otel-agent-config-vol
+          mountPath: /conf
+      volumes:
+        - configMap:
+            name: otel-agent-conf
+            items:
+              - key: otel-agent-config
+                path: otel-agent-config.yaml
+          name: otel-agent-config-vol
+{{- end }}

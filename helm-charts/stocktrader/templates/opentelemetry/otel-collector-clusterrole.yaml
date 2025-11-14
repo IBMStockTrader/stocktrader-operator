@@ -1,0 +1,28 @@
+{{- if not .Values.global.opentelemetry.disable }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-otel-collector
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-collector
+rules:
+- apiGroups: [""]
+  resources:
+  - pods
+  - namespaces
+  - nodes
+  verbs: ["get", "watch", "list"]
+- apiGroups: ["apps"]
+  resources:
+  - replicasets
+  - deployments
+  - statefulsets
+  - daemonsets
+  verbs: ["get", "watch", "list"]
+- apiGroups: ["batch"]
+  resources:
+  - jobs
+  - cronjobs
+  verbs: ["get", "watch", "list"]
+{{- end }}

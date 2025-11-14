@@ -1,0 +1,44 @@
+{{- if not .Values.global.opentelemetry.disable }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-otel-agent-conf
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-agent-conf
+data:
+  otel-agent-config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
+          http:
+            endpoint: ${env:MY_POD_IP}:4318
+    exporters:
+      otlp:
+        endpoint: "otel-collector.default:4317"
+        tls:
+          insecure: true
+        sending_queue:
+          num_consumers: 4
+          queue_size: 100
+        retry_on_failure:
+          enabled: true
+    processors:
+      memory_limiter:
+        # 80% of maximum memory up to 2G
+        limit_mib: 400
+        # 25% of limit up to 2G
+        spike_limit_mib: 100
+        check_interval: 5s
+    extensions:
+      zpages: {}
+    service:
+      extensions: [zpages]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter]
+          exporters: [otlp]
+{{- end }}

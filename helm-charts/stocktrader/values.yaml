@@ -19,12 +19,35 @@
 global:
   auth: basic
   monitoring: true
+  opentelemetry:
+    disable: false
+    agent:
+      enabled: false
+    collector:
+      replicas: 1
+      endpoint: http://{{ .Release.Name }}-otel-collector:4317
+      backends:
+        azuremonitor:
+          secretName: "{{ .Release.Name }}-otel-secrets"
+          # connectionString: ""  # NOT RECOMMENDED: Only set this if you want to store the connection string in values.yaml (insecure)
+                                  # Instead, create a secret manually before installation (see README.md)
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: 80
+    serviceName: trader
+    logExporter: otlp
+    metricExporter: otlp
+    traceExporter: otlp
   ingress: false
   route: false
   healthCheck: true
   disableLogFiles: false
   jsonLogging: false
   traceSpec: "*=info"
+  environment: production
   cqrs: false
   istio: false
   istioNamespace: istio-system
@@ -90,7 +113,7 @@ trader:
   cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/trader
-    tag: 1.0.0
+    tag: otel
   whiteLabelHeaderImage: header.jpg
   whiteLabelFooterImage: footer.jpg
   whiteLabelLoginMessage: Log in to Stock Trader
