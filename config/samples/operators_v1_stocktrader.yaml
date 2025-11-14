@@ -67,10 +67,25 @@ spec:
     istioIngress: egressgateway
     istioNamespace: istio-system
     jsonLogging: false
+    environment: production
     monitoring: true
     opentelemetry:
       disable: false
-      collectorEndpoint: http://otel-collector.default:4317
+      agent:
+        enabled: false
+      collector:
+        replicas: 1
+        endpoint: http://{{ .Release.Name }}-otel-collector:4317
+        backends:
+          azuremonitor:
+            secretName: "{{ .Release.Name }}-otel-secrets"
+            # connectionString: ""  # NOT RECOMMENDED: Create a secret manually instead
+      autoscaling:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 5
+        targetCPUUtilizationPercentage: 80
+        targetMemoryUtilizationPercentage: 80
       serviceName: trader
       logExporter: otlp
       metricExporter: otlp
@@ -87,6 +102,7 @@ spec:
     audience: stock-trader
     issuer: http://stock-trader.ibm.com
   kafka:
+    kind: ibm-event-streams
     accountTopic: account
     address: <your Kafka proxy service>:30000
     apiKey: <your API key>

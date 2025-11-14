@@ -26,8 +26,11 @@ global:
     collector:
       replicas: 1
       endpoint: http://{{ .Release.Name }}-otel-collector:4317
-    azuremonitor:
-      connectionString: "InstrumentationKey=03c29666-d159-43d9-aada-dfd05c12f17c;IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/;ApplicationId=d85904fa-65c6-46ff-9cd2-da6c26506d49"
+      backends:
+        azuremonitor:
+          secretName: "{{ .Release.Name }}-otel-secrets"
+          # connectionString: ""  # NOT RECOMMENDED: Only set this if you want to store the connection string in values.yaml (insecure)
+                                  # Instead, create a secret manually before installation (see README.md)
     autoscaling:
       enabled: true
       minReplicas: 1

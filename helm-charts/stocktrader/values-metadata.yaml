@@ -71,6 +71,24 @@ global:
           label: "OpenTelemetry Collector endpoint"
           description: "Endpoint for the OpenTelemetry Collector"
           type: string
+      backends:
+        __metadata:
+          label: "OpenTelemetry backend exporters"
+          description: "Configuration for various telemetry backend exporters"
+        azuremonitor:
+          __metadata:
+            label: "Azure Monitor configuration"
+            description: "Settings for Azure Monitor Application Insights integration"
+          secretName:
+            __metadata:
+              label: "Secret name"
+              description: "Name of the Kubernetes secret containing the Azure Monitor connection string"
+              type: string
+          connectionString:
+            __metadata:
+              label: "Connection string (NOT RECOMMENDED)"
+              description: "Azure Monitor connection string - NOT RECOMMENDED to set here. Create a Kubernetes secret instead for security."
+              type: password
     autoscaling:
       __metadata:
         label: "OpenTelemetry Collector autoscaling"

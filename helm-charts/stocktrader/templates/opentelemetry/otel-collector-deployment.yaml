@@ -71,8 +71,8 @@ spec:
           - name: AZURE_MONITOR_CONNECTION_STRING
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-otel-collector-secrets
-                key: azure-monitor-connection-string
+                name: {{ tpl .Values.global.opentelemetry.collector.backends.azuremonitor.secretName . }}
+                key: connection-string
         volumeMounts:
         - name: otel-collector-config-vol
           mountPath: /conf

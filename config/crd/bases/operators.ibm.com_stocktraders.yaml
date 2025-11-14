@@ -288,6 +288,9 @@ spec:
                   jsonLogging:
                     description: Output pod logs in JSON format (for ElasticSearch/Kibana)
                     type: boolean
+                  environment:
+                    description: Deployment environment name (e.g., production, staging, development)
+                    type: string
                   monitoring:
                     description: Enable Prometheus monitoring
                     type: boolean
@@ -295,11 +298,58 @@ spec:
                     description: OpenTelemetry settings
                     properties:
                       disable:
-                        description: Disable OpenTelemetry instrumentation
+                        description: Disable OpenTelemetry SDK instrumentation
                         type: boolean
-                      collectorEndpoint:
-                        description: OpenTelemetry Collector endpoint
-                        type: string
+                      agent:
+                        description: OpenTelemetry Agent settings
+                        properties:
+                          enabled:
+                            description: Enable OpenTelemetry Agent DaemonSet
+                            type: boolean
+                        type: object
+                      collector:
+                        description: OpenTelemetry Collector settings
+                        properties:
+                          replicas:
+                            description: Number of OpenTelemetry collector replicas
+                            type: integer
+                          endpoint:
+                            description: OpenTelemetry Collector endpoint
+                            type: string
+                          backends:
+                            description: Configuration for various telemetry backend exporters
+                            properties:
+                              azuremonitor:
+                                description: Azure Monitor Application Insights integration
+                                properties:
+                                  secretName:
+                                    description: Name of the Kubernetes secret containing the Azure Monitor connection string
+                                    type: string
+                                  connectionString:
+                                    description: Azure Monitor connection string (NOT RECOMMENDED - use secret instead)
+                                    type: string
+                                type: object
+                            type: object
+                        type: object
+                      autoscaling:
+                        description: OpenTelemetry Collector autoscaling settings
+                        properties:
+                          enabled:
+                            description: Enable horizontal pod autoscaling for the collector
+                            type: boolean
+                          minReplicas:
+                            description: Minimum number of collector replicas
+                            type: integer
+                          maxReplicas:
+                            description: Maximum number of collector replicas
+                            type: integer
+                          targetCPUUtilizationPercentage:
+                            description: Target CPU utilization percentage for autoscaling
+                            type: integer
+                          targetMemoryUtilizationPercentage:
+                            description: Target memory utilization percentage for autoscaling
+                            type: integer
+                        type: object
                       serviceName:
                         description: Service name for OpenTelemetry traces/metrics/logs
                         type: string
@@ -351,6 +401,9 @@ spec:
               kafka:
                 description: Kafka settings (optional)
                 properties:
+                  kind:
+                    description: Kind of Kafka provider
+                    type: string
                   accountTopic:
                     description: Account Topic
                     type: string
