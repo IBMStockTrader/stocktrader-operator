@@ -288,9 +288,100 @@ spec:
                   jsonLogging:
                     description: Output pod logs in JSON format (for ElasticSearch/Kibana)
                     type: boolean
+                  environment:
+                    description: Deployment environment name (e.g., production, staging, development)
+                    type: string
                   monitoring:
                     description: Enable Prometheus monitoring
                     type: boolean
+                  opentelemetry:
+                    description: OpenTelemetry settings
+                    properties:
+                      disable:
+                        description: Disable OpenTelemetry SDK instrumentation
+                        type: boolean
+                      agent:
+                        description: OpenTelemetry Agent settings
+                        properties:
+                          enabled:
+                            description: Enable OpenTelemetry Agent DaemonSet
+                            type: boolean
+                          image:
+                            description: Docker image settings for OpenTelemetry Agent
+                            properties:
+                              repository:
+                                description: Docker image registry
+                                type: string
+                              tag:
+                                description: Docker image tag
+                                type: string
+                            type: object
+                        type: object
+                      collector:
+                        description: OpenTelemetry Collector settings
+                        properties:
+                          replicas:
+                            description: Number of OpenTelemetry collector replicas
+                            type: integer
+                          endpoint:
+                            description: OpenTelemetry Collector endpoint
+                            type: string
+                          image:
+                            description: Docker image settings for OpenTelemetry Collector (used in production environment)
+                            properties:
+                              repository:
+                                description: Docker image registry
+                                type: string
+                              tag:
+                                description: Docker image tag
+                                type: string
+                            type: object
+                          backends:
+                            description: Array of telemetry backend exporters
+                            type: array
+                            items:
+                              description: Backend exporter configuration
+                              type: object
+                              properties:
+                                kind:
+                                  description: Type of backend exporter (e.g., azuremonitor, googlecloud)
+                                  type: string
+                                secretName:
+                                  description: Name of the Kubernetes secret containing the backend connection string
+                                  type: string
+                        type: object
+                      autoscaling:
+                        description: OpenTelemetry Collector autoscaling settings
+                        properties:
+                          enabled:
+                            description: Enable horizontal pod autoscaling for the collector
+                            type: boolean
+                          minReplicas:
+                            description: Minimum number of collector replicas
+                            type: integer
+                          maxReplicas:
+                            description: Maximum number of collector replicas
+                            type: integer
+                          targetCPUUtilizationPercentage:
+                            description: Target CPU utilization percentage for autoscaling
+                            type: integer
+                          targetMemoryUtilizationPercentage:
+                            description: Target memory utilization percentage for autoscaling
+                            type: integer
+                        type: object
+                      serviceName:
+                        description: Service name for OpenTelemetry traces/metrics/logs
+                        type: string
+                      logExporter:
+                        description: Log exporter for OpenTelemetry
+                        type: string
+                      metricExporter:
+                        description: Metric exporter for OpenTelemetry
+                        type: string
+                      traceExporter:
+                        description: Trace exporter for OpenTelemetry
+                        type: string
+                    type: object
                   proxyServer:
                     description: Enable use of a proxy server
                     type: boolean
