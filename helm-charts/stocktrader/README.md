@@ -13,7 +13,7 @@ The user must install and configure (or point to existing installations of) the 
 
 ### OpenTelemetry (Optional)
 
-For detailed OpenTelemetry setup and configuration, see [templates/opentelemetry/README.md](templates/opentelemetry/README.md).
+For detailed OpenTelemetry setup and configuration, see [opentelemetry-README.md](opentelemetry-README.md).
 
 The following dependencies are optional:
 * An MQ product, such as IBM MQ Series, or Apache ActiveMQ (enables notifications)
@@ -31,7 +31,7 @@ The following table lists the configurable parameters of this chart and their de
 The parameters allow you to:
 * change the image of any microservice from the one provided by IBM to one that you build (e.g. if you want to try to modify a service)
 * enable the deployment of optional microservices (tradr, account, messaging, notification-slack, notification-twitter, trade-history, collector)
-* configure OpenTelemetry observability with various backend exporters - see [templates/opentelemetry/README.md](templates/opentelemetry/README.md) for details
+* configure OpenTelemetry observability with various backend exporters - see [opentelemetry-README.md](opentelemetry-README.md) for details
 
 ### Microservice Image Configuration
 
@@ -110,7 +110,7 @@ This sets the Helm release name to `cjot` and creates all Kubernetes resources i
 
 ### Installation with OpenTelemetry
 
-For OpenTelemetry installation instructions, see [templates/opentelemetry/README.md](templates/opentelemetry/README.md).
+For OpenTelemetry installation instructions, see [opentelemetry-README.md](opentelemetry-README.md).
 
 
 ## Uninstalling the Chart

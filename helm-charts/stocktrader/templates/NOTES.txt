@@ -17,4 +17,28 @@ OpenTelemetry Configuration:
   Agent Image: {{ include "otel.agent.image" . }}
   {{- end }}
   Environment: {{ .Values.global.environment }}
+
+{{- if and (eq .Values.global.environment "production") (not .Values.global.opentelemetry.collector.image) }}
+
+⚠️  WARNING: SECURITY RISK DETECTED ⚠️
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You are deploying to a PRODUCTION environment but using the community
+OpenTelemetry Collector image (otel/opentelemetry-collector-contrib:latest).
+
+This is NOT a best practice and poses security risks:
+  • Community images may not be scanned or approved for production use
+  • Using 'latest' tag can lead to unexpected updates and instability
+  • No guarantee of support or security patches
+
+RECOMMENDED ACTION:
+  Define a specific production image in values.yaml:
+    global:
+      opentelemetry:
+        collector:
+          image:
+            repository: ghcr.io/ibmstocktrader/opentelemetry-collector-contrib
+            tag: <specific-version>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{{- end }}
 {{- end }}
