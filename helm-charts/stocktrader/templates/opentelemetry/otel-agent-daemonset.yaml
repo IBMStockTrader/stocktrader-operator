@@ -21,7 +21,7 @@ spec:
       - command:
           - "/otelcol"
           - "--config=/conf/otel-agent-config.yaml"
-        image: otel/opentelemetry-collector:latest
+        image: {{ include "otel.agent.image" . }}
         name: otel-agent
         resources:
           limits:
@@ -42,6 +42,20 @@ spec:
                 fieldPath: status.podIP
           - name: GOMEMLIMIT
             value: 400MiB
+{{- if .Values.global.opentelemetry.collector.backends.googlecloud }}
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.opentelemetry.collector.backends.googlecloud.secretName . }}
+                key: connection-string
+{{- end }}
+{{- if .Values.global.opentelemetry.collector.backends.azuremonitor }}
+          - name: AZURE_MONITOR_CONNECTION_STRING
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.opentelemetry.collector.backends.azuremonitor.secretName . }}
+                key: connection-string
+{{- end }}
         volumeMounts:
         - name: otel-agent-config-vol
           mountPath: /conf

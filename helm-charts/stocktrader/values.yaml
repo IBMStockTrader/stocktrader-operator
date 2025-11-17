@@ -20,17 +20,25 @@ global:
   auth: basic
   monitoring: true
   opentelemetry:
-    disable: false
+    disable: true
     agent:
       enabled: false
+      image:
+        repository: ghcr.io/ibmstocktrader/opentelemetry-collector
+        tag: latest
     collector:
       replicas: 1
       endpoint: http://{{ .Release.Name }}-otel-collector:4317
+      # By default, the OpenTelemetry Collector Contrib image is used if the environment variable is set.
+      # image:
+      #   repository: otel/opentelemetry-collector
+      #   tag: latest
       backends:
-        azuremonitor:
-          secretName: "{{ .Release.Name }}-otel-secrets"
-          # connectionString: ""  # NOT RECOMMENDED: Only set this if you want to store the connection string in values.yaml (insecure)
-                                  # Instead, create a secret manually before installation (see README.md)
+        # The kind directly translates to the exporter type in the OpenTelemetry Collector configuration.
+        - kind: azuremonitor
+          secretName: "{{ .Release.Name }}-azuremonitor-secrets"
+        # - kind: googlecloud
+        #   secretName: "{{ .Release.Name }}-googlecloud-secrets"
     autoscaling:
       enabled: true
       minReplicas: 1
@@ -47,7 +55,7 @@ global:
   disableLogFiles: false
   jsonLogging: false
   traceSpec: "*=info"
-  environment: production
+  environment: development
   cqrs: false
   istio: false
   istioNamespace: istio-system
@@ -113,7 +121,7 @@ trader:
   cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/trader
-    tag: otel
+    tag: 1.0.0
   whiteLabelHeaderImage: header.jpg
   whiteLabelFooterImage: footer.jpg
   whiteLabelLoginMessage: Log in to Stock Trader

@@ -24,6 +24,42 @@ metadata:
               "auth": "basic",
               "cqrs": false,
               "monitoring": true,
+              "environment": "production",
+              "opentelemetry": {
+                "disable": false,
+                "agent": {
+                  "enabled": false,
+                  "image": {
+                    "repository": "ghcr.io/ibmstocktrader/opentelemetry-collector",
+                    "tag": "latest"
+                  }
+                },
+                "collector": {
+                  "replicas": 1,
+                  "endpoint": "http://{{ .Release.Name }}-otel-collector:4317",
+                  "image": {
+                    "repository": "ghcr.io/ibmstocktrader/opentelemetry-collector-contrib",
+                    "tag": "latest"
+                  },
+                  "backends": [
+                    {
+                      "kind": "azuremonitor",
+                      "secretName": "{{ .Release.Name }}-azuremonitor-secrets"
+                    }
+                  ]
+                },
+                "autoscaling": {
+                  "enabled": true,
+                  "minReplicas": 1,
+                  "maxReplicas": 5,
+                  "targetCPUUtilizationPercentage": 80,
+                  "targetMemoryUtilizationPercentage": 80
+                },
+                "serviceName": "trader",
+                "logExporter": "otlp",
+                "metricExporter": "otlp",
+                "traceExporter": "otlp"
+              },
               "ingress": false,
               "istio": false,
               "istioEgress": "egressgateway",
@@ -491,6 +527,118 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:text
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+          - path: global.environment
+            description: Deployment environment (production, staging, development, etc.)
+            displayName: Environment
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:global
+
+          # Section for OpenTelemetry settings
+          - path: global.opentelemetry
+            displayName: OpenTelemetry Settings
+          - path: global.opentelemetry.disable
+            description: Disable OpenTelemetry SDK instrumentation
+            displayName: Disable OpenTelemetry
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.agent.enabled
+            description: Enable OpenTelemetry Agent DaemonSet
+            displayName: Enable Agent DaemonSet
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.agent.image.repository
+            description: Docker image repository for OpenTelemetry Agent
+            displayName: Agent Image Repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.agent.image.tag
+            description: Docker image tag for OpenTelemetry Agent
+            displayName: Agent Image Tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.collector.replicas
+            description: Number of OpenTelemetry Collector replicas
+            displayName: Collector Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.collector.endpoint
+            description: OpenTelemetry Collector endpoint URL
+            displayName: Collector Endpoint
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.collector.image.repository
+            description: Docker image repository for OpenTelemetry Collector
+            displayName: Collector Image Repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.collector.image.tag
+            description: Docker image tag for OpenTelemetry Collector
+            displayName: Collector Image Tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.autoscaling.enabled
+            description: Enable horizontal pod autoscaling for the collector
+            displayName: Enable Autoscaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.autoscaling.minReplicas
+            description: Minimum number of collector replicas
+            displayName: Minimum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.autoscaling.maxReplicas
+            description: Maximum number of collector replicas
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.autoscaling.targetCPUUtilizationPercentage
+            description: Target CPU utilization percentage for autoscaling
+            displayName: Target CPU Percentage
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.autoscaling.targetMemoryUtilizationPercentage
+            description: Target memory utilization percentage for autoscaling
+            displayName: Target Memory Percentage
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.serviceName
+            description: Service name for OpenTelemetry traces/metrics/logs
+            displayName: Service Name
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.logExporter
+            description: Log exporter for OpenTelemetry
+            displayName: Log Exporter
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.metricExporter
+            description: Metric exporter for OpenTelemetry
+            displayName: Metric Exporter
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
+          - path: global.opentelemetry.traceExporter
+            description: Trace exporter for OpenTelemetry
+            displayName: Trace Exporter
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:opentelemetry
 
           # Section for Database settings
           - path: database

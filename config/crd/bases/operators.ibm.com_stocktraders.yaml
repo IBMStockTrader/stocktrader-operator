@@ -306,6 +306,16 @@ spec:
                           enabled:
                             description: Enable OpenTelemetry Agent DaemonSet
                             type: boolean
+                          image:
+                            description: Docker image settings for OpenTelemetry Agent
+                            properties:
+                              repository:
+                                description: Docker image registry
+                                type: string
+                              tag:
+                                description: Docker image tag
+                                type: string
+                            type: object
                         type: object
                       collector:
                         description: OpenTelemetry Collector settings
@@ -316,20 +326,29 @@ spec:
                           endpoint:
                             description: OpenTelemetry Collector endpoint
                             type: string
-                          backends:
-                            description: Configuration for various telemetry backend exporters
+                          image:
+                            description: Docker image settings for OpenTelemetry Collector (used in production environment)
                             properties:
-                              azuremonitor:
-                                description: Azure Monitor Application Insights integration
-                                properties:
-                                  secretName:
-                                    description: Name of the Kubernetes secret containing the Azure Monitor connection string
-                                    type: string
-                                  connectionString:
-                                    description: Azure Monitor connection string (NOT RECOMMENDED - use secret instead)
-                                    type: string
-                                type: object
+                              repository:
+                                description: Docker image registry
+                                type: string
+                              tag:
+                                description: Docker image tag
+                                type: string
                             type: object
+                          backends:
+                            description: Array of telemetry backend exporters
+                            type: array
+                            items:
+                              description: Backend exporter configuration
+                              type: object
+                              properties:
+                                kind:
+                                  description: Type of backend exporter (e.g., azuremonitor, googlecloud)
+                                  type: string
+                                secretName:
+                                  description: Name of the Kubernetes secret containing the backend connection string
+                                  type: string
                         type: object
                       autoscaling:
                         description: OpenTelemetry Collector autoscaling settings

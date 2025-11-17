@@ -9,3 +9,12 @@ The Java web application is available at
 The Node.js web application is available at
   https://<route-url>>/tradr
 {{- end }}
+
+{{- if not .Values.global.opentelemetry.disable }}
+OpenTelemetry Configuration:
+  Collector Image: {{ include "otel.collector.image" . }}
+  {{- if .Values.global.opentelemetry.agent.enabled }}
+  Agent Image: {{ include "otel.agent.image" . }}
+  {{- end }}
+  Environment: {{ .Values.global.environment }}
+{{- end }}

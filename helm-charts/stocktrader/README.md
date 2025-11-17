@@ -11,31 +11,9 @@ is used instead; that operator wraps this helm chart.
 The user must install and configure (or point to existing installations of) the following dependencies:
 * A relational (JDBC-compliant) database, such as IBM DB2 or PostgreSQL
 
-### OpenTelemetry with Azure Monitor (Optional)
+### OpenTelemetry (Optional)
 
-If you want to enable OpenTelemetry tracing with Azure Monitor Application Insights, you must create a Kubernetes secret containing your Azure Monitor connection string **before** installing the chart.
-
-Create the secret with the following command:
-
-```bash
-kubectl create secret generic <release-name>-otel-secrets \
-  --from-literal=connection-string='<your-azure-monitor-connection-string>' \
-  -n <namespace>
-```
-
-Replace the placeholders:
-- `<release-name>` - Your Helm release name (e.g., `cjot`)
-- `<your-azure-monitor-connection-string>` - Your Azure Monitor Application Insights connection string (format: `InstrumentationKey=...;IngestionEndpoint=...;LiveEndpoint=...;ApplicationId=...`)
-- `<namespace>` - The Kubernetes namespace where you'll install Stock Trader (e.g., `stocktrader`)
-
-**Example:**
-```bash
-kubectl create secret generic cjot-otel-secrets \
-  --from-literal=connection-string='InstrumentationKey=12345678-1234-1234-1234-123456789abc;IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/;ApplicationId=12345678-1234-1234-1234-123456789abc' \
-  -n stocktrader
-```
-
-**Note:** The secret name must match the pattern `<release-name>-otel-secrets` as configured in `values.yaml` under `global.opentelemetry.collector.backends.azuremonitor.secretName`.
+For detailed OpenTelemetry setup and configuration, see [templates/opentelemetry/README.md](templates/opentelemetry/README.md).
 
 The following dependencies are optional:
 * An MQ product, such as IBM MQ Series, or Apache ActiveMQ (enables notifications)
@@ -53,19 +31,7 @@ The following table lists the configurable parameters of this chart and their de
 The parameters allow you to:
 * change the image of any microservice from the one provided by IBM to one that you build (e.g. if you want to try to modify a service)
 * enable the deployment of optional microservices (tradr, account, messaging, notification-slack, notification-twitter, trade-history, collector)
-* configure OpenTelemetry observability with various backend exporters (Azure Monitor, etc.)
-
-### Key OpenTelemetry Configuration Parameters
-
-| Parameter                                                    | Description                                         | Default                                    |
-| ------------------------------------------------------------ | --------------------------------------------------- | ------------------------------------------ |
-| global.opentelemetry.disable                                 | Disable OpenTelemetry SDK instrumentation           | false                                      |
-| global.opentelemetry.collector.endpoint                      | OpenTelemetry Collector endpoint                    | http://{{ .Release.Name }}-otel-collector:4317 |
-| global.opentelemetry.collector.backends.azuremonitor.secretName | Secret containing Azure Monitor connection string | {{ .Release.Name }}-otel-secrets           |
-| global.opentelemetry.serviceName                             | Service name for OpenTelemetry traces               | trader                                     |
-| global.opentelemetry.logExporter                             | Log exporter type                                   | otlp                                       |
-| global.opentelemetry.metricExporter                          | Metric exporter type                                | otlp                                       |
-| global.opentelemetry.traceExporter                           | Trace exporter type                                 | otlp                                       |
+* configure OpenTelemetry observability with various backend exporters - see [templates/opentelemetry/README.md](templates/opentelemetry/README.md) for details
 
 ### Microservice Image Configuration
 
@@ -139,27 +105,12 @@ helm install cjot stocktrader-2.0.0.tgz -n stocktrader .
 
 This sets the Helm release name to `cjot` and creates all Kubernetes resources in a namespace called `stocktrader`.
 
-### Installation with OpenTelemetry and Azure Monitor
-
-If you want to enable OpenTelemetry with Azure Monitor, first create the secret (see Prerequisites section above), then install:
-
-```console
-# Create the namespace
-kubectl create namespace stocktrader
-
-# Create the Azure Monitor secret (replace with your actual connection string)
-kubectl create secret generic cjot-otel-secrets \
-  --from-literal=connection-string='InstrumentationKey=...;IngestionEndpoint=...;LiveEndpoint=...;ApplicationId=...' \
-  -n stocktrader
-
-# Install the chart
-helm install cjot stocktrader-2.0.0.tgz -n stocktrader .
-```
-
 **Important Notes:**
 * Make sure that the namespace has an image policy allowing it to pull images from the GitHub Container Registry (unless you have built the sample yourself and are pulling it from your local Docker image registry)
-* The secret name must match the pattern `<release-name>-otel-secrets` where `<release-name>` is your Helm release name
-* Keep your Azure Monitor connection string secure - never commit it to source control
+
+### Installation with OpenTelemetry
+
+For OpenTelemetry installation instructions, see [templates/opentelemetry/README.md](templates/opentelemetry/README.md).
 
 
 ## Uninstalling the Chart

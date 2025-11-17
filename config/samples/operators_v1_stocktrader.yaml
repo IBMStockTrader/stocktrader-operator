@@ -73,13 +73,20 @@ spec:
       disable: false
       agent:
         enabled: false
+        image:
+          repository: ghcr.io/ibmstocktrader/opentelemetry-collector
+          tag: latest
       collector:
         replicas: 1
         endpoint: http://{{ .Release.Name }}-otel-collector:4317
+        image:
+          repository: ghcr.io/ibmstocktrader/opentelemetry-collector-contrib
+          tag: latest
         backends:
-          azuremonitor:
-            secretName: "{{ .Release.Name }}-otel-secrets"
-            # connectionString: ""  # NOT RECOMMENDED: Create a secret manually instead
+          - kind: azuremonitor
+            secretName: "{{ .Release.Name }}-azuremonitor-secrets"
+          # - kind: googlecloud
+          #   secretName: "{{ .Release.Name }}-googlecloud-secrets"
       autoscaling:
         enabled: true
         minReplicas: 1

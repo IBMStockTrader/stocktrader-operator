@@ -57,6 +57,20 @@ global:
           label: "Enable OpenTelemetry Agent"
           description: "Deploy OpenTelemetry agent as DaemonSet"
           type: boolean
+      image:
+        __metadata:
+          label: "Agent image settings"
+          description: "Docker image settings for OpenTelemetry Agent (used in production environment)"
+        repository:
+          __metadata:
+            label: "Image repository"
+            description: "Docker image repository"
+            type: string
+        tag:
+          __metadata:
+            label: "Image tag"
+            description: "Docker image tag"
+            type: string
     collector:
       __metadata:
         label: "OpenTelemetry Collector settings"
@@ -71,24 +85,25 @@ global:
           label: "OpenTelemetry Collector endpoint"
           description: "Endpoint for the OpenTelemetry Collector"
           type: string
+      image:
+        __metadata:
+          label: "Collector image settings"
+          description: "Docker image settings for OpenTelemetry Collector (used in production environment)"
+        repository:
+          __metadata:
+            label: "Image repository"
+            description: "Docker image repository"
+            type: string
+        tag:
+          __metadata:
+            label: "Image tag"
+            description: "Docker image tag"
+            type: string
       backends:
         __metadata:
           label: "OpenTelemetry backend exporters"
-          description: "Configuration for various telemetry backend exporters"
-        azuremonitor:
-          __metadata:
-            label: "Azure Monitor configuration"
-            description: "Settings for Azure Monitor Application Insights integration"
-          secretName:
-            __metadata:
-              label: "Secret name"
-              description: "Name of the Kubernetes secret containing the Azure Monitor connection string"
-              type: string
-          connectionString:
-            __metadata:
-              label: "Connection string (NOT RECOMMENDED)"
-              description: "Azure Monitor connection string - NOT RECOMMENDED to set here. Create a Kubernetes secret instead for security."
-              type: password
+          description: "Array of telemetry backend exporters. Each backend has a 'kind' (e.g., azuremonitor, googlecloud) and 'secretName' for credentials."
+          type: array
     autoscaling:
       __metadata:
         label: "OpenTelemetry Collector autoscaling"

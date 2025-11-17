@@ -4,6 +4,6 @@ metadata:
   name: cloud-journey-optimization-team
 spec:
   displayName: Cloud Journey Optimization Team
-  image: 'docker.io/ibmstocktrader/stocktrader-operator-catalog:v1.0.0'
+  image: 'ghcr.io/ibmstocktrader/stocktrader-operator-catalog:v1.0.0'
   publisher: Kyndryl
   sourceType: grpc
