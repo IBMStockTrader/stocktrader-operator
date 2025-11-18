@@ -15,7 +15,7 @@ Once the catalog image is available in an image registry, you just add it to you
 2. Navigate to *Administration->Cluster Settings* in the left nav, then click on the *Global Configuration* tab, and scroll down and click on *OperatorHub*.
 3. Click on the *Sources* tab, and then click the **Create CatalogSource** button.
 4. In the form that appears, you can enter whatever values you want in the *Catalog source name* field (I typed `cloud-journey-optimization-team`), the *Display name* field (I typed `Cloud Journey Optimization Team`), and the *Publisher name* field (I typed `Kyndryl`)
-5. The field that really matters is the *Image* field, where you need to type the value from the `podman push` above of the image that `opm` produced, which was `docker.io/ibmstocktrader/stocktrader-operator-catalog:v1.0.0` in my case.
+5. The field that really matters is the *Image* field, where you need to type the value from the `podman push` above of the image that `opm` produced, which was `ghcr.io/ibmstocktrader/stocktrader-operator-catalog:v1.0.0` in my case.
 6. I chose the *Cluster-wide catalog source* radio button under *Availablility*, then clicked the **Create** button.
 7. This will take you back to the list of catalog sources, with your new source listed.  At first it will have a dash in the *# of operators* cell of the table (the browser needs to be fairly wide to see this column), but after a few minutes it should switch to "1".
 8. Navigate to *Operators->OperatorHub* in the left nav, then scroll down to find **IBM Stock Trader sample Operator** (you can type something like "stock" in the filter field to make only this operator show up, rather than having scroll down past hundreds of them).

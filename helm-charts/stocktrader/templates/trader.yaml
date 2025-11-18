@@ -218,6 +218,47 @@ spec:
           - name: WLP_LOGGING_MESSAGE_SOURCE
             value: none
 {{- end }}
+{{- if .Values.global.opentelemetry.disable }}
+          - name: OTEL_SDK_DISABLED
+            value: "true"
+          - name: OTEL_TRACES_EXPORTER
+            value: "none"
+          - name: OTEL_LOGS_EXPORTER
+            value: "none"
+          - name: OTEL_METRICS_EXPORTER
+            value: "none"
+{{- else }}
+          - name: OTEL_SDK_DISABLED
+            value: "false"
+          - name:  OTEL_EXPORTER_OTLP_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.opentelemetry.collectorEndpoint
+          - name:  OTEL_SERVICE_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.opentelemetry.serviceName
+          - name:  OTEL_LOGS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.opentelemetry.logExporter
+                optional: true
+          - name:  OTEL_METRICS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.opentelemetry.metricExporter
+                optional: true
+          - name:  OTEL_TRACES_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: trader.opentelemetry.traceExporter
+                optional: true
+{{- end }}
         ports:
           - containerPort: 9080
           - containerPort: 9443

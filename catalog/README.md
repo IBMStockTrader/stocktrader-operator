@@ -11,7 +11,7 @@ mkdir catalog
 
 ./bin/opm init stocktrader-operator -c stable -o yaml > catalog/operator.yaml
 
-./bin/opm render docker.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0 -o yaml >> catalog/operator.yaml
+./bin/opm render ghcr.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0 -o yaml >> catalog/operator.yaml
 
 cat << EOF >> catalog/operator.yaml
 ---

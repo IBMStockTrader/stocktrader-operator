@@ -81,7 +81,7 @@ helm install --tls --name stocktrader --namespace stocktrader .
 This sets the Helm release name to `stocktrader` and creates all Kubernetes resources in a namespace called `stocktrader`.
 
 Note you need to make sure that the namespace to which you install it has an image policy allowing it to pull images from
-DockerHub (unless you have built the sample yourself and are pulling it from your local Docker image registry).  In the ICP console, choose Manage->Resource Security, then choose Image Policies and create one that allows access to `docker.io/ibmstocktrader/*`.
+DockerHub (unless you have built the sample yourself and are pulling it from your local Docker image registry).  In the ICP console, choose Manage->Resource Security, then choose Image Policies and create one that allows access to `ghcr.io/ibmstocktrader/*`.
 
 You can also install this helm chart via the ICP console.  Choose Manage->Helm Repositories, and click "Sync repositories".
 Wait a few minutes, then click Catalog in the top right, and scroll down to "stocktrader" (or start typing "stock"
