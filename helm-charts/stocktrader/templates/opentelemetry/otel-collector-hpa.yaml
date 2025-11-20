@@ -1,0 +1,40 @@
+{{- if not .Values.global.opentelemetry.disable }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-otel-collector-hpa
+  labels:
+    app: {{ .Release.Name }}-opentelemetry
+    component: {{ .Release.Name }}-otel-collector
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-otel-collector
+  minReplicas: {{ .Values.global.opentelemetry.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.global.opentelemetry.autoscaling.maxReplicas }}
+  {{- if .Values.global.opentelemetry.autoscaling.behavior }}
+  behavior:
+    {{- toYaml .Values.global.opentelemetry.autoscaling.behavior | nindent 4 }}
+  {{- end }}
+  metrics:
+  {{- if .Values.global.opentelemetry.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.global.opentelemetry.autoscaling.targetMemoryUtilizationPercentage }}
+  {{- end }}
+  {{- if .Values.global.opentelemetry.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.global.opentelemetry.autoscaling.targetCPUUtilizationPercentage }}
+  {{- end }}
+  {{- with .Values.global.opentelemetry.autoscaling.additionalMetrics }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -39,6 +39,120 @@ global:
       label: "Enable Prometheus monitoring"
       description: "Register a Prometheus scraper for the metrics endpoint for each microservice"
       type: boolean
+  opentelemetry:
+    __metadata:
+      label: "Enable OpenTelemetry"
+      description: "Enable OpenTelemetry for each microservice"
+    disable:
+      __metadata:
+        label: "Disable SDK instrumentation"
+        description: "Disable OpenTelemetry SDK instrumentation for each microservice"
+        type: boolean
+    agent:
+      __metadata:
+        label: "OpenTelemetry Agent settings"
+        description: "Settings for OpenTelemetry agent DaemonSet"
+      enabled:
+        __metadata:
+          label: "Enable OpenTelemetry Agent"
+          description: "Deploy OpenTelemetry agent as DaemonSet"
+          type: boolean
+      image:
+        __metadata:
+          label: "Agent image settings"
+          description: "Docker image settings for OpenTelemetry Agent (used in production environment)"
+        repository:
+          __metadata:
+            label: "Image repository"
+            description: "Docker image repository"
+            type: string
+        tag:
+          __metadata:
+            label: "Image tag"
+            description: "Docker image tag"
+            type: string
+    collector:
+      __metadata:
+        label: "OpenTelemetry Collector settings"
+        description: "Settings for OpenTelemetry collector deployment"
+      replicas:
+        __metadata:
+          label: "Collector replicas"
+          description: "Number of OpenTelemetry collector replicas"
+          type: number
+      endpoint:
+        __metadata:
+          label: "OpenTelemetry Collector endpoint"
+          description: "Endpoint for the OpenTelemetry Collector"
+          type: string
+      image:
+        __metadata:
+          label: "Collector image settings"
+          description: "Docker image settings for OpenTelemetry Collector (used in production environment)"
+        repository:
+          __metadata:
+            label: "Image repository"
+            description: "Docker image repository"
+            type: string
+        tag:
+          __metadata:
+            label: "Image tag"
+            description: "Docker image tag"
+            type: string
+      backends:
+        __metadata:
+          label: "OpenTelemetry backend exporters"
+          description: "Array of telemetry backend exporters. Each backend has a 'kind' (e.g., azuremonitor, googlecloud) and 'secretName' for credentials."
+          type: array
+    autoscaling:
+      __metadata:
+        label: "OpenTelemetry Collector autoscaling"
+        description: "Autoscaling settings for OpenTelemetry collector"
+      enabled:
+        __metadata:
+          label: "Enable autoscaling"
+          description: "Enable horizontal pod autoscaling for the collector"
+          type: boolean
+      minReplicas:
+        __metadata:
+          label: "Minimum replicas"
+          description: "Minimum number of collector replicas"
+          type: number
+      maxReplicas:
+        __metadata:
+          label: "Maximum replicas"
+          description: "Maximum number of collector replicas"
+          type: number
+      targetCPUUtilizationPercentage:
+        __metadata:
+          label: "Target CPU utilization"
+          description: "Target CPU utilization percentage for autoscaling"
+          type: number
+      targetMemoryUtilizationPercentage:
+        __metadata:
+          label: "Target memory utilization"
+          description: "Target memory utilization percentage for autoscaling"
+          type: number
+    serviceName:
+      __metadata:
+        label: "OpenTelemetry Service Name"
+        description: "Service name to be used in OpenTelemetry traces"
+        type: string
+    logExporter:
+      __metadata:
+        label: "Enable logging exporter"
+        description: "Enable OpenTelemetry logging exporter for each microservice"
+        type: string
+    metricExporter:
+      __metadata:
+        label: "Enable metrics exporter"
+        description: "Enable OpenTelemetry metrics exporter for each microservice"
+        type: string
+    traceExporter:
+      __metadata:
+        label: "Enable tracing exporter"
+        description: "Enable OpenTelemetry tracing exporter for each microservice"
+        type: string
   ingress:
     __metadata:
       label: "Enable Ingress"

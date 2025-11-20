@@ -11,6 +11,10 @@ is used instead; that operator wraps this helm chart.
 The user must install and configure (or point to existing installations of) the following dependencies:
 * A relational (JDBC-compliant) database, such as IBM DB2 or PostgreSQL
 
+### OpenTelemetry (Optional)
+
+For detailed OpenTelemetry setup and configuration, see [opentelemetry-README.md](opentelemetry-README.md).
+
 The following dependencies are optional:
 * An MQ product, such as IBM MQ Series, or Apache ActiveMQ (enables notifications)
 * IBM Operational Decision Manager (enables loyalty level determination - can use a serverless function instead)
@@ -27,6 +31,9 @@ The following table lists the configurable parameters of this chart and their de
 The parameters allow you to:
 * change the image of any microservice from the one provided by IBM to one that you build (e.g. if you want to try to modify a service)
 * enable the deployment of optional microservices (tradr, account, messaging, notification-slack, notification-twitter, trade-history, collector)
+* configure OpenTelemetry observability with various backend exporters - see [opentelemetry-README.md](opentelemetry-README.md) for details
+
+### Microservice Image Configuration
 
 | Parameter                           | Description                                         | Default                                                                         |
 | ----------------------------------- | ----------------------------------------------------| --------------------------------------------------------------------------------|
@@ -88,6 +95,8 @@ It is also handy to change directory into the `stocktrader` directory (where the
 
 ## Installing the Chart
 
+### Basic Installation
+
 You can install the chart by setting the current directory to the folder where this chart is located and running the following command:
 
 ```console
@@ -96,8 +105,12 @@ helm install cjot stocktrader-2.0.0.tgz -n stocktrader .
 
 This sets the Helm release name to `cjot` and creates all Kubernetes resources in a namespace called `stocktrader`.
 
-Note you need to make sure that the namespace to which you install it has an image policy allowing it to pull images from
-the GitHub Container Registry (unless you have built the sample yourself and are pulling it from your local Docker image registry).
+**Important Notes:**
+* Make sure that the namespace has an image policy allowing it to pull images from the GitHub Container Registry (unless you have built the sample yourself and are pulling it from your local Docker image registry)
+
+### Installation with OpenTelemetry
+
+For OpenTelemetry installation instructions, see [opentelemetry-README.md](opentelemetry-README.md).
 
 
 ## Uninstalling the Chart

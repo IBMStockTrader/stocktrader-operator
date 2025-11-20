@@ -18,6 +18,8 @@ resources:
 - ../manager
 # [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
 #- ../prometheus
+# [OpenTelemetry] To enable OpenTelemetry monitor, uncomment all sections with 'OpenTelemetry'.
+- ../opentelemetry
 
 patchesStrategicMerge:
   # Protect the /metrics endpoint by putting it behind auth.
