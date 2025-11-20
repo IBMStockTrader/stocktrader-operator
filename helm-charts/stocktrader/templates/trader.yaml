@@ -61,6 +61,20 @@ spec:
       imagePullSecrets:
       - name: {{ tpl .Values.global.pullSecretName . }}
 {{- end }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: trader
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: trader
+
       containers:
       - name: trader
         image: "{{ .Values.trader.image.repository }}:{{ .Values.trader.image.tag }}"
