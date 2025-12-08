@@ -119,6 +119,9 @@ trader:
   autoscale: false
   maxReplicas: 10
   cpuThreshold: 75
+  # NEW: multi-AZ toggle for topology spread
+  topologySpread:
+    multiAzEnabled: true   # set to false for single-AZ clusters
   image:
     repository: ghcr.io/ibmstocktrader/trader
     tag: 1.0.0
