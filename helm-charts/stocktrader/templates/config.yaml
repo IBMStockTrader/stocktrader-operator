@@ -24,6 +24,9 @@ data:
   broker.url: {{ tpl .Values.broker.url . }}
   portfolio.url: {{ tpl .Values.portfolio.url . }}
   stockQuote.url: {{ tpl .Values.stockQuote.url . }}
+  sentiment.url: {{ tpl .Values.sentiment.url . }}
+  sentiment.enabled: {{ quote .Values.sentiment.enabled }}
+  sentiment.dashboardUrl: {{ tpl .Values.sentiment.dashboardUrl . }}
   watson.url: {{ .Values.watson.url }}
   tradeHistory.url: {{ tpl .Values.tradeHistory.url . }}
   trader.whiteLabelHeaderImage: {{ .Values.trader.whiteLabelHeaderImage }}
@@ -80,6 +83,12 @@ data:
   jwt.issuer: {{ .Values.jwt.issuer }}
   jwt.audience: {{ .Values.jwt.audience }}
   redis.cacheInterval: "{{ .Values.redis.cacheInterval }}"
+  azure.openai.endpoint: {{ .Values.azureOpenAI.endpoint }}
+  azure.openai.deploymentName: {{ .Values.azureOpenAI.deploymentName }}
+  azure.openai.apiVersion: {{ .Values.azureOpenAI.apiVersion }}
+  azure.openai.embeddingDeployment: {{ .Values.azureOpenAI.embeddingDeployment }}
+  azure.aiSearch.endpoint: {{ .Values.azureAISearch.endpoint }}
+  azure.aiSearch.indexName: {{ .Values.azureAISearch.indexName }}
   mongo.ip: {{ .Values.mongo.ip }}
   mongo.port: "{{ .Values.mongo.port }}"
   mongo.database: {{ .Values.mongo.database }}
@@ -89,6 +98,10 @@ data:
   s3.location: {{ .Values.s3.location }}
   s3.endpointUrl: {{ .Values.s3.endpointUrl }}
   s3.resourceInstanceId: "{{ .Values.s3.resourceInstanceId }}"
+  rag.topK: "{{ .Values.rag.topK }}"
+  dataSource.reddit.enabled: {{ quote .Values.dataSources.reddit.enabled }}
+  dataSource.alphaVantage.enabled: {{ quote .Values.dataSources.alphaVantage.enabled }}
+  dataSource.finnhub.enabled: {{ quote .Values.dataSources.finnhub.enabled }}
   ssl.certs: |-
 {{ .Values.global.certs | indent 4 }}
 {{- end }}

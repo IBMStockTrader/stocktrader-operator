@@ -108,6 +108,19 @@ metadata:
                 "saltBytes": "\u003cyour salt bytes\u003e"
               }
             },
+            "sentiment": {
+              "enabled": false,
+              "replicas": 1,
+              "autoscale": false,
+              "maxReplicas": 10,
+              "cpuThreshold": 75,
+              "image": {
+                "repository": "\u003cyour-repo\u003e/stock-sentiment-api",
+                "tag": "latest"
+              },
+              "url": "http://{{ .Release.Name }}-sentiment-api-service:8000",
+              "dashboardUrl": "http://{{ .Release.Name }}-sentiment-dashboard-service:8501"
+            },
             "trader": {
               "enabled": true,
               "replicas": 1,
@@ -867,6 +880,64 @@ spec:
             x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:password
               - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuote
+
+          # Section for Sentiment Analysis settings
+          - path: sentiment
+            displayName: Sentiment Analysis microservice
+          - path: sentiment.enabled
+            description: Enable the Sentiment Analysis microservice
+            displayName: Enable Sentiment Analysis
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.replicas
+            description: Initial number of pods for this microservice
+            displayName: Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.autoscale
+            description: Enable a Horizontal Pod Autoscaler for this microservice
+            displayName: Enable Auto-scaling
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.maxReplicas
+            description: Maximum number of pods for this microservice
+            displayName: Maximum Replicas
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:podCount
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.cpuThreshold
+            description: CPU Threshold that results in a scaling up another pod
+            displayName: CPU Threshold
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:number
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.image.repository
+            description: Path to locate the Docker image for the sentiment analysis microservice
+            displayName: Sentiment API Docker image repository
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.image.tag
+            description: Tag for the Docker image for the sentiment analysis microservice
+            displayName: Sentiment API Docker image tag
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.url
+            description: URL at which this microservice can be accessed by other microservices
+            displayName: Sentiment API URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
+          - path: sentiment.dashboardUrl
+            description: URL for the Streamlit sentiment dashboard
+            displayName: Sentiment Dashboard URL
+            x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:text
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:sentiment
 
           # Section for Trader settings
           - path: trader

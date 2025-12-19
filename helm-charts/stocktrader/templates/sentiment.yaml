@@ -1,0 +1,450 @@
+#       Copyright 2017-2021 IBM Corp, All Rights Reserved
+#       Copyright 2022-2025 Kyndryl, All Rights Reserved
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+{{- if .Values.sentiment.enabled }}
+#Deploy the pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-sentiment-api
+  labels:
+    app: {{ .Release.Name }}-stock-trader
+  annotations:
+    prism.subkind: FastAPI
+spec:
+{{- if not .Values.sentiment.autoscale }}
+  replicas: {{ .Values.sentiment.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+        app: sentiment-api
+  template:
+    metadata:
+      labels:
+        app: sentiment-api
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/stock-sentiment-analysis"
+{{- if .Values.global.monitoring }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: "8000"
+{{- end }}
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
+{{- end }}
+    spec:
+{{- if .Values.global.pullSecret }}
+      imagePullSecrets:
+      - name: {{ tpl .Values.global.pullSecretName . }}
+{{- end }}
+      containers:
+      - name: sentiment-api
+        image: "{{ .Values.sentiment.image.repository }}:{{ .Values.sentiment.image.tag }}"
+        env:
+          - name: AZURE_OPENAI_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.endpoint
+                optional: true
+          - name: AZURE_OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: azure.openai.apiKey
+                optional: true
+          - name: AZURE_OPENAI_DEPLOYMENT_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.deploymentName
+                optional: true
+          - name: AZURE_OPENAI_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.apiVersion
+                optional: true
+          - name: AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.embeddingDeployment
+                optional: true
+          - name: REDIS_CONNECTION_STRING
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: redis.url
+                optional: true
+          - name: AZURE_AI_SEARCH_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.aiSearch.endpoint
+                optional: true
+          - name: AZURE_AI_SEARCH_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: azure.aiSearch.apiKey
+                optional: true
+          - name: AZURE_AI_SEARCH_INDEX_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.aiSearch.indexName
+                optional: true
+          - name: APP_RAG_TOP_K
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: rag.topK
+                optional: true
+          - name: DATA_SOURCE_REDDIT_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.reddit.clientId
+                optional: true
+          - name: DATA_SOURCE_REDDIT_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.reddit.clientSecret
+                optional: true
+          - name: DATA_SOURCE_REDDIT_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: dataSource.reddit.enabled
+                optional: true
+          - name: DATA_SOURCE_ALPHA_VANTAGE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.alphaVantage.apiKey
+                optional: true
+          - name: DATA_SOURCE_ALPHA_VANTAGE_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: dataSource.alphaVantage.enabled
+                optional: true
+          - name: DATA_SOURCE_FINNHUB_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.finnhub.apiKey
+                optional: true
+          - name: DATA_SOURCE_FINNHUB_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: dataSource.finnhub.enabled
+                optional: true
+        ports:
+          - containerPort: 8000
+        imagePullPolicy: Always
+{{- if .Values.global.healthCheck }}
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          periodSeconds: 30
+          timeoutSeconds: 20
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          periodSeconds: 60
+          timeoutSeconds: 30
+          failureThreshold: 5
+{{- end }}
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+            ephemeral-storage: 512Mi
+          requests:
+            cpu: 250m
+            memory: 512Mi
+            ephemeral-storage: 64Mi
+{{- if .Values.sentiment.autoscale }}
+---
+#Deploy the autoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-sentiment-api-hpa
+  labels:
+    app: stock-trader
+spec:
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Min
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 120
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-sentiment-api
+  minReplicas: {{ .Values.sentiment.replicas }}
+  maxReplicas: {{ .Values.sentiment.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.sentiment.cpuThreshold }}
+{{- end }}
+---
+#Deploy the service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-sentiment-api-service
+  labels:
+    app: sentiment-api
+{{- if .Values.global.monitoring }}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: "8000"
+{{- end }}
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: sentiment-api
+{{- end }}
+---
+{{- if and .Values.sentiment.enabled .Values.sentiment.dashboard.enabled }}
+#Deploy the dashboard pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-sentiment-dashboard
+  labels:
+    app: {{ .Release.Name }}-stock-trader
+  annotations:
+    prism.subkind: Streamlit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: sentiment-dashboard
+  template:
+    metadata:
+      labels:
+        app: sentiment-dashboard
+      annotations:
+        git-repo: "https://github.com/IBMStockTrader/stock-sentiment-analysis"
+{{- if .Values.global.istio }}
+        sidecar.istio.io/inject: 'true'
+        maistra.io/expose-route: 'true'
+{{- end }}
+    spec:
+{{- if .Values.global.pullSecret }}
+      imagePullSecrets:
+      - name: {{ tpl .Values.global.pullSecretName . }}
+{{- end }}
+      containers:
+      - name: sentiment-dashboard
+        image: "{{ .Values.sentiment.dashboard.image.repository }}:{{ .Values.sentiment.dashboard.image.tag }}"
+        env:
+          # API URL for dashboard to connect to sentiment API
+          - name: SENTIMENT_API_URL
+            value: {{ tpl .Values.sentiment.url . }}
+          # Azure OpenAI Configuration (required for service initialization even in API mode)
+          - name: AZURE_OPENAI_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.endpoint
+                optional: true
+          - name: AZURE_OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: azure.openai.apiKey
+                optional: true
+          - name: AZURE_OPENAI_DEPLOYMENT_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.deploymentName
+                optional: true
+          - name: AZURE_OPENAI_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.apiVersion
+                optional: true
+          - name: AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.openai.embeddingDeployment
+                optional: true
+          # Redis Configuration (optional, for fallback services)
+          - name: REDIS_CONNECTION_STRING
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: redis.url
+                optional: true
+          # Azure AI Search Configuration (optional, for RAG service)
+          - name: AZURE_AI_SEARCH_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.aiSearch.endpoint
+                optional: true
+          - name: AZURE_AI_SEARCH_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: azure.aiSearch.apiKey
+                optional: true
+          - name: AZURE_AI_SEARCH_INDEX_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: azure.aiSearch.indexName
+                optional: true
+          # RAG Configuration
+          - name: APP_RAG_TOP_K
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: rag.topK
+                optional: true
+          # Data Sources Configuration (optional)
+          - name: DATA_SOURCE_ALPHA_VANTAGE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.alphaVantage.apiKey
+                optional: true
+          - name: DATA_SOURCE_ALPHA_VANTAGE_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: dataSource.alphaVantage.enabled
+                optional: true
+          - name: DATA_SOURCE_FINNHUB_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.finnhub.apiKey
+                optional: true
+          - name: DATA_SOURCE_FINNHUB_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: dataSource.finnhub.enabled
+                optional: true
+          - name: DATA_SOURCE_REDDIT_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.reddit.clientId
+                optional: true
+          - name: DATA_SOURCE_REDDIT_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ tpl .Values.global.secretName . }}
+                key: dataSource.reddit.clientSecret
+                optional: true
+          - name: DATA_SOURCE_REDDIT_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: dataSource.reddit.enabled
+                optional: true
+        ports:
+          - containerPort: 8501
+        imagePullPolicy: Always
+{{- if .Values.global.healthCheck }}
+        startupProbe:
+          httpGet:
+            path: /sentiment-dashboard/_stcore/health
+            port: 8501
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /sentiment-dashboard/_stcore/health
+            port: 8501
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /sentiment-dashboard/_stcore/health
+            port: 8501
+          periodSeconds: 15
+          failureThreshold: 3
+{{- end }}
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+            ephemeral-storage: 512Mi
+          requests:
+            cpu: 250m
+            memory: 512Mi
+            ephemeral-storage: 64Mi
+---
+#Deploy the dashboard service (ClusterIP for Istio routing)
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-sentiment-dashboard-service
+  labels:
+    app: sentiment-dashboard
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8501
+      targetPort: 8501
+  selector:
+    app: sentiment-dashboard
+{{- end }}
+

@@ -866,6 +866,89 @@ spec:
                     description: URL
                     type: string
                 type: object
+              azureOpenAI:
+                description: Azure OpenAI configuration for sentiment analysis and RAG
+                properties:
+                  endpoint:
+                    description: Azure OpenAI endpoint URL
+                    type: string
+                  apiKey:
+                    description: Azure OpenAI API key
+                    format: password
+                    type: string
+                  deploymentName:
+                    description: Azure OpenAI chat/completions deployment name
+                    type: string
+                  apiVersion:
+                    description: Azure OpenAI API version
+                    type: string
+                  embeddingDeployment:
+                    description: Azure OpenAI embedding deployment name
+                    type: string
+                type: object
+              azureAISearch:
+                description: Azure AI Search configuration for RAG
+                properties:
+                  endpoint:
+                    description: Azure AI Search endpoint URL
+                    type: string
+                  apiKey:
+                    description: Azure AI Search API key
+                    format: password
+                    type: string
+                  indexName:
+                    description: Azure AI Search index name
+                    type: string
+                type: object
+              rag:
+                description: RAG (Retrieval-Augmented Generation) configuration
+                properties:
+                  topK:
+                    description: Number of documents to retrieve for RAG
+                    format: int32
+                    minimum: 1
+                    type: integer
+                type: object
+              dataSources:
+                description: External data source configuration for sentiment analysis
+                properties:
+                  reddit:
+                    description: Reddit data source configuration
+                    properties:
+                      clientId:
+                        description: Reddit client ID
+                        type: string
+                      clientSecret:
+                        description: Reddit client secret
+                        format: password
+                        type: string
+                      enabled:
+                        description: Enable Reddit data source
+                        type: boolean
+                    type: object
+                  alphaVantage:
+                    description: Alpha Vantage data source configuration
+                    properties:
+                      apiKey:
+                        description: Alpha Vantage API key
+                        format: password
+                        type: string
+                      enabled:
+                        description: Enable Alpha Vantage data source
+                        type: boolean
+                    type: object
+                  finnhub:
+                    description: Finnhub data source configuration
+                    properties:
+                      apiKey:
+                        description: Finnhub API key
+                        format: password
+                        type: string
+                      enabled:
+                        description: Enable Finnhub data source
+                        type: boolean
+                    type: object
+                type: object
               s3:
                 description: S3 buckets in AWS (or IBM Cloud Object Storage)
                 properties:
@@ -962,6 +1045,64 @@ spec:
                     type: integer
                   url:
                     description: Stock Quote URL
+                    type: string
+                type: object
+              sentiment:
+                description: Sentiment Analysis microservice
+                properties:
+                  enabled:
+                    description: Enable the Sentiment Analysis microservice
+                    type: boolean
+                  autoscale:
+                    description: Enable a HorizontalPodAutoscaler for this microservice
+                    type: boolean
+                  cpuThreshold:
+                    description: CPU Threshold for autoscaling
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  image:
+                    description: Docker image settings
+                    properties:
+                      repository:
+                        description: Docker image registry
+                        type: string
+                      tag:
+                        description: Docker image tag
+                        type: string
+                    type: object
+                  maxReplicas:
+                    description: Maximum number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  replicas:
+                    description: Initial number of pods for this microservice
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  url:
+                    description: Sentiment API URL
+                    type: string
+                  dashboard:
+                    description: Sentiment Dashboard deployment settings
+                    properties:
+                      enabled:
+                        description: Enable the Sentiment Dashboard
+                        type: boolean
+                      image:
+                        description: Docker image settings for dashboard
+                        properties:
+                          repository:
+                            description: Docker image repository
+                            type: string
+                          tag:
+                            description: Docker image tag
+                            type: string
+                        type: object
+                    type: object
+                  dashboardUrl:
+                    description: Sentiment Dashboard URL (external URL, set after LoadBalancer gets IP)
                     type: string
                 type: object
               tradeHistory:

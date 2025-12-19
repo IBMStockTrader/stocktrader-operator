@@ -1,0 +1,151 @@
+name: Build and Push Operator Bundle to GHCR
+
+on:
+  push:
+    branches:
+      - feat-sentimentIntegration
+  workflow_dispatch: {}
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/stocktrader-operator-bundle
+  OPERATOR_IMAGE_NAME: ${{ github.repository_owner }}/stocktrader-operator
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install operator-sdk
+        run: |
+          curl -L https://github.com/operator-framework/operator-sdk/releases/download/v1.35.0/operator-sdk_linux_amd64 -o operator-sdk
+          chmod +x operator-sdk
+          sudo mv operator-sdk /usr/local/bin/
+
+      - name: Install kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+          # Remove the bin directory to avoid conflicts with local binaries
+          rm -rf bin/
+          # Verify kustomize is working
+          kustomize version
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=sentimentAnalysis
+            type=sha,format=short,prefix=sentimentAnalysis-
+            type=raw,value=latest
+
+      - name: Build operator image
+        run: |
+          # Use semantic version instead of branch name
+          if [[ "${{ github.ref_name }}" == "master" || "${{ github.ref_name }}" == "main" ]]; then
+            export VERSION="1.0.1"
+          else
+            export VERSION="0.0.0-sentimentanalysis"
+          fi
+          export IMAGE_TAG_BASE=${{ env.REGISTRY }}/$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          export IMG=${{ env.REGISTRY }}/$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]'):sentimentAnalysis
+          make docker-build
+
+      - name: Push operator image
+        run: |
+          export IMG=${{ env.REGISTRY }}/$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]'):sentimentAnalysis
+          make docker-push
+
+      - name: Generate bundle
+        run: |
+          # Use semantic version instead of branch name
+          if [[ "${{ github.ref_name }}" == "master" || "${{ github.ref_name }}" == "main" ]]; then
+            export VERSION="1.0.1"
+          else
+            export VERSION="0.0.0-sentimentanalysis"
+          fi
+          export IMAGE_TAG_BASE=${{ env.REGISTRY }}/$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          export IMG=${{ env.REGISTRY }}/$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]'):sentimentAnalysis
+          # Ensure we're using the system kustomize, not local bin/
+          export PATH="/usr/local/bin:$PATH"
+          which kustomize
+          kustomize version
+          echo "Using VERSION: $VERSION"
+          make bundle
+
+      - name: Build bundle image
+        run: |
+          # Use semantic version instead of branch name
+          if [[ "${{ github.ref_name }}" == "master" || "${{ github.ref_name }}" == "main" ]]; then
+            export VERSION="1.0.1"
+          else
+            export VERSION="0.0.0-sentimentanalysis"
+          fi
+          export IMAGE_TAG_BASE=${{ env.REGISTRY }}/$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          export BUNDLE_IMG=${{ env.REGISTRY }}/$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]'):sentimentAnalysis
+          make bundle-build
+
+      - name: Push bundle image
+        run: |
+          # Use semantic version instead of branch name
+          if [[ "${{ github.ref_name }}" == "master" || "${{ github.ref_name }}" == "main" ]]; then
+            export VERSION="1.0.1"
+          else
+            export VERSION="0.0.0-sentimentanalysis"
+          fi
+          export IMAGE_TAG_BASE=${{ env.REGISTRY }}/$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          export BUNDLE_IMG=${{ env.REGISTRY }}/$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]'):sentimentAnalysis
+          make bundle-push
+
+      - name: Output image information
+        run: |
+          OPERATOR_IMAGE_LOWER=$(echo "${{ env.OPERATOR_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          BUNDLE_IMAGE_LOWER=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          
+          echo "Operator Image: ${{ env.REGISTRY }}/$OPERATOR_IMAGE_LOWER:sentimentAnalysis"
+          echo "Bundle Image: ${{ env.REGISTRY }}/$BUNDLE_IMAGE_LOWER:sentimentAnalysis"
+          echo "Bundle Image Latest: ${{ env.REGISTRY }}/$BUNDLE_IMAGE_LOWER:latest"
+          
+          # Create a summary for the workflow
+          echo "## 🚀 Operator Bundle Built Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Images Created:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Operator Image**: \`${{ env.REGISTRY }}/$OPERATOR_IMAGE_LOWER:${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bundle Image**: \`${{ env.REGISTRY }}/$BUNDLE_IMAGE_LOWER:${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bundle Image (Latest)**: \`${{ env.REGISTRY }}/$BUNDLE_IMAGE_LOWER:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Usage in Terraform:" >> $GITHUB_STEP_SUMMARY
+          echo "Update your \`azure/modules/k8s_bootstrap/main.tf\` file:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`hcl" >> $GITHUB_STEP_SUMMARY
+          echo "operator-sdk run bundle ${{ env.REGISTRY }}/$BUNDLE_IMAGE_LOWER:sentimentAnalysis --timeout=600s" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+

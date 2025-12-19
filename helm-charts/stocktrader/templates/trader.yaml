@@ -136,6 +136,18 @@ spec:
                 name: {{ tpl .Values.global.configMapName . }}
                 key: broker.url
                 optional: true
+          - name: SENTIMENT_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: sentiment.enabled
+                optional: true
+          - name: SENTIMENT_DASHBOARD_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: sentiment.dashboardUrl
+                optional: true
           - name: S3_ENABLED
             value: {{ quote .Values.s3.enabled }}
           - name: S3_BUCKET

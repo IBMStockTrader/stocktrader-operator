@@ -155,6 +155,38 @@ spec:
       version: v1
 ---
 {{- end }}
+{{- if and .Values.sentiment.enabled .Values.sentiment.dashboard.enabled }}
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-sentiment-dashboard
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ .Release.Name }}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /sentiment-dashboard
+    route:
+    - destination:
+        host: {{ .Release.Name }}-sentiment-dashboard-service
+        port:
+          number: 8501
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-sentiment-dashboard
+spec:
+  host: {{ .Release.Name }}-sentiment-dashboard-service
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
+{{- end }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:

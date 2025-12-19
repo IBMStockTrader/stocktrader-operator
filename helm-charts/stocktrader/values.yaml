@@ -113,6 +113,22 @@ stockQuote:
     class: noneEncryptor
     saltBytes: <salt bytes generated>
     password: <encryption password>
+sentiment:
+  enabled: false
+  replicas: 1
+  autoscale: false
+  maxReplicas: 10
+  cpuThreshold: 75
+  image:
+    repository: <your-repo>/stock-sentiment-api
+    tag: latest
+  url: http://{{ .Release.Name }}-sentiment-api-service:8000
+  dashboard:
+    enabled: false
+    image:
+      repository: <your-repo>/stock-sentiment-dashboard
+      tag: latest
+  dashboardUrl: /sentiment-dashboard
 trader:
   enabled: true
   replicas: 1
@@ -243,6 +259,38 @@ mq:
 redis:
   urlWithCredentials: redis://<your credentials>@redistrader1-ibm-redis-ha-dev-master-svc:6379
   cacheInterval: 60
+azureOpenAI:
+  # Azure OpenAI endpoint, e.g. https://eastus.api.cognitive.microsoft.com
+  endpoint: ""
+  # Azure OpenAI API key (treat as secret in real environments)
+  apiKey: ""
+  # Chat/completions deployment name, e.g. gpt-4
+  deploymentName: gpt-4
+  # API version, e.g. 2023-05-15
+  apiVersion: "2023-05-15"
+  # Embedding deployment name, e.g. text-embedding-ada-002
+  embeddingDeployment: text-embedding-ada-002
+azureAISearch:
+  # Azure AI Search endpoint, e.g. https://<name>.search.windows.net
+  endpoint: ""
+  # Azure AI Search API key (treat as secret)
+  apiKey: ""
+  # Azure AI Search index name
+  indexName: stock-articles
+rag:
+  # Number of documents/articles to retrieve for RAG
+  topK: 3
+dataSources:
+  reddit:
+    clientId: ""
+    clientSecret: ""
+    enabled: false
+  alphaVantage:
+    apiKey: ""
+    enabled: false
+  finnhub:
+    apiKey: ""
+    enabled: false
 openwhisk:
   id: <your id>
   password: <your password>

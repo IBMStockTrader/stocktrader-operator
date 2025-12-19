@@ -110,6 +110,14 @@ spec:
                 optional: true
           - name: TRADE_HISTORY_ENABLED
             value: {{ quote .Values.tradeHistory.enabled }}
+          - name: SENTIMENT_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ tpl .Values.global.configMapName . }}
+                key: sentiment.url
+                optional: true
+          - name: SENTIMENT_API_ENABLED
+            value: {{ quote .Values.sentiment.enabled }}
           - name: CQRS_ENABLED
             value: {{ quote .Values.global.cqrs }}
           - name: REDIS_URL
