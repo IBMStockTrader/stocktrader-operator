@@ -1,0 +1,173 @@
+
+{{- if and .Values.global.ingress.enabled (eq (lower .Values.global.ingress.className) "haproxy") }}
+# ===================== Ingress (HAProxy) =====================
+# Trader (Ingress)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-trader-ingress-haproxy
+  {{- if .Values.global.ingress.https.enabled }}
+  annotations:
+    haproxy.org/ssl-redirect: "true"
+    haproxy.org/backend-protocol: "https"
+    haproxy.org/server-ssl: "true"
+    haproxy.org/ssl-verify: "false"
+    haproxy.org/cookie-persistence: "true"
+    haproxy.org/session-cookie-name: "route"
+    haproxy.org/session-cookie-hash: "sha1"
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.global.ingress.className }}
+  {{- if .Values.global.ingress.https.enabled }}
+  {{- if or .Values.global.ingress.fqdn .Values.global.ingress.https.tlsSecretName }}
+  tls:
+       {{- if .Values.global.ingress.fqdn }}
+    - hosts:
+        - {{ .Values.global.ingress.fqdn }}
+      {{- end }}
+      {{- if .Values.global.ingress.https.tlsSecretName }}
+      secretName: {{ .Values.global.ingress.https.tlsSecretName }}
+      {{- end }}
+  {{- end }}
+  {{- end }}
+  rules:
+    -{{- if .Values.global.ingress.fqdn }} host: {{ .Values.global.ingress.fqdn }}{{- end }}
+      http:
+        paths:
+          - path: /trader
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-trader-service
+                port:
+                  number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
+
+---
+# Broker (Ingress)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-broker-ingress-haproxy
+  {{- if .Values.global.ingress.https.enabled }}
+  annotations:
+    haproxy.org/ssl-redirect: "true"
+    haproxy.org/backend-protocol: "https"
+    haproxy.org/server-ssl: "true"
+    haproxy.org/ssl-verify: "false"
+    haproxy.org/cookie-persistence: "true"
+    haproxy.org/session-cookie-name: "route"
+    haproxy.org/session-cookie-hash: "sha1"
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.global.ingress.className }}
+  {{- if .Values.global.ingress.https.enabled }}
+  {{- if or .Values.global.ingress.fqdn .Values.global.ingress.https.tlsSecretName }}
+  tls:
+       {{- if .Values.global.ingress.fqdn }}
+    - hosts:
+        - {{ .Values.global.ingress.fqdn }}
+      {{- end }}
+      {{- if .Values.global.ingress.https.tlsSecretName }}
+      secretName: {{ .Values.global.ingress.https.tlsSecretName }}
+      {{- end }}
+  {{- end }}
+  {{- end }}
+  rules:
+    -{{- if .Values.global.ingress.fqdn }} host: {{ .Values.global.ingress.fqdn }}{{- end }}
+      http:
+        paths:
+          - path: /broker
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-broker-service
+                port:
+                  number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
+{{ end }}
+
+{{- if and .Values.global.ingress.enabled (eq (lower .Values.global.ingress.className) "kgateway") }}
+
+# ===================== Gateway API (kGateway) =====================
+
+# Gateway (hardcoded name/namespace)
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: public-gw
+  namespace: agentgateway-system
+spec:
+  gatewayClassName: kgateway
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
+  {{- if .Values.global.ingress.https.enabled }}
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: {{ .Values.global.ingress.https.tlsSecretName }}
+    allowedRoutes:
+      namespaces:
+        from: All
+  {{- end }}
+
+---
+# HTTPRoute (HTTP → /trader)
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Release.Name }}-trader-http
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+  - name: public-gw
+    namespace: agentgateway-system
+    sectionName: http
+  {{- if .Values.global.ingress.fqdn }}
+  hostnames:
+  - "{{ .Values.global.ingress.fqdn }}"
+  {{- end }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /trader
+    backendRefs:
+    - name: {{ .Release.Name }}-trader-service
+      port: 9080
+
+{{- if .Values.global.ingress.https.enabled }}
+---
+# HTTPRoute (HTTPS → /trader)
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Release.Name }}-trader-https
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+  - name: public-gw
+    namespace: agentgateway-system
+    sectionName: https
+  {{- if .Values.global.ingress.fqdn }}
+  hostnames:
+  - "{{ .Values.global.ingress.fqdn }}"
+  {{- end }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /trader
+    backendRefs:
+    - name: {{ .Release.Name }}-trader-service
+      port: 9080
+{{- end }}
+{{- end }}
+
+

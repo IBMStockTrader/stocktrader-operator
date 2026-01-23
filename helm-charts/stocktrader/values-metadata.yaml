@@ -156,8 +156,39 @@ global:
   ingress:
     __metadata:
       label: "Enable Ingress"
-      description: "Enable an Ingress for each front-end microservice"
-      type: boolean
+      description: "Enable Ingress for each front-end microservice"
+    enabled:
+      __metadata:
+        label: "Enable Ingress or Gateway Class"
+        type: boolean
+    className:
+      __metadata:
+        label: "Select the type of controller"
+        description: "Choose from HaProxy Ingress, Kgateway API"
+        options:
+        - label: "HAPROXY"
+          value: "haproxy"
+        - label: "KGATEWAY"
+          value: "kgateway"
+        type: string
+    fqdn:
+      __metadata:
+        label: "External Name"
+        description: "External FQDN for the host"
+        type: string
+    https:
+      __metadata:
+        label: "Enable TLS Offload on Igress"
+        description: "External FQDN for the host"
+      enabled:
+        __metadata:
+          label: "Enable HTTPS"
+          type: boolean
+      tlsSecretName:
+        __metadata:
+          label: "TLS Secret Name"
+          description: "Name of the TLS secret for HTTPS"
+          type: string
   route:
     __metadata:
       label: "Enable Route"

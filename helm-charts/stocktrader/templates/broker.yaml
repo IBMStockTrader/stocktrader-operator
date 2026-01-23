@@ -292,34 +292,6 @@ spec:
       targetPort: 9443
   selector:
     app: broker
-{{- if .Values.global.ingress }}
----
-#Configure the ingress
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ .Release.Name }}-broker-ingress
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    ingress.kubernetes.io/affinity: "cookie"
-    ingress.kubernetes.io/session-cookie-name: "route"
-    ingress.kubernetes.io/session-cookie-hash: "sha1"
-    #ingress.kubernetes.io/rewrite-target: /
-    ingress.kubernetes.io/secure-backends: "true"
-    #ingress.kubernetes.io/app-root: "/broker"
-spec:
-  rules:
-  - host:
-    http:
-      paths:
-      - path: /broker
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Release.Name }}-trader-service
-            port:
-              number: 9443
-{{- end }}
 {{- if .Values.global.route }}
 ---
 apiVersion: route.openshift.io/v1
