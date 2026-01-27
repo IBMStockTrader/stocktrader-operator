@@ -114,7 +114,7 @@ For OpenTelemetry installation instructions, see [opentelemetry-README.md](opent
 
 ### Installation with Ingress
 
-For OpenTelemetry installation instructions, see [ingress-README.md](ingress-README.md).
+For Ingress installation instructions, see [ingress-README.md](ingress-README.md).
 
 ## Uninstalling the Chart
 
