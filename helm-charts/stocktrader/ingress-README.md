@@ -5,27 +5,30 @@ This directory contains the Ingress Access integration for IBM Stock Trader, mai
 
 ## Services Overview
 
-| Service                | Tested Type.  | Default Type            | Exposed via Ingress  | Notes |
-|------------------------|---------------|-------------------------|----------------------|-------|
-| trader                 | LoadBalancer  | ClusterIP (if Ingress ) | Yes (`/trader`)      | Ingress handles routing; HAProxy strict HTTPS backend = 9443. |
-| broker                 | LoadBalancer  | ClusterIP (if Ingress ) | Yes (`/broker`)      | Same pattern as trader; only exposed API endpoints. |
-| portfolio              | NodePort      | ClusterIP               | No                   | Internal-only; remove NodePort. |
-| stock-quote            | ClusterIP     | ClusterIP               | No                   | Internal backend service. |
-| tradr                  | ClusterIP     | ClusterIP               | No                   | Optional service, usually disabled. |
-| account                | ClusterIP     | ClusterIP               | No                   | Internal microservice. |
-| cash-account           | ClusterIP     | ClusterIP               | No                   | Internal microservice. |
-| trade-history          | ClusterIP     | ClusterIP               | No                   | Internal history processor. |
-| messaging              | ClusterIP     | ClusterIP               | No                   | Internal messaging aggregator. |
-| notification-service   | ClusterIP     | ClusterIP               | No                   | Internal eventing. |
-| notification-slack     | ClusterIP     | ClusterIP               | No                   | Internal notifier. |
-| notification-twitter   | ClusterIP     | ClusterIP               | No                   | Internal notifier. |
-| looper                 | ClusterIP     | ClusterIP               | No                   | Internal background worker. |
-| tradr                  | LoadBalancer  | Load Balancer           | No (`/tradr`)        | Ingress handles routing; HAProxy strict HTTPS backend = 9443. |
+| Service                | Default Type  | If Ingress | Exposed via Ingress  | Notes |
+|------------------------|---------------|------------|----------------------|-------|
+| trader                 | LoadBalancer  | ClusterIP  | Yes (`/trader`)      | Ingress handles routing; HAProxy strict HTTPS backend = 9443. |
+| broker                 | LoadBalancer  | ClusterIP  | Yes (`/broker`)      | Same pattern as trader; only exposed API endpoints. |
+| portfolio              | ClusterIP     | ClusterIP  | No                   | Internal-only; remove NodePort. |
+| stock-quote            | ClusterIP     | ClusterIP  | No                   | Internal backend service. |
+| tradr                  | ClusterIP     | ClusterIP  | No                   | Optional service, usually disabled. |
+| account                | ClusterIP     | ClusterIP  | No                   | Internal microservice. |
+| cash-account           | ClusterIP     | ClusterIP  | No                   | Internal microservice. |
+| trade-history          | ClusterIP     | ClusterIP  | No                   | Internal history processor. |
+| messaging              | ClusterIP     | ClusterIP  | No                   | Internal messaging aggregator. |
+| notification-service   | ClusterIP     | ClusterIP  | No                   | Internal eventing. |
+| notification-slack     | ClusterIP     | ClusterIP  | No                   | Internal notifier. |
+| notification-twitter   | ClusterIP     | ClusterIP  | No                   | Internal notifier. |
+| looper                 | ClusterIP     | ClusterIP  | No                   | Internal background worker. |
 
 <Note that the tradr service is usually disabled; if neccesary, enable it via the `tradr.enabled` Helm value independently of the Ingress configuration.>
 
+### Key Parameters
+All Parameters are described in [values-metadata.yaml](./values-metadata.yaml)
+
+
 ## Architecure
-* Controllers ( Ingress or Gateway ) are out of the scope or prerequisites see "APPENDIX A"
+* Controllers ( Ingress or GatewayAPI ) are out of the scope or prerequisites see section APPENDIX A
 * Stocktrader microservices are configured to work with Ingress controllers
 
 ![Architecural Ingress Diagram](/images/ingress.png)
@@ -41,6 +44,12 @@ global:
       enabled: true
       tlsSecretName: stocktrader-tls
 ```
+## Best Practices
+* Avoid to expose LoadBalancer services when using Ingress controllers and filter source IP
+* Use strict HTTPS backend communication when using Haproxy Ingress Controller
+* Use proper TLS certificates on Ingress controllers
+* Monitor Ingress controller health and performance tuning as needed
+
 
 ## APPENDIX A: Ingress Controller Prerequisites
 ### Haproxy Ingress Controller Installation
