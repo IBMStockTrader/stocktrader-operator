@@ -64,10 +64,10 @@ spec:
     ingress:
       enabled: false          
       className: haproxy
-      fqdn: ""                
+      fqdn: <your external Name>             
       https:
         enabled: false
-        tlsSecretName: ""
+        tlsSecretName: "{{ .Release.Name }}-ingress-secrets"
     istio: false
     istioEgress: ingressgateway
     istioIngress: egressgateway
