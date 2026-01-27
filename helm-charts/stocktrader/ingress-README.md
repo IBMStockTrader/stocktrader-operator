@@ -39,7 +39,7 @@ global:
   ingress:
     enabled: true
     className: ""
-    fqdn: "st.cloudoptimization.kynhost.com"
+    fqdn: "yourdomain.com"
     https:
       enabled: true
       tlsSecretName: stocktrader-tls
