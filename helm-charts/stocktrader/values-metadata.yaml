@@ -165,12 +165,12 @@ global:
       __metadata:
         label: "Select the type of controller"
         description: "Choose from HaProxy Ingress, Kgateway API"
+        type: string
         options:
         - label: "HAPROXY"
           value: "haproxy"
         - label: "KGATEWAY"
           value: "kgateway"
-        type: string
     fqdn:
       __metadata:
         label: "External Name"
@@ -178,7 +178,7 @@ global:
         type: string
     https:
       __metadata:
-        label: "Enable TLS Offload on Igress"
+        label: "Enable TLS Offload on Ingress"
         description: "External FQDN for the host"
       enabled:
         __metadata:

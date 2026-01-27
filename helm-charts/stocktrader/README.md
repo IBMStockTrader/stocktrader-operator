@@ -112,6 +112,9 @@ This sets the Helm release name to `cjot` and creates all Kubernetes resources i
 
 For OpenTelemetry installation instructions, see [opentelemetry-README.md](opentelemetry-README.md).
 
+### Installation with Ingress
+
+For OpenTelemetry installation instructions, see [ingress-README.md](ingress-README.md).
 
 ## Uninstalling the Chart
 

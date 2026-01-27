@@ -1,12 +1,11 @@
 
-{{- if and .Values.global.ingress.enabled (eq (lower .Values.global.ingress.className) "haproxy") }}
-# ===================== Ingress (HAProxy) =====================
-# Trader (Ingress)
+{{ if and .Values.global.ingress.enabled (eq (lower (default "" .Values.global.ingress.className)) "haproxy") }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-trader-ingress-haproxy
-  {{- if .Values.global.ingress.https.enabled }}
+  namespace: {{ .Release.Namespace }}
+  {{ if .Values.global.ingress.https.enabled }}
   annotations:
     haproxy.org/ssl-redirect: "true"
     haproxy.org/backend-protocol: "https"
@@ -15,40 +14,34 @@ metadata:
     haproxy.org/cookie-persistence: "true"
     haproxy.org/session-cookie-name: "route"
     haproxy.org/session-cookie-hash: "sha1"
-  {{- end }}
+  {{ end }}
 spec:
   ingressClassName: {{ .Values.global.ingress.className }}
-  {{- if .Values.global.ingress.https.enabled }}
-  {{- if or .Values.global.ingress.fqdn .Values.global.ingress.https.tlsSecretName }}
+  {{ if .Values.global.ingress.https.enabled }}
   tls:
-       {{- if .Values.global.ingress.fqdn }}
     - hosts:
         - {{ .Values.global.ingress.fqdn }}
-      {{- end }}
-      {{- if .Values.global.ingress.https.tlsSecretName }}
       secretName: {{ .Values.global.ingress.https.tlsSecretName }}
-      {{- end }}
-  {{- end }}
-  {{- end }}
+  {{ end }}
   rules:
-    -{{- if .Values.global.ingress.fqdn }} host: {{ .Values.global.ingress.fqdn }}{{- end }}
-      http:
-        paths:
-          - path: /trader
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-trader-service
-                port:
-                  number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
-
+  - host: {{ .Values.global.ingress.fqdn }}
+    http:
+      paths:
+      - path: /trader
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-trader-service
+            port:
+              number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
 ---
-# Broker (Ingress)
+#Broker:Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-broker-ingress-haproxy
-  {{- if .Values.global.ingress.https.enabled }}
+  namespace: {{ .Release.Namespace }}
+  {{ if .Values.global.ingress.https.enabled }}
   annotations:
     haproxy.org/ssl-redirect: "true"
     haproxy.org/backend-protocol: "https"
@@ -57,32 +50,26 @@ metadata:
     haproxy.org/cookie-persistence: "true"
     haproxy.org/session-cookie-name: "route"
     haproxy.org/session-cookie-hash: "sha1"
-  {{- end }}
+  {{ end }}
 spec:
   ingressClassName: {{ .Values.global.ingress.className }}
-  {{- if .Values.global.ingress.https.enabled }}
-  {{- if or .Values.global.ingress.fqdn .Values.global.ingress.https.tlsSecretName }}
+  {{ if .Values.global.ingress.https.enabled }}
   tls:
-       {{- if .Values.global.ingress.fqdn }}
     - hosts:
         - {{ .Values.global.ingress.fqdn }}
-      {{- end }}
-      {{- if .Values.global.ingress.https.tlsSecretName }}
       secretName: {{ .Values.global.ingress.https.tlsSecretName }}
-      {{- end }}
-  {{- end }}
-  {{- end }}
+  {{ end }}
   rules:
-    -{{- if .Values.global.ingress.fqdn }} host: {{ .Values.global.ingress.fqdn }}{{- end }}
-      http:
-        paths:
-          - path: /broker
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-broker-service
-                port:
-                  number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
+  - host: {{ .Values.global.ingress.fqdn }}
+    http:
+      paths:
+      - path: /broker
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-broker-service
+            port:
+              number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
 {{ end }}
 
 {{- if and .Values.global.ingress.enabled (eq (lower .Values.global.ingress.className) "kgateway") }}
@@ -169,5 +156,3 @@ spec:
       port: 9080
 {{- end }}
 {{- end }}
-
-

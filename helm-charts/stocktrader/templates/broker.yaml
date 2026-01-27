@@ -267,20 +267,21 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-broker-service
   annotations:
+    {{- if not .Values.global.ingress.enabled }}
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
-  labels:
-    app: broker
-{{- if .Values.global.monitoring }}
-  annotations:
-    prometheus.io/scrape: 'true'
+    {{- end }}
+    {{- if .Values.global.monitoring }}
+    prometheus.io/scrape: "true"
     prometheus.io/port: "9080"
-{{- end }}
-  finalizers:
-  - service.kubernetes.io/load-balancer-cleanup
+    {{- end }}
   labels:
     app: broker
+  {{- if not .Values.global.ingress.enabled }}
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  {{- end }}
 spec:
-  type: LoadBalancer
+  type: {{ if .Values.global.ingress.enabled }}ClusterIP{{ else }}LoadBalancer{{ end }}
   ports:
     - name: http
       protocol: TCP
@@ -292,6 +293,7 @@ spec:
       targetPort: 9443
   selector:
     app: broker
+
 {{- if .Values.global.route }}
 ---
 apiVersion: route.openshift.io/v1

@@ -18,10 +18,17 @@
 # Declare variables to be passed into your templates.
 global:
   ingress:
-    enabled: true
+    enabled: false
     className: kgateway
-    fqdn: "st.cloudoptimization.kynhost.com"
+    fqdn: "stapi.cloudoptimization.kynhost.com"
     https:
       enabled: true
-      tlsSecretName: stocktrader-tls 
-
+      tlsSecretName: stocktrader-tls
+database:
+  db: neondb
+  host: ep-morning-shape-ahb6yu2c-pooler.c-3.us-east-1.aws.neon.tech
+  port: 5432
+  kind: postgres
+  id: neondb_owner
+  password: npg_HasthZ3enfQ8
+  ssl: true
