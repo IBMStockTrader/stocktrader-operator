@@ -61,7 +61,13 @@ spec:
     externalConfigMap: false
     externalSecret: false
     healthCheck: true
-    ingress: false
+    ingress:
+      enabled: false          
+      className: haproxy
+      fqdn: ""                
+      https:
+        enabled: false
+        tlsSecretName: ""
     istio: false
     istioEgress: ingressgateway
     istioIngress: egressgateway

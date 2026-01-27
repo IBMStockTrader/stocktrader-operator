@@ -271,8 +271,27 @@ spec:
                     description: Enable Startup, Readiness and Liveness probes
                     type: boolean
                   ingress:
-                    description: Enable Ingress
-                    type: boolean
+                    description: Configure Ingress settings
+                    properties:
+                      enabled:
+                        description: Enable Ingress
+                        type: boolean
+                      className:
+                        description: Ingress Class Name
+                        type: string
+                      fqdn:
+                        description: Ingress Domain External Name
+                        type: string
+                      https:
+                        description: Ingress SSL Offload settings
+                        type: object
+                        properties:
+                          enabled:
+                            description: Enable full https
+                            type: boolean
+                          tlsSecretName:
+                            description: TLS Secret Name for HTTPS
+                            type: string
                   istio:
                     description: Enable the OpenShift Service Mesh (Istio)
                     type: boolean
