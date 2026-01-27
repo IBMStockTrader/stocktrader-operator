@@ -40,3 +40,19 @@ git checkout -b feature/short-description
 7. push your branch to your fork
 8. open a pull request to the original repository via cli or github web interface
 
+5. **Make Changes and Test**
+   - Implement your feature or fix.
+   - Test your changes thoroughly to ensure they work as expected.
+
+```bash
+git checkout master
+git fetch upstream
+git merge upstream/master
+git push origin master
+
+git checkout ingress
+git merge master
+git push origin ingress
+```
+6. PR Changes
+
