@@ -65,6 +65,11 @@ helm upgrade --install haproxy-ingress haproxytech/kubernetes-ingress \
   --create-namespace \
   -f valueshaproxy.yaml
 ```
+```helm Options
+  --set controller.ingressClass=haproxy \
+  --set controller.service.type=LoadBalancer \
+  --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"="false" \
+```
 <Note Review Ingress Controller HealthCheck in azure cases to be controller Up and running .>
 
 ### kgateway API Gateway Installation
