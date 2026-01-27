@@ -33,7 +33,11 @@ spec:
           service:
             name: {{ .Release.Name }}-trader-service
             port:
-              number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
+              {{- if .Values.global.ingress.https.enabled }}
+              number: 9443
+              {{- else }}
+              number: 9080
+              {{- end }}
 ---
 #Broker:Ingress
 apiVersion: networking.k8s.io/v1
@@ -69,7 +73,12 @@ spec:
           service:
             name: {{ .Release.Name }}-broker-service
             port:
-              number: {{ if .Values.global.ingress.https.enabled }}9443{{ else }}9080{{ end }}
+            port:
+              {{- if .Values.global.ingress.https.enabled }}
+              number: 9443
+              {{- else }}
+              number: 9080
+              {{- end }}
 {{ end }}
 
 {{- if and .Values.global.ingress.enabled (eq (lower .Values.global.ingress.className) "kgateway") }}
