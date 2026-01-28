@@ -49,7 +49,13 @@ global:
     logExporter: otlp
     metricExporter: otlp
     traceExporter: otlp
-  ingress: false
+  ingress:
+    enabled: false          
+    className: haproxy      
+    fqdn: <your external Name>             
+    https:
+      enabled: false
+      tlsSecretName: "{{ .Release.Name }}-ingress-secrets"
   route: false
   healthCheck: true
   disableLogFiles: false

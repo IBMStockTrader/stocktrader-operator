@@ -1,7 +1,7 @@
 # IBM Stock Trader operator
 This operator is intended to install all of the microservices from the IBM Stock Trader sample, and configure them to talk to services they require.
 
-Note it does NOT install such prereqs, like DB2 or MQ - it just asks you to tell it how to connect to such services you already have - whether they be running in the same Kube cluster, or out in a public cloud. See the sibling [stocktrader-setup](https://github.com/IBMStockTrader/stocktrader-setp) repository for Terraform/OpenTofu scripts to set up the prereqs.
+Note it does NOT install such prereqs, like DB2 or MQ - it just asks you to tell it how to connect to such services you already have - whether they be running in the same Kube cluster, or out in a public cloud. See the sibling [stocktrader-setup](https://github.com/IBMStockTrader/stocktrader-setup) repository for Terraform/OpenTofu scripts to set up the prereqs.
 
 It is a follow-on to the helm chart I created earlier, and described at https://medium.com/cloud-engagement-hub/using-an-umbrella-helm-chart-to-deploy-the-composite-ibm-stock-trader-sample-3b8b69af900d.
 
@@ -46,10 +46,11 @@ We then run the operator bundle using:
 ```
 operator-sdk run bundle ghcr.io/ibmstocktrader/stocktrader-operator-bundle:v1.0.0
 ```
+> NOTE: It is not necessary to apply the StockTrader CRDs manually, as they are already packaged within the bundle
 
 Now you should have the OLM-enabled Stock Trader operator running in the cluster. With the operator, you can install an instance of Stock Trader using:
 ```
-kubectl apply -f <Your Stocktrader CR Yaml>
+kubectl apply -f <Your Stocktrader CR Yaml> -n <Your Namespace for Stocktrader>
 ```
 An example of the CR yaml can be viewed [here](https://github.com/IBMStockTrader/stocktrader-operator/blob/master/config/samples/operators_v1_stocktrader.yaml).
 
@@ -64,3 +65,9 @@ In a browser, enter the url in this format: `https://<trader-service-ip>:9443/tr
 The following page should pop up:
 ![Login](images/Login.png)
 Congratulations, you have used the operator to install and configure and access the Stock Trader application!
+
+## Contributing
+
+For full details, please see our [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Thank you for helping improve the StockTrader Operator! 🎉

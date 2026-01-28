@@ -61,7 +61,13 @@ spec:
     externalConfigMap: false
     externalSecret: false
     healthCheck: true
-    ingress: false
+    ingress:
+      enabled: false          
+      className: haproxy
+      fqdn: <your external Name>             
+      https:
+        enabled: false
+        tlsSecretName: "{{ .Release.Name }}-ingress-secrets"
     istio: false
     istioEgress: ingressgateway
     istioIngress: egressgateway

@@ -267,20 +267,21 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-broker-service
   annotations:
+    {{- if not .Values.global.ingress.enabled }}
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
-  labels:
-    app: broker
-{{- if .Values.global.monitoring }}
-  annotations:
-    prometheus.io/scrape: 'true'
+    {{- end }}
+    {{- if .Values.global.monitoring }}
+    prometheus.io/scrape: "true"
     prometheus.io/port: "9080"
-{{- end }}
-  finalizers:
-  - service.kubernetes.io/load-balancer-cleanup
+    {{- end }}
   labels:
     app: broker
+  {{- if not .Values.global.ingress.enabled }}
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  {{- end }}
 spec:
-  type: LoadBalancer
+  type: {{ if .Values.global.ingress.enabled }}ClusterIP{{ else }}LoadBalancer{{ end }}
   ports:
     - name: http
       protocol: TCP
@@ -292,34 +293,7 @@ spec:
       targetPort: 9443
   selector:
     app: broker
-{{- if .Values.global.ingress }}
----
-#Configure the ingress
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ .Release.Name }}-broker-ingress
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    ingress.kubernetes.io/affinity: "cookie"
-    ingress.kubernetes.io/session-cookie-name: "route"
-    ingress.kubernetes.io/session-cookie-hash: "sha1"
-    #ingress.kubernetes.io/rewrite-target: /
-    ingress.kubernetes.io/secure-backends: "true"
-    #ingress.kubernetes.io/app-root: "/broker"
-spec:
-  rules:
-  - host:
-    http:
-      paths:
-      - path: /broker
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Release.Name }}-trader-service
-            port:
-              number: 9443
-{{- end }}
+
 {{- if .Values.global.route }}
 ---
 apiVersion: route.openshift.io/v1

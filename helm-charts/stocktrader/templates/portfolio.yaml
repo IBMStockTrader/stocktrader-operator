@@ -300,7 +300,7 @@ metadata:
     prometheus.io/port: "9080"
 {{- end }}
 spec:
-  type: NodePort
+  # type: NodePort
   ports:
     - name: http
       protocol: TCP
