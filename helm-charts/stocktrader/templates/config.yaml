@@ -21,11 +21,11 @@ metadata:
 data:
   auth.type: {{ .Values.global.auth }}
   trace.spec: "{{ .Values.global.traceSpec }}"
-  broker.url: {{ tpl .Values.broker.url . }}
-  portfolio.url: {{ tpl .Values.portfolio.url . }}
-  stockQuote.url: {{ tpl .Values.stockQuote.url . }}
+  broker.url: http://{{ .Release.Name }}-broker-service:9080/broker
+  portfolio.url: http://{{ .Release.Name }}-portfolio-service:9080/portfolio
+  stockQuote.url: http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote
   watson.url: {{ .Values.watson.url }}
-  tradeHistory.url: {{ tpl .Values.tradeHistory.url . }}
+  tradeHistory.url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
   trader.whiteLabelHeaderImage: {{ .Values.trader.whiteLabelHeaderImage }}
   trader.whiteLabelFooterImage: {{ .Values.trader.whiteLabelFooterImage }}
   trader.whiteLabelLoginMessage: {{ .Values.trader.whiteLabelLoginMessage }}
@@ -37,15 +37,15 @@ data:
   trader.opentelemetry.metricExporter: {{ .Values.global.opentelemetry.metricExporter }}
   trader.opentelemetry.traceExporter: {{ .Values.global.opentelemetry.traceExporter }}
   {{- end }}
-  messaging.notification.url: {{ tpl .Values.messaging.notification.url . }}
-  looper.url: {{ tpl .Values.looper.url . }}
+  messaging.notification.url: http://{{ .Release.Name }}-notification-service:9080/notification
+  looper.url: "http://{{ .Release.Name }}-looper-service:9080/looper"
   apic.url: {{ .Values.stockQuote.apiConnect }}
   iex.url: {{ .Values.stockQuote.iexTrading }}
   encryption.type: {{ .Values.stockQuote.encryption.class }}
   odm.url: {{ .Values.odm.url }}
   openwhisk.url: {{ .Values.openwhisk.url }}
-  account.url: {{ tpl .Values.account.url . }}
-  cashAccount.url: {{ tpl .Values.cashAccount.url . }}
+  account.url: http://{{ .Release.Name }}-account-service:9080/account
+  cashAccount.url: http://{{ .Release.Name }}-cash-account-service:9080/cash-account
   cashAccount.exchangeRateUrl: {{ tpl .Values.cashAccount.exchangeRateUrl . }}
   cloudant.url: {{ .Values.cloudant.url }}
   cloudant.host: {{ .Values.cloudant.host }}
@@ -60,10 +60,10 @@ data:
   kafka.saslMechanism: {{ .Values.kafka.saslMechanism }}
   kafka.saslJaasConfig: {{ .Values.kafka.saslJaasConfig }}
   database.kind: {{ .Values.database.kind }}
-  database.host: {{ .Values.database.host }}
-  database.port: "{{ .Values.database.port }}"
-  database.db: {{ .Values.database.db }}
-  database.ssl: "{{ .Values.database.ssl }}"
+  database.host: {{ include "stocktrader.database.host" . }}
+  database.port: "{{ include "stocktrader.database.port" . }}"
+  database.db: {{ include "stocktrader.database.name" . }}
+  database.ssl: "{{ include "stocktrader.database.ssl" . }}"
   mq.host: {{ .Values.mq.host }}
   mq.kind: {{ .Values.mq.kind }}
   mq.port: "{{ .Values.mq.port }}"

@@ -26,7 +26,7 @@ metadata:
     prism.subkind: Liberty
 spec:
 {{- if not .Values.looper.autoscale }}
-  replicas: {{ .Values.looper.replicas }}
+  replicas: {{ .Values.looper.replicas | default 1 }}
 {{- end }}
   selector:
     matchLabels:
@@ -170,9 +170,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-looper
-  minReplicas: {{ .Values.looper.replicas }}
-  maxReplicas: {{ .Values.looper.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.looper.cpuThreshold }}
+  minReplicas: {{ .Values.looper.replicas | default 1 }}
+  maxReplicas: {{ .Values.looper.maxReplicas | default 1 }}
+  targetCPUUtilizationPercentage: {{ .Values.looper.cpuThreshold | default 75 }}
 {{- end }}
 ---
 #Deploy the service

@@ -13,7 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-apiVersion: v1
+apiVersion: v2
 description: Umbrella Helm chart for the IBM Stock Trader sample
 name: stocktrader
 version: 2.0.0
@@ -23,3 +23,8 @@ sources:
 maintainers:
   - name: John W. Alcorn
     email: John.Alcorn@kyndryl.com
+dependencies:
+- name: postgresql
+  version: 18.1.3
+  repository: https://charts.bitnami.com/bitnami
+  condition: postgresql.enabled

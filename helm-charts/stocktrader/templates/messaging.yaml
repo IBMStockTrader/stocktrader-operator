@@ -31,7 +31,7 @@ metadata:
     prism.subkind: Liberty
 spec:
 {{- if not .Values.messaging.autoscale }}
-  replicas: {{ .Values.messaging.replicas }}
+  replicas: {{ .Values.messaging.replicas | default 1 }}
 {{- end }}
   selector:
     matchLabels:
@@ -203,8 +203,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-messaging
-  minReplicas: {{ .Values.messaging.replicas }}
-  maxReplicas: {{ .Values.messaging.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.messaging.cpuThreshold }}
+  minReplicas: {{ .Values.messaging.replicas | default 1 }}
+  maxReplicas: {{ .Values.messaging.maxReplicas | default 1 }}
+  targetCPUUtilizationPercentage: {{ .Values.messaging.cpuThreshold | default 75 }}
 {{- end }}
 {{- end }}

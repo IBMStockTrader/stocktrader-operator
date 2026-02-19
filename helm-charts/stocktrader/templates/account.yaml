@@ -25,7 +25,7 @@ metadata:
     prism.subkind: Liberty
 spec:
 {{- if not .Values.account.autoscale }}
-  replicas: {{ .Values.account.replicas }}
+  replicas: {{ .Values.account.replicas | default 1 }}
 {{- end }}
   selector:
     matchLabels:
@@ -339,8 +339,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-account
-  minReplicas: {{ .Values.account.replicas }}
-  maxReplicas: {{ .Values.account.maxReplicas }}
+  minReplicas: {{ .Values.account.replicas | default 1 }}
+  maxReplicas: {{ .Values.account.maxReplicas | default 1 }}
   # Replace legacy targetCPUUtilizationPercentage with proper v2 metrics
   metrics:
     - type: Resource
@@ -348,7 +348,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.account.cpuThreshold }}
+          averageUtilization: {{ .Values.account.cpuThreshold | default 75  }}
 {{- end }}
 ---
 #Deploy the service

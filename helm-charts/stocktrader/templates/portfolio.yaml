@@ -25,7 +25,7 @@ metadata:
     prism.subkind: Liberty
 spec:
 {{- if not .Values.portfolio.autoscale }}
-  replicas: {{ .Values.portfolio.replicas }}
+  replicas: {{ .Values.portfolio.replicas | default 1 }}
 {{- end }}
   selector:
     matchLabels:
@@ -221,7 +221,7 @@ spec:
           httpGet:
             path: /health/started
             port: 9080
-          initialDelaySeconds: 180
+          initialDelaySeconds: 60
           periodSeconds: 30
           failureThreshold: 5
         readinessProbe:
@@ -246,6 +246,14 @@ spec:
             cpu: 250m
             memory: 1Gi
             ephemeral-storage: 32Mi
+        volumeMounts:
+        - name: postgres-config
+          mountPath: /opt/ol/wlp/usr/servers/defaultServer/includes/postgres.xml
+          subPath: postgres.xml
+      volumes:
+      - name: postgres-config
+        configMap:
+          name: {{ .Release.Name }}-portfolio-postgres-config
 {{- if .Values.portfolio.autoscale }}
 ---
 #Deploy the autoscaler
@@ -275,8 +283,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-portfolio
-  minReplicas: {{ .Values.portfolio.replicas }}
-  maxReplicas: {{ .Values.portfolio.maxReplicas }}
+  minReplicas: {{ .Values.portfolio.replicas | default 1 }}
+  maxReplicas: {{ .Values.portfolio.maxReplicas | default 1 }}
   # Replace legacy targetCPUUtilizationPercentage with proper v2 metrics
   metrics:
     - type: Resource
@@ -284,7 +292,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.portfolio.cpuThreshold }}
+          averageUtilization: {{ .Values.portfolio.cpuThreshold | default 75  }}
 {{- end }}
 ---
 #Deploy the service

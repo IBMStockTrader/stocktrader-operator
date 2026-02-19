@@ -24,7 +24,7 @@ metadata:
     prism.subkind: Spring
 spec:
 {{- if not .Values.cashAccount.autoscale }}
-  replicas: {{ .Values.cashAccount.replicas }}
+  replicas: {{ .Values.cashAccount.replicas  | default 1 }}
 {{- end }}
   selector:
     matchLabels:
@@ -259,8 +259,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-cash-account
-  minReplicas: {{ .Values.cashAccount.replicas }}
-  maxReplicas: {{ .Values.cashAccount.maxReplicas }}
+  minReplicas: {{ .Values.cashAccount.replicas | default 1 }}
+  maxReplicas: {{ .Values.cashAccount.maxReplicas | default 1  }}
   # Replace legacy targetCPUUtilizationPercentage with proper v2 metrics
   metrics:
     - type: Resource
@@ -268,7 +268,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.cashAccount.cpuThreshold }}
+          averageUtilization: {{ .Values.cashAccount.cpuThreshold | default 75  }}
 {{- end }}
 ---
 #Deploy the service

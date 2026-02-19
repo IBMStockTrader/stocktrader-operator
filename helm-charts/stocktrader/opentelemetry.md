@@ -249,7 +249,7 @@ kubectl get configmap <release-name>-otel-collector-conf -n stocktrader -o yaml
 - `otel-collector-clusterrolebinding.yaml` - Binds ServiceAccount to ClusterRole
 - `otel-collector-hpa.yaml` - Horizontal Pod Autoscaler for collector
 - `otel-collector-secret.yaml` - Template for backend secrets (commented out)
-- `README.md` - This documentation
+- `opentelemetry.md` - This documentation
 
 ## References
 

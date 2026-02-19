@@ -1,0 +1,3 @@
+# Ignore Chart Dependencies
+**/charts/*.tgz
+

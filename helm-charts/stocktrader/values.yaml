@@ -71,41 +71,18 @@ global:
   pullSecretName: <your pull secret>
   specifyCerts: false
   certs: <your SSL certificates>
-database:
-  kind: db2
-  host: db2trader1-ibm-db2oltp-dev
-  port: 50000
-  id: db2inst1
-  password: db2inst1
-  db: trader
-  ssl: false
 broker:
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
-    repository: ghcr.io/ibmstocktrader/broker
-    tag: 1.0.0
-  url: http://{{ .Release.Name }}-broker-service:9080/broker
+    repository: stocktraderotel.azurecr.io/broker
+    tag: latest
 portfolio:
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
-    repository: ghcr.io/ibmstocktrader/portfolio
-    tag: 1.0.0
-  url: http://{{ .Release.Name }}-portfolio-service:9080/portfolio
+    repository: stocktraderotel.azurecr.io/portfolio
+    tag: updated
 stockQuote:
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/stock-quote
     tag: 1.0.0
-  url: http://{{ .Release.Name }}-stock-quote-service:9080/stock-quote
   apiConnect: https://api.us.apiconnect.ibmcloud.com/jalcornusibmcom-dev/sb/stocks
   iexTrading: https://cloud.iexapis.com/stable/stock
   iexApiKey: <your IEX API key>
@@ -115,95 +92,53 @@ stockQuote:
     password: <encryption password>
 trader:
   enabled: true
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
-    repository: ghcr.io/ibmstocktrader/trader
-    tag: 1.0.0
+    repository: stocktraderotel.azurecr.io/trader
+    tag: latest
   whiteLabelHeaderImage: header.jpg
   whiteLabelFooterImage: footer.jpg
   whiteLabelLoginMessage: Log in to Stock Trader
 tradr:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/tradr
     tag: 1.0.0
 cashAccount:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/cash-account
     tag: 1.0.0
-  url: http://{{ .Release.Name }}-cash-account-service:8080/cash-account
   exchangeRateUrl: https://api.frankfurter.app/latest
 account:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/account
     tag: 1.0.0
-  url: http://{{ .Release.Name }}-account-service:9080/account
 messaging:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/messaging
     tag: 1.0.0
-  notification:
-    url: http://{{ .Release.Name }}-notification-service:9080/notification
 notificationSlack:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/notification-slack
     tag: 1.0.0
 notificationTwitter:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/notification-twitter
     tag: 1.0.0
 tradeHistory:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/trade-history
     tag: 1.0.0
-  url: http://{{ .Release.Name }}-trade-history-service:9080/trade-history
 looper:
   enabled: false
-  replicas: 1
-  autoscale: false
-  maxReplicas: 10
-  cpuThreshold: 75
   image:
     repository: ghcr.io/ibmstocktrader/looper
     tag: 1.0.0
-  url: http://{{ .Release.Name }}-looper-service:9080/looper
 jwt:
   issuer: http://stock-trader.ibm.com
   audience: stock-trader
@@ -286,3 +221,83 @@ s3:
   endpointUrl: <your S3 endpoint URL>
   resourceInstanceId: <your S3 CRN>
   apiKey: <your S3 API Key>
+
+# PostgreSQL database configuration
+# Options are 'internal' to use the bundled PostgreSQL subchart, or 'external' to use an external database
+database:
+  type: internal
+  kind: postgres
+  id: stocktrader
+  password: changeme
+  external:
+    secretName: <your secret name>
+    host: remote-stocktrader-jonathan.postgres.database.azure.com
+    port: 5432
+    db: trader
+    id: stocktrader
+    password: ChangeMe!
+    # Azure requires this to be set to true
+    ssl: true
+# PostgreSQL subchart configuration
+# https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+postgresql:
+  enabled: true
+  auth:
+  # NOTE: Inject via secret in future releases
+    username: stocktrader
+    password: changeme
+    database: trader
+  primary:
+    containerPorts:
+      postgresql: 5432
+    service:
+      ports:
+        postgresql: 5432
+    persistence:
+      enabled: true
+      size: 2Gi
+    initdb:
+      scripts:
+        create-schema-and-tables.sql: |
+          -- Stock Trader Database Schema-
+          CREATE TABLE IF NOT EXISTS Portfolio(
+            owner VARCHAR(32) NOT NULL, 
+            total DOUBLE PRECISION, 
+            accountID VARCHAR(64), 
+            PRIMARY KEY(owner)
+          );
+          
+          CREATE TABLE IF NOT EXISTS Stock(
+            owner VARCHAR(32) NOT NULL, 
+            symbol VARCHAR(8) NOT NULL, 
+            shares INTEGER, 
+            price DOUBLE PRECISION, 
+            total DOUBLE PRECISION, 
+            dateQuoted VARCHAR(10), 
+            commission DOUBLE PRECISION, 
+            FOREIGN KEY (owner) REFERENCES Portfolio(owner) ON DELETE CASCADE, 
+            PRIMARY KEY(owner, symbol)
+          );
+          
+          CREATE TABLE IF NOT EXISTS cashaccount(
+            owner VARCHAR(32) NOT NULL, 
+            balance DOUBLE PRECISION, 
+            currency VARCHAR(8), 
+            PRIMARY KEY(owner)
+          );
+          
+          -- Add currency constraint if it doesn't exist
+          DO $$
+          BEGIN
+            IF NOT EXISTS (
+              SELECT 1 FROM pg_constraint WHERE conname = 'allowed_currencies'
+            ) THEN
+              ALTER TABLE cashaccount ADD CONSTRAINT allowed_currencies 
+              CHECK (currency IN (
+                'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 
+                'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'ISK', 
+                'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 
+                'RON', 'SEK', 'SGD', 'THB', 'TRY', 'USD', 'ZAR'
+              ));
+            END IF;
+          END$$; 
